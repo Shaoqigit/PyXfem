@@ -1,21 +1,33 @@
 from abc import abstractmethod, ABCMeta
-from polynomial import Lobatto, Larange
+from polynomial import Lobatto, Larange, PolyBuilder
+from quadratures import GaussLegendreQuadrature
 import numpy as np
+from precompute_matrices import Ke1Do1, Me1Do1, Ke1Do2, Me1Do2, Ke1Do3, Me1Do3, Ke1Do4, Me1Do4
 
-class BaseElementaryMatrix(metaclass=ABCMeta):
+            
+
+class Base1DElement(metaclass=ABCMeta):
     """base abstract FE elementary matrix class
     precompute the shape function and its derivative on gauss points
     parameters:
     order: int
         element order
     """
-    def Jacobian(self, coord):
-        coord = np.array(coord)
-        if len(coord) == 2:
-            return 2/np.abs(coord[0]-coord[1])
-        elif len(coord) == 3:
+    def __init__(self, order):
+        self.order = order
+        self.dim = 0
+        self.nodes = None
+
+    @property
+    def Jacobian(self):
+
+        nodes = elem.nodes()
+        if elem.dim() == 1:
+            return 2/np.abs(nodes[0]-nodes[1])
+        else:
             print("not implemented yet")
 
+    @property
     def inverse_Jacobian(self, coord):
         coord = np.array(coord)
         if len(coord) == 2:
@@ -24,32 +36,25 @@ class BaseElementaryMatrix(metaclass=ABCMeta):
             print("not implemented yet")
 
 
-    @abstractmethod
-    def matrix(self, order):
-        pass
 
-class Elementary1DStiffnessMatrix(BaseElementaryMatrix):
+class Elementary1DLobattoStiffnessMatrix(BaseElementaryMatrix):
     """FE elementary stiffness matrix class
     parameters:
     order: int
         element order
     """
     def __init__(self, order):
-        self.order = order
-        self.gauss = Lobatto(order, np.linspace(-1, 1, order+1))
-        self.gauss_d = self.gauss.derivative()
+        super().__init__(order)
 
-    def matrix(self):
+    def get_matrix(self):
         """compute the elementary stiffness matrix
         returns:
         K: ndarray
             elementary stiffness matrix
         """
-        K = np.zeros((self.order+1, self.order+1))
-        for i in range(self.order+1):
-            for j in range(self.order+1):
-                K[i, j] = np.sum(self.gauss_d[i]*self.gauss_d[j])
-        return K
+        if self.order = 1:
+            Ke =  self.Jacobian(elem)*Ke1Do1
+        return Ke
     
 class Elementary1DMassMatrix(BaseElementaryMatrix):
     """FE elementary mass matrix class
