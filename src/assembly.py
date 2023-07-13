@@ -31,8 +31,23 @@ class Assembler:
 
         
 
-    def assemble_M(self):
+    def assemble_material_K(self, subdomains):
+        elem_mat = {}
+        for key, elems in subdomains.items():
+            elem_mat.update({elem: key for elem in elems})
+
+        for i, dofs, basis in enumerate(zip(self.dof_handler.global_dof_index(), self.bases)):
+            local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
+            global_indices = np.array([(row, col) for row in dofs for col in dofs])
+            # print(global_indices)
+            row = global_indices.T[0]
+            col = global_indices.T[1]
+
+            data = basis.ke[local_indices.T[0], local_indices.T[1]]
+            self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs))
+
         return self.M
     
     def get_matrix_in_array(self):
         return self.M.toarray()
+
