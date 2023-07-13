@@ -1,6 +1,6 @@
 import numpy as np
-from quadratures import GaussLegendreQuadrature
-from polynomial import Lobatto, Larange
+from src.quadratures import GaussLegendreQuadrature
+from src.polynomial import Lobatto, Larange
 from numpy.polynomial.legendre import leggauss
 
 def compute_matrix(Ke, Me, order):
@@ -48,13 +48,14 @@ Ke1Do4 = np.zeros((5,5))
 Me1Do4 = np.zeros((5,5))
 compute_matrix(Ke1Do4, Me1Do4, order)
 
+Ke1D = [Ke1Do1, Ke1Do2, Ke1Do3, Ke1Do4]
+Me1D = [Me1Do1, Me1Do2, Me1Do3, Me1Do4]
 
-
-print(Ke1Do1)
-print(Me1Do1)
-print(Ke1Do2)
-print(Me1Do2)
-print(Ke1Do3)
-print(Me1Do3)
-print(Ke1Do4)
-print(Me1Do4)
+# print(Ke1Do1)
+# print(Me1Do1)
+# print(Ke1Do2)
+# print(Me1Do2)
+# print(Ke1Do3)
+# print(Me1Do3)
+# print(Ke1Do4)
+# print(Me1Do4)
