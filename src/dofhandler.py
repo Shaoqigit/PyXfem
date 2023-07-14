@@ -44,6 +44,13 @@ class DofHandler1D:
             global_dof.append(np.hstack((np.array([elem[0], elem[1]]), np.array([internal_dof_index_start + j for j in range(0, basis.get_order()-1)]))))
             internal_dof_index_start += basis.get_order()-1
 
-
-
         return global_dof
+        
+    @property
+    def num_external_dofs(self):
+        return self.mesh.get_num_nodes()
+    
+    @property
+    def num_internal_dofs(self):
+        return self.get_num_dofs() - self.num_external_dofs()
+

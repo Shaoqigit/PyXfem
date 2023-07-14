@@ -13,6 +13,7 @@ class BaseMaterial(metaclass=ABCMeta):
     def __init__(self, name,  *args):
         self.name = name
 
+
     def __str__(self) -> str:
         return f"name: {self.name}, type: {self.__class__.TYPE}, model: {self.__class__.MODEL}"
 
@@ -51,6 +52,10 @@ class Air(BaseMaterial):
         self.Z = Air.Z
         self.rho = Air.rho
 
+        # derived parameters
+        self.rho_f = self.rho
+        self.c_f = self.c
+
 class Fluid(BaseMaterial):
     """fluid material class
     parameters:
@@ -66,6 +71,9 @@ class Fluid(BaseMaterial):
         self.name = name
         self.rho = args[0]
         self.c = args[1]
+
+        self.rho_f = self.rho
+        self.c_f = self.c
 
 
 class EquivalentFluid(BaseMaterial):
@@ -109,6 +117,10 @@ class EquivalentFluid(BaseMaterial):
 
         self.c_eq_til = sqrt(self.K_eq_til/self.rho_eq_til)
 
+        self.rho_f = self.rho_eq_til
+        self.c_f = self.c_eq_til 
+
+
 class LimpPorousMaterial(EquivalentFluid):
     """limp porous material class
     derived from equivalent fluid class
@@ -132,6 +144,8 @@ class LimpPorousMaterial(EquivalentFluid):
     def set_frequency(self, omega):
         self.rho_limp = self.rho_til*self.rho_eq_til/(self.rho_til+self.rho_eq_til*self.gamma_til**2)
 
+        self.rho_f = self.rho_limp
+        self.c_f= self.c_eq_til
 
 
 def check_material_compability(subdomains):
