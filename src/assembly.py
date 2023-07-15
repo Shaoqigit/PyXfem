@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import csr_array, csr_matrix, csc_matrix, coo_matrix
+from scipy.sparse import csr_array, csr_matrix
 
 
 class Assembler:
@@ -8,22 +8,22 @@ class Assembler:
         self.num_dofs = dof_handler.get_num_dofs()
         self.bases = bases
         self.dtype = dtype
+        self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
         self.M = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.F = csr_array((self.num_dofs), dtype=self.dtype)
         self.omega = 0.
 
     def assemble_K(self):
-        for dofs, basis in zip(self.dof_handler.global_dof_index(), self.bases):
+        for dofs, basis in zip(self.dof_handler.get_global_dofs(), self.bases):
             local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
             # print(global_indices)
             row = global_indices.T[0]
             col = global_indices.T[1]
             data = basis.ke[local_indices.T[0], local_indices.T[1]]
-            self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs))
+            self.K += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs))
 
     def assemble_M(self):  
-        for dofs, basis in zip(self.dof_handler.global_dof_index(), self.bases):
+        for dofs, basis in zip(self.dof_handler.get_global_dofs(), self.bases):
             local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
             # print(global_indices)
@@ -39,7 +39,7 @@ class Assembler:
         elem_mat = {}
         for key, elems in subdomains.items():
             elem_mat.update({elem: key for elem in elems})
-        for i, (dofs, basis) in enumerate(zip(self.dof_handler.global_dof_index(), self.bases)):
+        for i, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
             local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
             # print(global_indices)
@@ -47,23 +47,23 @@ class Assembler:
             col = global_indices.T[1]
             mat = elem_mat[i]
             if mat.TYPE in ['Air', 'Fluid']:
-                mat_coeff = 1/mat.rho
+                mat_coeff = 1/mat.rho_f
             elif mat.TYPE in ['Equivalent Fluid', 'Limp Fluid']:
                 mat.set_frequency(omega)
                 mat_coeff = 1/mat.rho_f
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.ke[local_indices.T[0], local_indices.T[1]]
-            self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.K += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
 
-        return self.M
+        return self.K
     
     def assemble_material_M(self, subdomains, omega = 0):
         self.omega = omega
         elem_mat = {}
         for key, elems in subdomains.items():
             elem_mat.update({elem: key for elem in elems})
-        for i, (dofs, basis) in enumerate(zip(self.dof_handler.global_dof_index(), self.bases)):
+        for i, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
             local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
             # print(global_indices)
@@ -71,13 +71,13 @@ class Assembler:
             col = global_indices.T[1]
             mat = elem_mat[i]
             if mat.TYPE in ['Air', 'Fluid']:
-                mat_coeff = 1/mat.rho_f*(omega/mat.c)**2
+                mat_coeff = 1/mat.rho_f*(omega/mat.c_f)**2
             elif mat.TYPE in ['Equivalent Fluid', 'Limp Fluid']:
                 mat.set_frequency(omega)
-                mat_coeff = 1/mat.rho_f*(omega/mat.c)**2
+                mat_coeff = 1/mat.rho_f*(omega/mat.c_f)**2
             else:
                 print("Material type not supported")
-            data = mat_coeff*basis.ke[local_indices.T[0], local_indices.T[1]]
+            data = mat_coeff*basis.me[local_indices.T[0], local_indices.T[1]]
             self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
 
         return self.M
@@ -85,14 +85,14 @@ class Assembler:
     def get_dim(self):
         return self.num_dofs
     
-    def get_matrix_in_array(self, M):
-        return M.toarray()
     
     def assemble_nature_bc(self, nature_bc):
+        F = np.zeros(self.num_dofs, dtype=self.dtype)
         if nature_bc['type']=='velocity':
-            self.F[nature_bc['position']] = 1j * self.omega * nature_bc['value']
+            F[nature_bc['position']] = 1j * self.omega * nature_bc['value']
+            # F = csr_matrix(F, shape=(self.num_dofs, 1), dtype=self.dtype)
         else:
             print("Nature BC type not supported")
 
-        return self.F
+        return F
 

@@ -148,18 +148,5 @@ class LimpPorousMaterial(EquivalentFluid):
         self.c_f= self.c_eq_til
 
 
-def check_material_compability(subdomains):
-    mats = []
-    for key in subdomains.keys():
-        mats.append(key)
-
-    compatibale_mats = mats[0].COMPATIBLE
-    print(compatibale_mats)
-    for mat in mats:
-        print(mat.TYPE)
-        if mat.TYPE not in compatibale_mats:
-            raise ValueError("Material model is not compatible")
-        else:
-            print("Material models are compatible, computation continues ...")
 
 # TODO: add ElasticMaterial class and BiotMaterial class

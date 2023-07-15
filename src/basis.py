@@ -1,7 +1,25 @@
-from abc import abstractmethod, ABCMeta
-from src.polynomial import Lobatto, Larange, PolyBuilder
-from src.quadratures import GaussLegendreQuadrature
+# This file is part of PyXfem, a software distributed under the MIT license.
+# For any question, please contact the authors cited below.
+#
+# Copyright (c) 2023
+# 	Shaoqi WU <shaoqiwu@outlook.com
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# basis.py mutiple element types
+# Lobatto element are recommended to use
+
 import numpy as np
+from abc import ABCMeta, abstractmethod
+
 from src.precompute_matrices import Ke1D, Me1D
 
             

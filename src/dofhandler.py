@@ -1,3 +1,22 @@
+# This file is part of PyXfem, a software distributed under the MIT license.
+# For any question, please contact the authors cited below.
+#
+# Copyright (c) 2023
+# 	Shaoqi WU <shaoqiwu@outlook.com
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# dofhandle.py
+# deal with mesh and basis, return global dof index t
+
 import numpy as np
 from src.mesh import Mesh1D
 
@@ -5,10 +24,10 @@ from src.mesh import Mesh1D
 
 class DofHandler1D:
 
-    def __init__(self, mesh, base) -> None:
+    def __init__(self, mesh, bases) -> None:
         if isinstance(mesh, Mesh1D):
             self.mesh = mesh
-            self.base = base
+            self.bases = bases
             self.connect = mesh.connectivity
         else:
             raise TypeError("mesh must be 1D mesh")
@@ -17,7 +36,7 @@ class DofHandler1D:
     def get_num_dofs(self):
         """return global dof"""
         num_dofs = 0
-        for basis in self.base:
+        for basis in self.bases:
             if basis.is_discontinue:
                 num_discontiue = self.basis.interface
                 return self.mesh.get_num_elems()*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
@@ -27,7 +46,7 @@ class DofHandler1D:
 
             
     
-    def global_dof_index(self):
+    def get_global_dofs(self):
         """return local dof
         return: global dof index
         [node_1_index, node_2_index, internal_dof_index],
@@ -35,8 +54,8 @@ class DofHandler1D:
         [.....]]"""
         global_dof = []
         internal_dof_index_start = self.mesh.get_num_nodes()
-        for i, basis in enumerate(self.base):
-            print("internal_dof_index_start", internal_dof_index_start)
+        for i, basis in enumerate(self.bases):
+            # print("internal_dof_index_start", internal_dof_index_start)
             if basis.num_internal_dofs() == 0:
                 global_dof.append(self.mesh.connectivity[i])
                 continue
@@ -52,5 +71,5 @@ class DofHandler1D:
     
     @property
     def num_internal_dofs(self):
-        return self.get_num_dofs() - self.num_external_dofs()
+        return self.get_num_dofs() - self.num_external_dofs
 

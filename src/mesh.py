@@ -1,3 +1,22 @@
+# This file is part of PyXfem, a software distributed under the MIT license.
+# For any question, please contact the authors cited below.
+#
+# Copyright (c) 2023
+# 	Shaoqi WU <shaoqiwu@outlook.com
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# mesh.py: generate mesh data dictionsary and refine mesh function
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from abc import ABCMeta, abstractmethod
@@ -12,7 +31,7 @@ class BaseMesh(metaclass=ABCMeta):
         return lines
    
     @abstractmethod
-    def read_mesh(self):
+    def get_mesh(self):
         pass
 
     @abstractmethod
@@ -26,7 +45,7 @@ class Mesh1D(BaseMesh):
         self.nodes = nodes
         self.elem_connect = elem_connect
 
-    def read_mesh(self):
+    def get_mesh(self):
         """read mesh file"""
         elems = {}
         for i in range(len(self.elem_connect)):
@@ -46,8 +65,6 @@ class Mesh1D(BaseMesh):
             new_nodes.append(self.nodes[-1])
             self.nodes = np.array(new_nodes)
             self.elem_connect = np.array(new_elem_connect)
-        print(self.nodes)
-        print(self.elem_connect)
         
 
     def get_num_nodes(self):
