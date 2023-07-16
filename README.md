@@ -25,7 +25,7 @@ Roadmap:
 ## For development
 Every time one new feature is developed, a new test case has to be added in the /tests folder. The run_test must to be run and passed with all green light before created Pull Request as:
 ```bash
-Test case:  main_test1_two_layer.py                                      \033[1;32mSUCCESS\033[0m
-Test case:  main_test2_impedance_bc.py                                   \033[1;32mSUCCESS\033[0m
-Test case:  main_test3_lobatto.py                                        \033[1;32mSUCCESS\033[0m
+Test case:  main_test1_two_layer.py                                      \033[32mSUCCESS\033[0m
+Test case:  main_test2_impedance_bc.py                                   \033[32mSUCCESS\033[0m
+Test case:  main_test3_lobatto.py                                        \033[32mSUCCESS\033[0m
 ```
