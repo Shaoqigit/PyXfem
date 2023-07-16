@@ -26,3 +26,8 @@ class PostProcessField(object):
     def display_layers(self, *layers_pos):
         for pos in layers_pos:
             self.ax.axvline(x=pos, ls='--', c='k')
+
+
+    def compute_error(self, sol, ana_sol):
+        error = np.mean(np.abs(sol-ana_sol))
+        return error

@@ -1,0 +1,16 @@
+import sys
+sys.path.append('../src')
+import os
+import subprocess
+
+
+
+test_path = "tests/"
+test_cases = ['main_test1_two_layer.py', 'main_test2_impedance_bc.py']
+for test_case in test_cases:
+    cmd = ['python3', test_path+test_case, f">> {os.path.splitext(test_case)[0]}.log"]
+    result = subprocess.run(cmd, stdout=subprocess.PIPE)
+    if 'Test passed!' in result.stdout.decode('utf-8'):
+        print(f"Test case:  {test_case}", "         ","\033[1;32m SUCESS \033[0m")
+    else:
+        print(f"Test case:  {test_case}", "         " ,"\033[1;31m FAILED \033[0m")

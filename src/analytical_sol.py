@@ -2,6 +2,35 @@ import numpy as np
 from abc import ABCMeta, abstractmethod 
 from cmath import sin, cos
 
+class ImpedenceKundltTube():
+
+    def __init__(self, mesh, *args) -> None:
+        self.mesh = mesh
+        self.mat = args[0]
+        self.omega = args[1]
+        self.nature_bc = args[2]
+        assert(self.nature_bc['type'] == 'velocity')
+        self.impedence_bc = args[3]
+        assert(self.impedence_bc['type'] == 'impedence')
+        self.analytical_field()
+
+    def analytical_field(self):
+        Z_0 = self.mat.Z_f
+        Up = self.nature_bc['value']
+        A = self.impedence_bc['value']
+        L = 1
+        k = self.omega/self.mat.c_f
+
+        alpha = Z_0*Up*(1+A)/((1+A)*np.exp(1j*k*L)-(1-A)*np.exp(-1j*k*L))
+        beta = alpha *(1-A)/(1+A)
+        self.p = lambda x: alpha*np.exp(-1j*k*x)+beta*np.exp(1j*k*x)
+
+    def sol_on_nodes(self, ana_sol, sol_type='pressure'):
+        # import pdb; pdb.set_trace()
+        for i, x in enumerate(self.mesh.nodes):
+            ana_sol[i] = self.p(x)
+
+
 
 class DoubleleLayerKundltTube():
     

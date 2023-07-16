@@ -99,6 +99,8 @@ class Lobbato1DElement(Base1DElement):
             Me =  self.Jacobian*Me1D[1]
         elif self.order == 3:
             Me =  self.Jacobian*Me1D[2]
+        elif self.order == 4:
+            Me =  self.Jacobian*Me1D[3]
         else:
             print("quadrtic lobatto not supported yet")
         return Me

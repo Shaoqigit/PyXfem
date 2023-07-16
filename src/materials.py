@@ -13,6 +13,8 @@ class BaseMaterial(metaclass=ABCMeta):
     def __init__(self, name,  *args):
         self.name = name
 
+    def set_frequency(self, omega):
+        pass
 
     def __str__(self) -> str:
         return f"name: {self.name}, type: {self.__class__.TYPE}, model: {self.__class__.MODEL}"
@@ -55,6 +57,8 @@ class Air(BaseMaterial):
         # derived parameters
         self.rho_f = self.rho
         self.c_f = self.c
+        self.Z_f = self.Z
+
 
 class Fluid(BaseMaterial):
     """fluid material class
@@ -74,6 +78,7 @@ class Fluid(BaseMaterial):
 
         self.rho_f = self.rho
         self.c_f = self.c
+        self.Z_f = self.rho*self.c
 
 
 class EquivalentFluid(BaseMaterial):
@@ -119,6 +124,7 @@ class EquivalentFluid(BaseMaterial):
 
         self.rho_f = self.rho_eq_til
         self.c_f = self.c_eq_til 
+        self.Z_f = self.rho_f*self.c_f
 
 
 class LimpPorousMaterial(EquivalentFluid):
@@ -146,6 +152,7 @@ class LimpPorousMaterial(EquivalentFluid):
 
         self.rho_f = self.rho_limp
         self.c_f= self.c_eq_til
+        self.Z_f = self.rho_f*self.c_f
 
 
 
