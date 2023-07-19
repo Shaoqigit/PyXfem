@@ -22,15 +22,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from src.basis import Lobbato1DElement
-from src.mesh import Mesh1D
-from src.dofhandler import DofHandler1D
-from src.assembly import Assembler
-from src.materials import Air, Fluid, EquivalentFluid
-from src.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from src.solver import LinearSolver
-from src.postprocess import PostProcessField
-from src.analytical_sol import ImpedenceKundltTube
+from fem.basis import Lobbato1DElement
+from fem.mesh import Mesh1D
+from fem.dofhandler import DofHandler1D
+from fem.assembly import Assembler
+from fem.materials import Air, Fluid, EquivalentFluid
+from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from fem.solver import LinearSolver
+from fem.postprocess import PostProcessField
+from fem.analytical_sol import ImpedenceKundltTube
 
 
 def test_case_2():

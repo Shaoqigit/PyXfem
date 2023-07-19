@@ -5,8 +5,8 @@ from scipy.sparse import csr_array
 from scipy.sparse.linalg import spsolve, bicg, bicgstab, gmres, SuperLU
 from scipy.sparse.csgraph import reverse_cuthill_mckee
 
-from src.polynomial import Lobatto, Larange
-from src.quadratures import GaussLegendreQuadrature
+from fem.polynomial import Lobatto, Larange
+from fem.quadratures import GaussLegendreQuadrature
 
 class BaseSolver(metaclass=ABCMeta):
     """base abstract FE solver class

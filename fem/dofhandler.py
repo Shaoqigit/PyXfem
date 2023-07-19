@@ -18,7 +18,7 @@
 # deal with mesh and basis, return global dof index t
 
 import numpy as np
-from src.mesh import Mesh1D
+from fem.mesh import Mesh1D
 
 
 

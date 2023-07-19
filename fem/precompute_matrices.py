@@ -1,6 +1,6 @@
 import numpy as np
-from src.quadratures import GaussLegendreQuadrature
-from src.polynomial import Lobatto, Larange
+from fem.quadratures import GaussLegendreQuadrature
+from fem.polynomial import Lobatto, Larange
 from numpy.polynomial.legendre import leggauss
 
 def compute_matrix(Ke, Me, order):

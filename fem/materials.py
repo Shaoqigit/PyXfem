@@ -148,12 +148,57 @@ class LimpPorousMaterial(EquivalentFluid):
         self.gamma_til = args[6]
 
     def set_frequency(self, omega):
+        super().set_frequency(omega)
         self.rho_limp = self.rho_til*self.rho_eq_til/(self.rho_til+self.rho_eq_til*self.gamma_til**2)
 
         self.rho_f = self.rho_limp
         self.c_f= self.c_eq_til
         self.Z_f = self.rho_f*self.c_f
 
+class ElasticMaterial(BaseMaterial):
+    """elastic material class
+    parameters:
+    """
+    TYPE = 'Elastic'
+    MODEL = 'Elastic Model'
+    COMPATIBLE = ['Elastic']
 
 
-# TODO: add ElasticMaterial class and BiotMaterial class
+    def __init__(self, name, *args):
+        super().__init__(name, *args)
+        assert(len(args) == 2)
+        self.name = name
+        self.E = args[0]
+        self.rho = args[1]
+        self.eta = args[2]
+        self.lambda_ = args[3]
+        self.mu = args[4]
+
+    def compute_missing(self):
+        if self.lambda_ is None:
+            self.lambda_ = (1+1j*self.eta)*(self.E*self.nu)/((1+self.nu)*(1-2*self.nu))
+        if self.mu is None:
+            self.mu = (1+1j*self.eta)*(self.E)/(2*(1+self.nu))
+
+    def set_frequency(self, omega):
+        self.omega = omega
+
+class PoroElasticMaterial(LimpPorousMaterial, ElasticMaterial):
+    TYPE = 'Poroelastic'
+    MODEL = 'JCA-Biot Model'
+    COMPATIBLE = ['Poroelastic', 'Elastic', 'Fluid', 'Equivalent Fluid', 'Limp Equivalent Fluid']
+
+    def __init__(self, name, *args):
+        super().__init__(name, *args)
+        assert(len(args) == 7)
+        self.name = name
+        self.phi = args[0]
+        self.sigma = args[1]
+        self.alpha = args[2]
+        self.Lambda_prime = args[3]
+        self.Lambda = args[4]
+        self.rho_til = args[5]
+        self.gamma_til = args[6]
+
+
+# TODO: correct Limp and BiotMaterial class

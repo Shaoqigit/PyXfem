@@ -20,7 +20,7 @@
 import numpy as np
 from abc import ABCMeta, abstractmethod
 
-from src.precompute_matrices import Ke1D, Me1D
+from fem.precompute_matrices import Ke1D, Me1D
 
             
 
