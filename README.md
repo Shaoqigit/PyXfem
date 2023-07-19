@@ -21,6 +21,8 @@ Roadmap:
 * Biot UP solid and Fluid coupling model
 * Perfect Matched Layer (PML) for free field boundary condition
 * Infinite Element for free field boundary condition
+* higher order shape function and integration ($p=10$)
+* Message and log system
 
 ## For development
 Every time one new feature is developed, a new test case has to be added in the /tests folder. The run_test must to be run and passed with all green light before created Pull Request as:
