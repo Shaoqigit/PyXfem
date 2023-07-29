@@ -97,7 +97,7 @@ class EquivalentFluid(BaseMaterial):
 
     def __init__(self, name, *args):
         super().__init__(name, *args)
-        assert(len(args) == 5)
+        # assert(len(args) == 5)
         self.name = name
         self.phi = args[0]
         self.sigma = args[1]
@@ -132,8 +132,7 @@ class LimpPorousMaterial(EquivalentFluid):
     derived from equivalent fluid class
     take the solid density and inertia into account
     additional attributes:
-    rho_til: solid density -> float
-    gamma_til: biot coupling coefficient -> float
+    rho_1: solid density -> float
     """
     TYPE = 'Limp Fluid'
     MODEL = 'Limp Equivalent Fluid'
@@ -142,13 +141,25 @@ class LimpPorousMaterial(EquivalentFluid):
 
     def __init__(self, name, *args):
         super().__init__(name, *args)
-        assert(len(args) == 7)
+        # assert(len(args) == 6)
         self.name = name
-        self.rho_til = args[5]
-        self.gamma_til = args[6]
+        self.rho_1 = args[5]  #
 
     def set_frequency(self, omega):
         super().set_frequency(omega)
+        self.rho_12 = -self.phi*Air.rho*(self.alpha-1)
+        self.rho_11 = self.rho_1-self.rho_12
+        self.rho_2 = self.phi*Air.rho
+        self.rho_22 = self.rho_2-self.rho_12
+
+        self.rho_22_til = self.phi**2*self.rho_eq_til
+        self.rho_12_til = self.rho_2-self.rho_22_til
+        self.rho_11_til = self.rho_1-self.rho_12_til
+        self.rho_til = self.rho_11_til-((self.rho_12_til**2)/self.rho_22_til)
+
+        self.gamma_til = self.phi*(self.rho_12_til/self.rho_22_til-(1-self.phi)/self.phi)
+        self.rho_s_til = self.rho_til+self.gamma_til**2*self.rho_eq_til
+
         self.rho_limp = self.rho_til*self.rho_eq_til/(self.rho_til+self.rho_eq_til*self.gamma_til**2)
 
         self.rho_f = self.rho_limp
@@ -166,39 +177,79 @@ class ElasticMaterial(BaseMaterial):
 
     def __init__(self, name, *args):
         super().__init__(name, *args)
-        assert(len(args) == 2)
+        assert(len(args) == 4)
         self.name = name
-        self.E = args[0]
-        self.rho = args[1]
-        self.eta = args[2]
-        self.lambda_ = args[3]
-        self.mu = args[4]
+        self.E = args[0]  # Young's modulus
+        self.rho_1 = args[1]  # solid density
+        self.nu = args[2]  # Poisson's ratio
+        self.eta = args[3]  # loss factor
 
     def compute_missing(self):
-        if self.lambda_ is None:
-            self.lambda_ = (1+1j*self.eta)*(self.E*self.nu)/((1+self.nu)*(1-2*self.nu))
-        if self.mu is None:
-            self.mu = (1+1j*self.eta)*(self.E)/(2*(1+self.nu))
+        self.E *= (1+1j*self.eta)
+        self.mu = (1+1j*self.eta)*(self.E)/(2*(1+self.nu))
+        self.lambda_ = (self.E*self.nu)/((1+self.nu)*(1-2*self.nu))
 
     def set_frequency(self, omega):
         self.omega = omega
+        P_mat = self.lambda_ + 2*self.mu
+        self.delta_p = omega*sqrt(self.rho/P_mat)
+        self.delta_s = omega*sqrt(self.rho/self.mu)
 
-class PoroElasticMaterial(LimpPorousMaterial, ElasticMaterial):
+class PoroElasticMaterial(LimpPorousMaterial):
     TYPE = 'Poroelastic'
     MODEL = 'JCA-Biot Model'
     COMPATIBLE = ['Poroelastic', 'Elastic', 'Fluid', 'Equivalent Fluid', 'Limp Equivalent Fluid']
 
     def __init__(self, name, *args):
         super().__init__(name, *args)
-        assert(len(args) == 7)
+        # assert(len(args) == 8)
         self.name = name
-        self.phi = args[0]
-        self.sigma = args[1]
-        self.alpha = args[2]
-        self.Lambda_prime = args[3]
-        self.Lambda = args[4]
-        self.rho_til = args[5]
-        self.gamma_til = args[6]
+        self.E = args[6]
+        self.nu = args[7]
+        self.eta = args[8]
+        
+    def set_frequency(self, omega):
+        super().set_frequency(omega)
+        self.structural_loss = 1+1j*self.eta
+
+        self.N = self.E/(2*(1+self.nu))*self.structural_loss
+        self.A_hat = (self.E*self.nu)/((1+self.nu)*(1-2*self.nu))*self.structural_loss
+        self.P_hat = self.A_hat+2*self.N
+
+        # Biot 1956 elastic coefficients
+        self.R_til = self.K_eq_til*self.phi**2
+        self.Q_til = ((1-self.phi)/self.phi)*self.R_til
+        self.P_til = self.P_hat+self.Q_til**2/self.R_til
+
+        delta_eq = omega*sqrt(self.rho_eq_til/self.K_eq_til)
+        delta_s_1 = omega*sqrt(self.rho_til/self.P_hat)
+        delta_s_2 = omega*sqrt(self.rho_s_til/self.P_hat)
+
+        Psi = ((delta_s_2**2+delta_eq**2)**2-4*delta_eq**2*delta_s_1**2)
+        sdelta_total = sqrt(Psi)
+
+        delta_1 = sqrt(0.5*(delta_s_2**2+delta_eq**2+sdelta_total))
+        delta_2 = sqrt(0.5*(delta_s_2**2+delta_eq**2-sdelta_total))
+        delta_3 = omega*sqrt(self.rho_til/self.N)
+
+        mu_1 = self.gamma_til*delta_eq**2/(delta_1**2-delta_eq**2)
+        mu_2 = self.gamma_til*delta_eq**2/(delta_2**2-delta_eq**2)
+        mu_3 = -self.gamma_til
+
+        self.delta_s_1 = delta_s_1
+        self.delta_s_2 = delta_s_2
+        self.delta_1 = delta_1
+        self.delta_2 = delta_2
+        self.delta_3 = delta_3
+        self.delta_eq = delta_eq
+        self.sdelta_total = sdelta_total
+        self.mu_1 = mu_1
+        self.mu_2 = mu_2
+        self.mu_3 = mu_3
+
+        self.rho_f = self.rho_eq_til
+        self.c_f = self.c_eq_til
+
 
 
 # TODO: correct Limp and BiotMaterial class
