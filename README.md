@@ -9,6 +9,7 @@ Main special features/architecture of the library compared to other existing lib
 * The element type (interpolation order of shape functions) can be variable on each element (mesh)
 * Extended elements and double node techinique are used to deal with discontitnuity
 * Various common Acoustic materials are supported, including porous rigid, Limp and Biot-up models.
+* FEM-TMM coupling is supported to model multi-layered configuration in general geometry problems
 
 Up to this moment:
 
@@ -21,6 +22,7 @@ Roadmap:
 * Biot UP solid and Fluid coupling model
 * Perfect Matched Layer (PML) for free field boundary condition
 * Infinite Element for free field boundary condition
+* TMM embeded for multi-layered configuration
 * higher order shape function and integration ($p=10$)
 * Message and log system
 
