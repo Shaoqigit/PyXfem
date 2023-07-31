@@ -19,6 +19,9 @@
 from scipy.sparse import csr_array
 
 def check_material_compability(subdomains):
+    if len(subdomains) == 1:
+         print("Material models are compatible, computation continues ...")
+         return True
     mats = []
     for key in subdomains.keys():
         mats.append(key)

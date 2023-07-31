@@ -30,7 +30,7 @@ from fem.materials import Air, Fluid, EquivalentFluid
 from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from fem.solver import LinearSolver
 from fem.postprocess import PostProcessField
-from fem.analytical_sol import ImpedenceKundltTube
+from analytical.fluid_sol import ImpedenceKundltTube
 
 
 def test_case_2():
@@ -56,7 +56,7 @@ def test_case_2():
     order = 4  # global order of the bases
     # applied the basis on each element
     for key, elem in elements_set.items():
-        basis = Lobbato1DElement(order, elem)
+        basis = Lobbato1DElement('P', order, elem)
         bases.append(basis)
         # print(basis.ke)
         # print(basis.me)

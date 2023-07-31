@@ -30,7 +30,7 @@ from fem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
 from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from fem.solver import LinearSolver
 from fem.postprocess import PostProcessField
-from fem.analytical_sol import DoubleleLayerKundltTube
+from analytical.fluid_sol import DoubleleLayerKundltTube
 
 
 def test_case():

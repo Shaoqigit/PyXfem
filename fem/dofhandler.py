@@ -72,4 +72,85 @@ class DofHandler1D:
     @property
     def num_internal_dofs(self):
         return self.get_num_dofs() - self.num_external_dofs
+    
+class DofHandler1DMutipleVariable(DofHandler1D):
+    def __init__(self, mesh, *mbases) -> None:
+        if isinstance(mesh, Mesh1D):
+            self.mesh = mesh
+            self.nb_var = len(mbases)
+            self.whole_bases = []
+            for bases in mbases:
+                self.whole_bases += bases
+            self.connect = mesh.connectivity
+            
+        else:
+            raise TypeError("mesh must be 1D mesh")
+
+
+    def get_num_dofs(self):
+        """return global dof"""
+        num_dofs = 0
+        for basis in self.whole_bases:
+            if basis.is_discontinue:
+                num_discontiue = self.basis.interface
+                return self.mesh.get_num_elems()*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
+            else:
+                num_dofs += basis.get_order()
+        return (num_dofs+self.nb_var)
+
+            
+    
+    def get_global_dofs(self):
+        """return local dof
+        return: global dof index
+        [node_1_index, node_2_index, internal_dof_index],
+        [.....],
+        [.....]]"""
+        global_dof = []
+        internal_dof_index_start = self.mesh.get_num_nodes()*self.nb_var
+
+        new_connect = self.connect
+        whole_connect = self.connect
+        for i in range(1, self.nb_var):
+            index_1 = new_connect.T[1]+self.connect.shape[0]*i
+            index_2 = new_connect.T[1]+1+self.connect.shape[0]*i
+            new_connect = np.vstack((index_1, index_2)).T
+            whole_connect = np.vstack((whole_connect, new_connect))
+
+        var_index_start = 0
+        for i, basis in enumerate(self.whole_bases):
+            # print("internal_dof_index_start", internal_dof_index_start)
+            if basis.num_internal_dofs() == 0:
+                global_dof.append(whole_connect[i])
+                continue
+            elem = whole_connect[i]
+            global_dof.append(np.hstack((np.array([elem[0], elem[1]]), np.array([internal_dof_index_start + j for j in range(0, basis.get_order()-1)]))))
+            # if i%self.connect.shape[0] == 0 and i>=self.connect.shape[0]:
+            #     var_index_start +=1
+            internal_dof_index_start += basis.get_order()-1 
+
+        return global_dof
+    
+    def base4global_dofs(self):
+        global_dofs = self.get_global_dofs()
+        base4dofs = {}
+        for i, bases in enumerate(self.whole_bases):
+            index = base4dofs.get(bases.label, [])
+            index.append(global_dofs[i])
+            base4dofs[bases.label] = index
+        return base4dofs
+    
+    def get_global_dofs_by_base(self, label):
+        base4dofs = self.base4global_dofs()
+        return base4dofs.get(label, None)
+
+
+    @property
+    def num_external_dofs(self):
+        return self.mesh.get_num_nodes()*self.nb_var
+    
+    @property
+    def num_internal_dofs(self):
+        return self.get_num_dofs() - self.num_external_dofs
+
 

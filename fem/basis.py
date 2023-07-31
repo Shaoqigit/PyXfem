@@ -20,7 +20,7 @@
 import numpy as np
 from abc import ABCMeta, abstractmethod
 
-from fem.precompute_matrices import Ke1D, Me1D
+from fem.precompute_matrices import Ke1D, Me1D, Ce1D
 
             
 
@@ -35,7 +35,8 @@ class Base1DElement(metaclass=ABCMeta):
         2d: [(x1, y1), (x2, y2)]
         3d: [(x1, y1, z1), (x2, y2, z2)]
     """
-    def __init__(self, order, nodes):
+    def __init__(self, label, order, nodes):
+        self.label = label
         self.order = order
         self.nodes = nodes
         self.is_discontinue = False
@@ -63,8 +64,8 @@ class Lobbato1DElement(Base1DElement):
 
     returns:
     """
-    def __init__(self, order, nodes):
-        super().__init__(order, nodes)
+    def __init__(self, label, order, nodes):
+        super().__init__(label, order, nodes)
 
     @property
     def ke(self):
@@ -90,7 +91,7 @@ class Lobbato1DElement(Base1DElement):
     def me(self):
         """compute the elementary stiffness matrix
         returns:
-        K: ndarray
+        m: ndarray
             elementary stiffness matrix
         """
         if self.order == 1:
@@ -104,6 +105,25 @@ class Lobbato1DElement(Base1DElement):
         else:
             print("quadrtic lobatto not supported yet")
         return Me
+    
+    @property
+    def ce(self):
+        """compute the elementary stiffness matrix
+        returns:
+        c: ndarray
+            elementary coupling matrix
+        """
+        if self.order == 1:
+            Ce =  Ce1D[0]
+        elif self.order == 2:
+            Ce =  Ce1D[1]
+        elif self.order == 3:
+            Ce =  Ce1D[2]
+        elif self.order == 4:
+            Ce =  Ce1D[3]
+        else:
+            print("quadrtic lobatto not supported yet")
+        return Ce
     
     def get_order(self):
         return self.order
