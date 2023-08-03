@@ -79,8 +79,11 @@ class DofHandler1DMutipleVariable(DofHandler1D):
             self.mesh = mesh
             self.nb_var = len(mbases)
             self.whole_bases = []
+            self.var_name = []
             for bases in mbases:
                 self.whole_bases += bases
+                if bases[0].label not in self.var_name:
+                    self.var_name.append(bases[0].label)
             self.connect = mesh.connectivity
             
         else:
@@ -112,21 +115,17 @@ class DofHandler1DMutipleVariable(DofHandler1D):
         new_connect = self.connect
         whole_connect = self.connect
         for i in range(1, self.nb_var):
-            index_1 = new_connect.T[1]+self.connect.shape[0]*i
-            index_2 = new_connect.T[1]+1+self.connect.shape[0]*i
+            index_1 = new_connect[:,1]+self.connect.shape[0]*i
+            index_2 = new_connect[:,1]+1+self.connect.shape[0]*i
             new_connect = np.vstack((index_1, index_2)).T
             whole_connect = np.vstack((whole_connect, new_connect))
 
-        var_index_start = 0
         for i, basis in enumerate(self.whole_bases):
-            # print("internal_dof_index_start", internal_dof_index_start)
             if basis.num_internal_dofs() == 0:
                 global_dof.append(whole_connect[i])
                 continue
             elem = whole_connect[i]
             global_dof.append(np.hstack((np.array([elem[0], elem[1]]), np.array([internal_dof_index_start + j for j in range(0, basis.get_order()-1)]))))
-            # if i%self.connect.shape[0] == 0 and i>=self.connect.shape[0]:
-            #     var_index_start +=1
             internal_dof_index_start += basis.get_order()-1 
 
         return global_dof
@@ -143,6 +142,13 @@ class DofHandler1DMutipleVariable(DofHandler1D):
     def get_global_dofs_by_base(self, label):
         base4dofs = self.base4global_dofs()
         return base4dofs.get(label, None)
+    
+    def mesh2dof(self, position, var):
+        index_var = self.var_name.index(var)
+        for i, node in enumerate(self.mesh.nodes):
+            if node == position:
+                return i+index_var*self.mesh.get_num_nodes()
+        
 
 
     @property

@@ -1,13 +1,14 @@
 import numpy as np
+from numba import jit
 from fem.quadratures import GaussLegendreQuadrature
 from fem.polynomial import Lobatto, Larange
-from numpy.polynomial.legendre import leggauss
+# from numpy.polynomial.legendre import leggauss
 
 def compute_matrix(Ke, Me, Ce, order):
     n_pts = order*2
     gl_q = GaussLegendreQuadrature(n_pts)
     gl_pts, gl_wts = gl_q.points(), gl_q.weights()
-    gl_pts, gl_wts = leggauss(n_pts)
+    # gl_pts, gl_wts = leggauss(n_pts)
     l = Lobatto(order)
     B = l.get_der_shape_functions()
     N = l.get_shape_functions()
@@ -17,10 +18,12 @@ def compute_matrix(Ke, Me, Ce, order):
             Ke[i, j] = sum(gl_wt*B[i](gl_pt)*B[j](gl_pt) for gl_pt, gl_wt in zip(gl_pts, gl_wts))
             Me[i, j] = sum(gl_wt*N[i](gl_pt)*N[j](gl_pt) for gl_pt, gl_wt in zip(gl_pts, gl_wts))
             Ce[i, j] = sum(gl_wt*N[i](gl_pt)*B[j](gl_pt) for gl_pt, gl_wt in zip(gl_pts, gl_wts))  #Coupling matrix that to be used in Biot equation
-            if abs(Ke[i, j]) < 1e-14:
+            if abs(Ke[i, j]) < 1e-10:
                 Ke[i, j] = 0
-            if abs(Me[i, j]) < 1e-14:
+            if abs(Me[i, j]) < 1e-10:
                 Me[i, j] = 0
+            if abs(Ce[i, j]) < 1e-10:
+                Ce[i, j] = 0
             
 
 

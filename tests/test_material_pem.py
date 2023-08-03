@@ -84,8 +84,8 @@ def test_case():
     foam2 = PoroElasticMaterial('foam', phi, sigma, alpha, Lambda_prime, Lambda, rho_1, E, nu, eta)
     foam2.set_frequency(omega)
     Z2 = foam2.rho_f * foam2.c_f
-    print("Impedance from reference:", foam.delta_1, foam.delta_2, foam.delta_3)
-    print("Impedance from reference:", foam2.delta_1, foam2.delta_2, foam2.delta_3)
+    print("Impedance from reference:", foam.delta_1, foam.delta_2, foam.delta_3, foam.rho_til)
+    print("Impedance from reference:", foam2.delta_1, foam2.delta_2, foam2.delta_3, foam2.rho_til)
     delta_reference = [foam.delta_1, foam.delta_2, foam.delta_3]
     delta_lib = [foam2.delta_1, foam2.delta_2, foam2.delta_3]
     for i in range(3):

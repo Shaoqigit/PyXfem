@@ -28,6 +28,11 @@ class PostProcessField(object):
             self.ax.axvline(x=pos, ls='--', c='k')
 
 
-    def compute_error(self, sol, ana_sol):
-        error = np.mean(np.abs(sol-ana_sol))
+    def compute_error(self, sol, ana_sol, remove=None):
+        # relative error
+        # rough error computation
+        sol = sol[:remove]
+        ana_sol = ana_sol[:remove]
+        error = np.mean(np.abs(sol-ana_sol)/np.abs(ana_sol))
+        # error = np.mean(np.abs(sol-ana_sol))
         return error

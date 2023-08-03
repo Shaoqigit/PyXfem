@@ -123,7 +123,7 @@ def test_case_2():
     # compute the error
     error = post_process.compute_error(sol, ana_sol)
     # print("error: ", error)
-    if error < 1e-4:
+    if error < 1e-5:
         print("Test passed!")
         return True
     else:

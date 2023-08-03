@@ -134,7 +134,7 @@ def test_case_1():
 
     error = post_processer.compute_error(sol, ana_sol)
     print("error:", error)
-    if error < 1e-4:
+    if error < 1e-5:
         print("Test passed!")
         return True
     else:
