@@ -1,4 +1,4 @@
-### AcoustiX Simple Acoustic Simulator
+# AcoustiX Simple Acoustic Simulator
                    based on Finite Element Method
                     contact: Shaoqiwu@outlook.com
 
@@ -11,7 +11,7 @@
 * Various common Acoustic materials are supported, including porous rigid, Limp and **Biot-up** models.
 * FEM-**TMM** coupling is supported to model multi-layered configuration in general geometry problems
 
-# Up to this moment:
+### Up to this moment:
 
 * High order lobatto shape function supported (up to $p=4$)
 * JCA and Limp model to account for porous acoustic materials
@@ -19,7 +19,7 @@
 * Impedence boundary condition supported
 * Weakly enforced essential boundary condition (penalty method and **Nitche's method**)
 
-# To do list
+### To do list
 * Add Porous UP to test cases
 * Refactoring and speed up
 * Biot UP and Fluid coupling model
@@ -28,7 +28,7 @@
 * TMM embeded for multi-layered configuration
 * higher order shape function and integration ($p=10$)
 
-# Roadmap:
+### Roadmap:
 * Message and log system
 
 ## For development
