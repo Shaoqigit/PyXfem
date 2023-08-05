@@ -1,0 +1,40 @@
+import numpy as np
+from numba import jit
+from scipy.sparse import csr_array, lil_array
+
+from tmm.adm_basis import admittance_element as adm_elem
+
+
+class AdmAssembler:
+    def __init__(self, mesh, subdomains, omega, dtype):
+        self.dtype = dtype
+        self.omega = omega
+        self.mesh = mesh.get_mesh()
+        self.num_dofs = mesh.get_num_nodes()
+        self.elem_mats = {}
+        for key, elems in subdomains.items():
+            self.elem_mats.update({elem: key for elem in elems})
+
+
+    def assemble_global_adm(self):
+        """assemble admittance matrix
+        parameters:
+        mat: admittance material
+        """
+        self.global_adm = lil_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        for i, elem in self.mesh.items():
+            mat = self.elem_mats[i]
+            mat.set_frequency(self.omega)
+            adm = adm_elem(mat, self.omega, elem)
+            adm.admittance()
+            self.global_adm[i:i+2, i:i+2] += adm.adm
+        return self.global_adm.tocsr()
+    
+    def assemble_nature_bc(self, nature_bc):
+        F = np.zeros(self.num_dofs, dtype=self.dtype)
+        if nature_bc['type']=='velocity':
+            F[nature_bc['position']] = -1*nature_bc['value']
+        else:
+            print("Nature BC type not supported")
+
+        return F

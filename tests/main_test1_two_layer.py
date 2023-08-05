@@ -34,7 +34,7 @@ from analytical.fluid_sol import DoubleleLayerKundltTube
 
 
 def test_case_1():
-    num_elem = 100  # number of elements
+    num_elem = 1000  # number of elements
     num_nodes = num_elem + 1  # number of nodes
 
     nodes = np.linspace(-1, 1, num_nodes)
@@ -53,7 +53,7 @@ def test_case_1():
     # print(elements_set)
 
     bases = []  # basis applied on each element, could be different order and type
-    order = 4  # global order of the bases
+    order = 1  # global order of the bases
     # applied the basis on each element
     for key, elem in elements_set.items():
         basis = Lobbato1DElement('P', order, elem)
@@ -82,12 +82,12 @@ def test_case_1():
     xfm = EquivalentFluid('xfm', phi, sigma, alpha, Lambda_prime, Lambda)
 
     # Harmonic Acoustic problem define the frequency
-    freq = 2000
+    freq = 8000
     omega = 2 * np.pi * freq  # angular frequency
 
     # define the subdomains: domain name (material) and the elements in the domain
-    air_elements = np.arange(0, 50)
-    xfm_elements = np.arange(50, num_nodes)
+    air_elements = np.arange(0, num_elem/2)
+    xfm_elements = np.arange(num_elem/2, num_nodes)
     subdomains = {air: air_elements, xfm: xfm_elements}
     check_material_compability(subdomains)
 

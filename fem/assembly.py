@@ -294,7 +294,7 @@ class Assembler4Biot:
 
         return self.C
     
-    def apply_essential_bc(self, left_hand_side, essential_bcs, var=None, bctype='strong', penalty=1e10):
+    def apply_essential_bc(self, left_hand_side, essential_bcs, var=None, bctype='strong', penalty=1e5):
         dof_index = self.dof_handler.mesh2dof(essential_bcs['position'], var)
 
         if bctype == 'strong':
@@ -321,7 +321,6 @@ class Assembler4Biot:
             self.F[dof_index] = penalty*essential_bcs['value']
             return left_hand_side
         elif bctype == 'nitsche':
-            import pdb; pdb.set_trace()
             mat = self.elem_mat[0]
             alpha = 1e1
             scaling = 2*1000

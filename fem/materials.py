@@ -59,6 +59,9 @@ class Air(BaseMaterial):
         self.c_f = self.c
         self.Z_f = self.Z
 
+    def set_frequency(self, omega):
+        pass
+
 
 class Fluid(BaseMaterial):
     """fluid material class
@@ -79,6 +82,9 @@ class Fluid(BaseMaterial):
         self.rho_f = self.rho
         self.c_f = self.c
         self.Z_f = self.rho*self.c
+
+    def set_frequency(self, omega):
+        return super().set_frequency(omega)
 
 
 class EquivalentFluid(BaseMaterial):

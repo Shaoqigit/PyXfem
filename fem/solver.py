@@ -35,6 +35,9 @@ class LinearSolver(BaseSolver):
         # u = np.linalg.solve(left_hand_side.toarray(), right_hand_side)
         self.u = u[:self.external_dofs]
 
+    def condition_number(self, left_hand_side):
+        return np.linalg.cond(left_hand_side.toarray())
+
     def optimize_matrix_pattern(self, left_hand_side, right_hand_side):
         row = left_hand_side.tocoo().row
         col = left_hand_side.tocoo().col
@@ -68,4 +71,20 @@ class LinearSolver(BaseSolver):
         return schur_complement, self.rhs
 
 
+class AdmittanceSolver:
+    """admittance solver class
+    parameters:
+    admittance: ndarray
+        admittance matrix
+    right_hand_side: ndarray
+        right hand side vector
+    """
+    def __init__(self, admittance, right_hand_side):
+        self.admittance = admittance
+        self.right_hand_side = right_hand_side
+        self.sol = None
+
+    def solve(self):
+        u = spsolve(self.admittance, self.right_hand_side)
+        self.sol = u
     

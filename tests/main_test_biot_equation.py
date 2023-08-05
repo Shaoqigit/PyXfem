@@ -52,7 +52,7 @@ def test_case():
 
     P_bases = []  # basis applied on each element, could be different order and type
     Ux_bases = []
-    order = 2  # global order of the bases
+    order = 1  # global order of the bases
     # applied the basis on each element
     for key, elem in elements_set.items():
         Ux_basis = Lobbato1DElement('Ux', order, elem)
@@ -122,8 +122,10 @@ def test_case():
     nature_bcs = {'type': 'total_displacement', 'value': 1, 'position': -1.}  # position is the x coordinate
     right_hand_vector = assembler.apply_nature_bc(nature_bcs, var='P')
 
+    # ============================= Solve the linear system ================================
     # solver the linear system
     linear_solver = LinearSolver(dof_handler)
+    # print("condition number:", linear_solver.condition_number(left_hand_matrix))
     # plot_matrix_partten(left_hand_matrix)
     linear_solver.solve(left_hand_matrix, right_hand_vector)
     sol = linear_solver.u
@@ -144,7 +146,6 @@ def test_case():
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
     # plt.show()
     
-    import pdb; pdb.set_trace()
 
     error_p = post_processer_p.compute_error(sol[num_elem+1:], ana_sol[4,:])
     error_u = post_processer_u.compute_error(sol[:num_elem+1], ana_sol[1,:], -1)
