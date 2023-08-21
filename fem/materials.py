@@ -58,6 +58,7 @@ class Air(BaseMaterial):
         self.rho_f = self.rho
         self.c_f = self.c
         self.Z_f = self.Z
+        self.K_f = self.c_f**2*self.rho_f
 
     def set_frequency(self, omega):
         pass
@@ -131,6 +132,8 @@ class EquivalentFluid(BaseMaterial):
         self.rho_f = self.rho_eq_til
         self.c_f = self.c_eq_til 
         self.Z_f = self.rho_f*self.c_f
+        self.K_f = self.c_f**2*self.rho_f
+
 
 
 class LimpPorousMaterial(EquivalentFluid):
@@ -171,6 +174,8 @@ class LimpPorousMaterial(EquivalentFluid):
         self.rho_f = self.rho_limp
         self.c_f= self.c_eq_til
         self.Z_f = self.rho_f*self.c_f
+        self.K_f = self.c_f**2*self.rho_f
+
 
 class ElasticMaterial(BaseMaterial):
     """elastic material class
@@ -217,10 +222,16 @@ class PoroElasticMaterial(LimpPorousMaterial):
     def set_frequency(self, omega):
         super().set_frequency(omega)
         self.structural_loss = 1+1j*self.eta
+        # self.structural_loss = 1
 
         self.N = self.E/(2*(1+self.nu))*self.structural_loss
         self.A_hat = (self.E*self.nu)/((1+self.nu)*(1-2*self.nu))*self.structural_loss
         self.P_hat = self.A_hat+2*self.N
+
+        K_b = 2*self.N*(1+self.nu)/3*(1-2*self.nu)
+        self.R = self.phi*self.K_f
+        self.Q = self.K_f*(1-self.phi)
+        self.P = 4/3*self.N + K_b + (1-self.phi)**2/self.phi*self.K_f
 
         # Biot 1956 elastic coefficients
         self.R_til = self.K_eq_til*self.phi**2

@@ -1,0 +1,12 @@
+---
+medium_type: pem
+phi: 0.4
+sigma: 4e6
+alpha: 1.75
+Lambda_prime: 2e-5
+Lambda: 9.3e-6
+rho_1: 120
+nu: 0.3
+E: 4e4
+eta: 0.2
+loss_type: structural

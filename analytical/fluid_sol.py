@@ -90,3 +90,4 @@ class DoubleleLayerKundltTube():
                     sol = self.v_analy[1](x)
 
             ana_sol[i] = sol
+        return ana_sol

@@ -2,7 +2,7 @@ import numpy as np
 from numba import jit
 from scipy.sparse import csr_array, lil_array
 
-from tmm.adm_basis import admittance_element as adm_elem
+from tmm.adm_basis import AdmFluid as fluid_elem
 
 
 class AdmAssembler:
@@ -16,7 +16,7 @@ class AdmAssembler:
             self.elem_mats.update({elem: key for elem in elems})
 
 
-    def assemble_global_adm(self):
+    def assemble_global_adm(self, theta, k_0, mode='continue'):
         """assemble admittance matrix
         parameters:
         mat: admittance material
@@ -25,15 +25,18 @@ class AdmAssembler:
         for i, elem in self.mesh.items():
             mat = self.elem_mats[i]
             mat.set_frequency(self.omega)
-            adm = adm_elem(mat, self.omega, elem)
+            adm = fluid_elem(mat, self.omega, theta, k_0, elem, mode)
             adm.admittance()
+            if i==len(self.mesh)-1:
+                import pdb; pdb.set_trace()
             self.global_adm[i:i+2, i:i+2] += adm.adm
         return self.global_adm.tocsr()
     
     def assemble_nature_bc(self, nature_bc):
         F = np.zeros(self.num_dofs, dtype=self.dtype)
         if nature_bc['type']=='velocity':
-            F[nature_bc['position']] = -1*nature_bc['value']
+            import pdb; pdb.set_trace()
+            F[nature_bc['position']] = -1*nature_bc['value']/(1j*self.omega)
         else:
             print("Nature BC type not supported")
 
