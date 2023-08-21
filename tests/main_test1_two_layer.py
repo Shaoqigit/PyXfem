@@ -53,7 +53,7 @@ def test_case_1():
     # print(elements_set)
 
     bases = []  # basis applied on each element, could be different order and type
-    order = 1  # global order of the bases
+    order = 3  # global order of the bases
     # applied the basis on each element
     for key, elem in elements_set.items():
         basis = Lobbato1DElement('P', order, elem)
@@ -82,7 +82,7 @@ def test_case_1():
     xfm = EquivalentFluid('xfm', phi, sigma, alpha, Lambda_prime, Lambda)
 
     # Harmonic Acoustic problem define the frequency
-    freq = 8000
+    freq = 2000
     omega = 2 * np.pi * freq  # angular frequency
 
     # define the subdomains: domain name (material) and the elements in the domain

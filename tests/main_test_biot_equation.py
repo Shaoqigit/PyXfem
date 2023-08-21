@@ -52,7 +52,7 @@ def test_case():
 
     P_bases = []  # basis applied on each element, could be different order and type
     Ux_bases = []
-    order = 1  # global order of the bases
+    order = 3  # global order of the bases
     # applied the basis on each element
     for key, elem in elements_set.items():
         Ux_basis = Lobbato1DElement('Ux', order, elem)

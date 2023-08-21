@@ -135,7 +135,7 @@ def discrete_in_frequency(freq):
 
 num_samp = int(1e5)
 absops = np.zeros((1, num_samp))
-freqs = np.linspace(10, 1e7, num=num_samp)
+freqs = np.linspace(10, 1e6, num=num_samp)
 
 from mediapack import from_yaml
 from pymls import Solver, Layer, backing
