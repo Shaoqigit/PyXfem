@@ -10,6 +10,7 @@
 * **Extended elements** and double node techinique are used to deal with discontitnuity
 * Various common Acoustic materials are supported, including porous rigid, Limp and **Biot-up** models.
 * FEM-**TMM** coupling is supported to model multi-layered configuration in general geometry problems
+* The proposed Finite Admittance Method **(FAM)** is supported
 
 ### Up to this moment:
 
@@ -20,11 +21,10 @@
 * Weakly enforced essential boundary condition (penalty method and **Nitche's method**)
 
 ### To do list
-* Add Porous UP to test cases
-* Refactoring and speed up
 * Biot UP and Fluid coupling model
 * Perfect Matched Layer (PML) for free field boundary condition
 * Infinite Element for free field boundary condition
+* Finite Admittance Method (FAM) for high precision multi-layered configuration
 * TMM embeded for multi-layered configuration
 * higher order shape function and integration ($p=10$)
 
