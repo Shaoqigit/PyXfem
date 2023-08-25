@@ -2,7 +2,7 @@
 # For any question, please contact the authors cited below.
 #
 # Copyright (c) 2023
-# 	Shaoqi WU <shaoqiwu@outlook.com
+# 	Shaoqi WU <shaoqiwu@outlook.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -74,6 +74,10 @@ class Mesh1D(BaseMesh):
     def get_num_elems(self):
         """return number of elements"""
         return len(self.elem_connect)
+    
+    def get_nodes(self, elem):
+        """return nodes of corresoinding element"""
+        return self.get_mesh()[elem]
     
     @property
     def connectivity(self):

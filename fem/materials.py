@@ -1,3 +1,22 @@
+# This file is part of PyXfem, a software distributed under the MIT license.
+# For any question, please contact the authors cited below.
+#
+# Copyright (c) 2023
+# 	Shaoqi WU <shaoqiwu@outlook.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# matertials.py common vibro-acoustic materials including fluid, equivalent fluid, limp equivalent fluid, elastic, poroelastic    
+
+
 import numpy as np
 from numpy.lib.scimath import sqrt
 from abc import abstractmethod, ABCMeta
@@ -23,9 +42,9 @@ class Air(BaseMaterial):
     """air material class
     parameters:
     """
-    TYPE = 'Air'
+    TYPE = 'Fluid'
     MODEL = 'Air Model'
-    COMPATIBLE = ['Air', 'Fluid', 'Equivalent Fluid', 'Limp Equivalent Fluid']
+    COMPATIBLE = ['Fluid', 'Poroelastic']
 
     # atmospheric conditions
     T = 293.15  # reference temperature [K]
@@ -70,7 +89,7 @@ class Fluid(BaseMaterial):
     """
     TYPE = 'Fluid'
     MODEL = 'Fluid Model'
-    COMPATIBLE = ['Air', 'Fluid', 'Equivalent Fluid', 'Limp Equivalent Fluid']
+    COMPATIBLE = ['Fluid', 'Poroelastic']
 
 
     def __init__(self, name, *args):
@@ -97,9 +116,9 @@ class EquivalentFluid(BaseMaterial):
     Lambda_prime: thermal characteristic length -> float
     Lambda: viscous characteristic length -> float
     """
-    TYPE = 'Equivalent Fluid'
+    TYPE = 'Fluid'
     MODEL = 'JCAL Equivalent Fluid'
-    COMPATIBLE = ['Air', 'Fluid', 'Equivalent Fluid', 'Limp Equivalent Fluid']
+    COMPATIBLE = ['Fluid', 'Poroelastic']
 
 
     def __init__(self, name, *args):
@@ -143,9 +162,9 @@ class LimpPorousMaterial(EquivalentFluid):
     additional attributes:
     rho_1: solid density -> float
     """
-    TYPE = 'Limp Fluid'
+    TYPE = 'Fluid'
     MODEL = 'Limp Equivalent Fluid'
-    COMPATIBLE = ['Air', 'Fluid', 'Equivalent Fluid', 'Limp Equivalent Fluid']
+    COMPATIBLE = ['Fluid', 'Poroelastic']
 
 
     def __init__(self, name, *args):
@@ -209,7 +228,7 @@ class ElasticMaterial(BaseMaterial):
 class PoroElasticMaterial(LimpPorousMaterial):
     TYPE = 'Poroelastic'
     MODEL = 'JCA-Biot Model'
-    COMPATIBLE = ['Poroelastic', 'Elastic', 'Fluid', 'Equivalent Fluid', 'Limp Equivalent Fluid']
+    COMPATIBLE = ['Poroelastic', 'Elastic', 'Fluid']
 
     def __init__(self, name, *args):
         super().__init__(name, *args)

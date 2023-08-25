@@ -108,7 +108,7 @@ class Lobbato1DElement(Base1DElement):
     
     @property
     def ce(self):
-        """compute the elementary stiffness matrix
+        """compute the elementary coupling matrix, N(x)B(x)
         returns:
         c: ndarray
             elementary coupling matrix
@@ -134,11 +134,3 @@ class Lobbato1DElement(Base1DElement):
     def local_dofs_index(self):
         return np.arange(self.order+1)
     
-
-# l_element = Lobbato1DElement(2, [0, 0.5])
-# k, m = l_element.get_matrix()
-# print(k)
-# print(m)
-# print(l_element.get_order())
-# print(l_element.num_internal_dofs())
-# print(l_element.local_dofs_index())

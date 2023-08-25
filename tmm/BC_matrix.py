@@ -18,6 +18,8 @@ def bcm_poro_fluid(porosity):
 
 
 def bcm_fluid_poro(porosity):
+    """
+    used for [v^s_1, v^s_3, v^t_3, sigma^s_3, sigma^s_1, sigma^f_3]"""
     phi = porosity
     bcm_fp = np.zeros((4,2),dtype=complex)
     bcm_fp[0,1] = -1
@@ -34,6 +36,8 @@ def bcm_fluid_poro(porosity):
     return bcm_fp, bcm_pf
 
 def bcm_fluid_poro2(porosity):
+    """
+    used for porous up formulation"""
     phi = porosity
     bcm_fp = np.zeros((4,2),dtype=complex)
     bcm_fp[0,1] = -1
@@ -68,6 +72,8 @@ def bcm_rigid_wall():
     return bcm_w
 
 def bcm_rigid_wall2():
+    """
+    used for porous up formulation"""
     bcm_w = np.zeros((3,6),dtype=complex)
     bcm_w[0,1] = 1
     bcm_w[1,2] = 1

@@ -1,3 +1,21 @@
+# This file is part of PyXfem, a software distributed under the MIT license.
+# For any question, please contact the authors cited below.
+#
+# Copyright (c) 2023
+# 	Shaoqi WU <shaoqiwu@outlook.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# solver is used solve and optimize the linear system
+
 import numpy as np
 from abc import ABCMeta, abstractmethod
 from scipy.sparse import csr_array
@@ -12,11 +30,12 @@ class BaseSolver(metaclass=ABCMeta):
     """base abstract FE solver class
 
     """
-    def __init__(self, dof_handler):
+    def __init__(self, dof_handler, symmetric=True):
         self.internal_dofs = dof_handler.num_internal_dofs
         self.external_dofs = dof_handler.num_external_dofs
         self.num_dofs = dof_handler.get_num_dofs()
         self.u = None
+        self.sym = symmetric
 
     @abstractmethod
     def solve(self):

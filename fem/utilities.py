@@ -16,6 +16,7 @@
 
 # utilities.py
 # including some useful functions that are independent of the other modules
+
 from scipy.sparse import csr_array
 
 def check_material_compability(subdomains):

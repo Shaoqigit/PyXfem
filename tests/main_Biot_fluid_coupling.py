@@ -18,14 +18,13 @@
 import sys
 sys.path.append('/home/shaoqi/Devlop/PyXfem/PyAcoustiX/')
 import numpy as np
-import meshio
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
 from fem.basis import Lobbato1DElement
 from fem.mesh import Mesh1D
-from fem.dofhandler import DofHandler1D, DofHandler1DMutipleVariable
-from fem.assembly import Assembler, Assembler4Biot
+from fem.dofhandler import DofHandler1D, GeneralDofHandler1D
+from fem.physic_assembler import HelmholtzAssembler, BiotAssembler
 from fem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
 from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from fem.solver import LinearSolver
@@ -33,7 +32,7 @@ from fem.postprocess import PostProcessField
 from analytical.Biot_sol import solve_PW
 
 def test_case():
-    num_elem = 1000  # number of elements
+    num_elem = 10  # number of elements
     num_nodes = num_elem + 1  # number of nodes
 
     nodes = np.linspace(-1, 0, num_nodes)
@@ -46,27 +45,7 @@ def test_case():
     # read the mesh data structure
     mesh = Mesh1D(nodes, connectivity)
     # mesh.refine_mesh(1)
-
-    elements_set = mesh.get_mesh()  # dict: elements number with nodes coodinates
-    # print(elements_set)
-
-    P_bases = []  # basis applied on each element, could be different order and type
-    Ux_bases = []
-    order = 3  # global order of the bases
-    # applied the basis on each element
-    for key, elem in elements_set.items():
-        Ux_basis = Lobbato1DElement('Ux', order, elem)
-        P_basis = Lobbato1DElement('P', order, elem)
-        P_bases.append(P_basis)
-        Ux_bases.append(Ux_basis)
-
-    # handler the dofs: map the basis to mesh
-    dof_handler = DofHandler1DMutipleVariable(mesh, Ux_bases, P_bases)
-    # import pdb;pdb.set_trace()
-    # print(dof_handler.get_num_dofs())
-    # print(dof_handler.get_global_dofs())
-
-
+    elements2node = mesh.get_mesh()  # dict: elements number with nodes coodinates
 
     # ====================== Pysical Problem ======================
     # define the materials
@@ -82,6 +61,7 @@ def test_case():
     eta = 0.032
     xfm = PoroElasticMaterial('xfm', phi, sigma, alpha, Lambda_prime, Lambda, rho_1, E, nu, eta)
 
+    air = Air('classical air')
     # Harmonic Acoustic problem define the frequency
     freq = 2000
     omega = 2 * np.pi * freq  # angular frequency
@@ -92,30 +72,52 @@ def test_case():
     kx = k_0*np.cos(theta*np.pi/180)
 
     # define the subdomains: domain name (material) and the elements in the domain
-    xfm_elements = np.arange(0, num_nodes)
-    subdomains = {xfm: xfm_elements}
+    air_elements = np.arange(0, 5)
+    xfm_elements = np.arange(5, num_elem)
+    subdomains = {air: air_elements, xfm: xfm_elements}
     check_material_compability(subdomains)
+    # print(elements_set)
+
+    order = 3  # global order of the bases
+    # applied the basis on each element
+    for mat, elems in subdomains.items():
+        if mat.TYPE == 'Fluid':
+            Pf_bases = [Lobbato1DElement('Pf', order, elements2node[elem]) for elem in elems]  # basis for pressure in fluid domain
+        elif mat.TYPE == 'Poroelastic':
+            Pb_bases = [Lobbato1DElement('Pb', order, elements2node[elem]) for elem in elems]   # basis for pressure in porous domain
+            Ux_bases = [Lobbato1DElement('Ux', order, elements2node[elem]) for elem in elems]  # basis for solid displacement in porous domain
+        else:
+            raise ValueError("Material type is not defined!")
+
+    Helmholtz_dof_handler = GeneralDofHandler1D(('Pf'), Pf_bases)
+    Biot_dof_handler = GeneralDofHandler1D(('Pb','Ux'), Pb_bases, Ux_bases)
+    print(Helmholtz_dof_handler.get_num_dofs())
+    print(Helmholtz_dof_handler.get_global_dofs())
+    print(Biot_dof_handler.get_global_dofs())
+
 
     import time
+
     # initialize the assembler
-    assembler = Assembler4Biot(dof_handler, subdomains, dtype=np.complex128)
+    Helmholtz_assember = HelmholtzAssembler(Helmholtz_dof_handler, subdomains, dtype=np.complex128)
+    Helmholtz_assember.assemble_material_K(Pf_bases, 'Pf', omega)
+    Helmholtz_assember.assemble_material_M(Pf_bases, 'Pf', omega)
 
-    start = time.perf_counter()
-    K_p= assembler.assemble_material_K(P_bases, 'P', omega)  # global stiffness matrix with material attribution
-    end = time.perf_counter()
-    print("Elapsed (with compilation) = {}s".format((end - start)))
+    K_f, M_f = Helmholtz_assember.K, Helmholtz_assember.M
 
+    Biot_assember = BiotAssembler(Biot_dof_handler, subdomains, dtype=np.complex128)
+    Biot_assember.assemble_material_K(Pb_bases, 'Pb', omega)
+    Biot_assember.assemble_material_M(Pb_bases, 'Pb', omega)
+    Biot_assember.assemble_material_K(Ux_bases, 'Ux', omega)
+    Biot_assember.assemble_material_M(Ux_bases, 'Ux', omega)
+    Biot_assember.assemble_material_C(Pb_bases, 'Ux', 'Pb', omega)
+
+    K_p, M_p, K_u, M_u, C_pu, C_up = Biot_assember.K, Biot_assember.M, Biot_assember.K, Biot_assember.M, Biot_assember.C, Biot_assember.C.T
     
-    M_p= assembler.assemble_material_M(P_bases, 'P', omega)  # global mass matrix with material attribution
-    assembler.initial_matrix()
-    K_u= assembler.assemble_material_K(Ux_bases, 'Ux', omega)  # global stiffness matrix with material attribution
-    M_u= assembler.assemble_material_M(Ux_bases, 'Ux', omega)  # global mass matrix with material attribution
-
-    C_up= assembler.assemble_material_C(P_bases, 'Ux', 'P', omega)  # global coupling matrix with material attribution
-    
-    C_pu= C_up.T  # global coupling matrix with material attribution 
-    # construct linear system
     left_hand_matrix = K_p+K_u-M_u-M_p - C_pu-C_up
+    import pdb; pdb.set_trace()
+
+
 
     # ============================= Boundary conditions =====================================
     essential_bcs = {'type': 'solid_displacement', 'value': 0, 'position': 0.}  # position is the x coordinate

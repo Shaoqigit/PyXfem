@@ -122,6 +122,53 @@ class AdmPoroElastic:
         return self.tm
     
     def admittance(self):
+        p = self.mat.phi
+        R0 = self.mat.sigma
+        rho_f = self.mat.rho_f
+        rho_s = self.mat.rho_1
+        t = self.mat.alpha
+        K_f = self.mat.K_f
+        biot=1
+        lame2 = self.mat.E/(2*(1+self.mat.nu))
+        lame1 = self.mat.E*self.mat.nu/((1+self.mat.nu)*(1-2*self.mat.nu))
+        K_s = lame1+2*lame2
+
+        b = p*R0
+        rhot=p*rho_f*(1-t)
+        rhoa=-rhot
+        rho12=rhot+1j*b/self.omega
+        rho22=p*rho_f-rho12
+        rho1=(1-p)*rho_s
+        rho11=rho1-rho12
+        rho=rho11-rho12**2/rho22  # rho_til
+
+        rg=p*rho12/rho22-(1-biot)  # gamma_til
+        KKs=K_s
+        KKf=p*p/rho22
+        MMs=rho
+        MMf=p/K_f
+
+        G=KKs*MMf-KKf*MMs+rg**2
+        D=G*G-4.0*KKs*KKf*MMs*MMf
+        rac2D=np.sqrt(D)
+
+        c1=np.sqrt((G+rac2D)/(2.0*MMs*MMf))
+        c2=np.sqrt((G-rac2D)/(2.0*MMs*MMf))
+        c3=np.sqrt(lame2/rho)
+
+        fa = -1j*self.omega*(c1*rho-K_s/c1)/rg  #p/u factor for fast c-wave
+        fb = -1j*self.omega*(c2*rho-K_s/c2)/rg  #p/u factor for slow c-wave
+        va=KKf*(fa/c1-1j*self.omega*rho_f)  #v/u factor for fast c-wave
+        vb=KKf*(fb/c2-1j*self.omega*rho_f)  #v/u factor for slow c-wave
+        sa=-1j*self.omega/c1*K_s-biot*fa  #sigma/u factor for fast c-wave
+        sb=-1j*self.omega/c2*K_s-biot*fb  #sigma/u factor for slow c-wave
+
+        miw=-1j*self.omega
+
+        h=self.thickness
+        kx=self.k_0
+
+
         tm_11 = self.tm[0,0]
         tm_12 = self.tm[0,1]
         tm_21 = self.tm[1,0]

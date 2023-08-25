@@ -40,6 +40,12 @@ def get_indeces(*dofs):
 
 class Assembler:
     def __init__(self, dof_handler, bases, subdomains, dtype) -> None:
+        """
+        dof_handler: DofHandler1D
+        bases: list of basis
+        subdomains: dict of subdomains
+        dtype: data type of linear system"""
+
         self.dof_handler = dof_handler
         self.num_dofs = dof_handler.get_num_dofs()
         self.bases = bases
@@ -52,6 +58,10 @@ class Assembler:
             self.elem_mat.update({elem: key for elem in elems})
 
     def assemble_K(self):
+        """
+        get the global stiffness matrix without material property
+        """
+
         for dofs, basis in zip(self.dof_handler.get_global_dofs(), self.bases):
             local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
@@ -61,7 +71,11 @@ class Assembler:
             data = basis.ke[local_indices.T[0], local_indices.T[1]]
             self.K += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs))
 
-    def assemble_M(self):  
+    def assemble_M(self): 
+        """
+        get the global mass matrix without material property
+        """
+
         for dofs, basis in zip(self.dof_handler.get_global_dofs(), self.bases):
             local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
@@ -74,6 +88,9 @@ class Assembler:
         
 
     def assemble_material_K(self, omega = 0):
+        """
+        get the global stiffness matrix with material property (frequency dependent material)
+        """
         self.omega = omega
         for i, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
             local_indices = get_indeces(basis.local_dofs_index())
@@ -82,10 +99,8 @@ class Assembler:
             row = global_indices[:,0]
             col = global_indices[:,1]
             mat = self.elem_mat[i]
-            if mat.TYPE in ['Air', 'Fluid']:
-                mat_coeff = 1/mat.rho_f
-            elif mat.TYPE in ['Equivalent Fluid', 'Limp Fluid']:
-                mat.set_frequency(omega)
+            mat.set_frequency(omega)
+            if mat.TYPE in ['Fluid']:
                 mat_coeff = 1/mat.rho_f
             else:
                 print("Material type not supported")
@@ -95,8 +110,10 @@ class Assembler:
         return self.K
     
     def assemble_material_M(self, omega = 0):
+        """
+        get the global mass matrix with material property (frequency dependent material)
+        """
         self.omega = omega
-
         for i, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
             local_indices = get_indeces(basis.local_dofs_index())
             global_indices = get_indeces(dofs)
@@ -104,10 +121,8 @@ class Assembler:
             row = global_indices[:,0]
             col = global_indices[:,1]
             mat = self.elem_mat[i]
-            if mat.TYPE in ['Air', 'Fluid']:
-                mat_coeff = 1/mat.rho_f*(omega/mat.c_f)**2
-            elif mat.TYPE in ['Equivalent Fluid', 'Limp Fluid']:
-                mat.set_frequency(omega)
+            mat.set_frequency(omega)
+            if mat.TYPE in ['Fluid']:
                 mat_coeff = 1/mat.rho_f*(omega/mat.c_f)**2
             else:
                 print("Material type not supported")
@@ -117,6 +132,9 @@ class Assembler:
         return self.M
     
     def assemble_material_C(self, omega = 0):
+        """
+        get the global coupling matrix with material property (frequency dependent material)
+        """
         self.omega = omega
         for i, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
             local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
@@ -125,10 +143,8 @@ class Assembler:
             row = global_indices[:,0]
             col = global_indices[:,1]
             mat = self.elem_mat[i]
-            if mat.TYPE in ['Air', 'Fluid']:
-                mat_coeff = 1/mat.rho_f*(omega/mat.c_f)**2
-            elif mat.TYPE in ['Equivalent Fluid', 'Limp Fluid']:
-                mat.set_frequency(omega)
+            mat.set_frequency(omega)
+            if mat.TYPE in ['Fluid']:
                 mat_coeff = 1/mat.rho_f*(omega/mat.c_f)**2
             else:
                 print("Material type not supported")
@@ -139,6 +155,10 @@ class Assembler:
     
 
     def assemble_impedance_bc(self, impedence_bcs):
+        """
+        impedence_bcs: dict of impedence boundary conditions
+        return the global matrix contributed from impedence boundary conditions
+        """
         row = np.array([impedence_bcs['position']])
         col = np.array([impedence_bcs['position']])
         mat = self.elem_mat[impedence_bcs['position']-1]
@@ -151,6 +171,10 @@ class Assembler:
     
     
     def assemble_nature_bc(self, nature_bc):
+        """
+        nature_bc: dict of nature boundary conditions
+        return the global vector contributed from nature boundary conditions
+        """
         F = np.zeros(self.num_dofs, dtype=self.dtype)
         if nature_bc['type']=='velocity':
             F[nature_bc['position']] = 1j * self.omega * nature_bc['value']
@@ -164,6 +188,9 @@ class Assembler:
 
 
 class Assembler4Biot:
+    """
+    Assembler for Biot's equation (only for Biot UP coupling equations)
+    """
     def __init__(self, dof_handler, subdomains, dtype) -> None:
         self.dof_handler = dof_handler
         self.num_dofs = dof_handler.get_num_dofs()
@@ -213,13 +240,10 @@ class Assembler4Biot:
             row = global_indices[:,0]
             col = global_indices[:,1]
             mat = self.elem_mat[i]
-            if mat.TYPE in ['Air', 'Fluid']:
-                mat_coeff = 1/mat.rho_f
-            elif mat.TYPE in ['Equivalent Fluid', 'Limp Fluid']:
-                mat.set_frequency(omega)
+            mat.set_frequency(omega)
+            if mat.TYPE in ['Fluid']:
                 mat_coeff = 1/mat.rho_f
             elif mat.TYPE in ['Poroelastic']:
-                mat.set_frequency(omega)
                 if var == 'P':
                     mat_coeff = 1/(self.omega**2*mat.rho_f)
                 elif var in ['Ux', 'Uy', 'Uz']:
@@ -228,9 +252,6 @@ class Assembler4Biot:
                 print("Material type not supported")
             data = mat_coeff*basis.ke[local_indices[:,0], local_indices[:,1]]
             self.K += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
-            # self.K[row, col] += data
-        # self.K.tocsr()
-        # general_K_assembler(self.K, self.num_dofs, dtype, dofs_index, bases, elem_mats, omega, var = None):
 
         return self.K
 
@@ -249,10 +270,8 @@ class Assembler4Biot:
             row = global_indices[:,0]
             col = global_indices[:,1]
             mat = self.elem_mat[i]
-            if mat.TYPE in ['Air', 'Fluid']:
-                mat_coeff = 1/mat.rho_f*(omega/mat.c_f)**2
-            elif mat.TYPE in ['Equivalent Fluid', 'Limp Fluid']:
-                mat.set_frequency(omega)
+            mat.set_frequency(omega)
+            if mat.TYPE in ['Fluid']:
                 mat_coeff = 1/mat.rho_f*(omega/mat.c_f)**2
             elif mat.TYPE in ['Poroelastic']:
                 mat.set_frequency(omega)
@@ -264,7 +283,6 @@ class Assembler4Biot:
                 print("Material type not supported")
             data = mat_coeff*basis.me[local_indices[:,0], local_indices[:,1]]
             self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
-            # self.M[row, col] += data
 
         return self.M
     
@@ -283,14 +301,13 @@ class Assembler4Biot:
             row = global_indices[:,0]
             col = global_indices[:,1]
             mat = self.elem_mat[i]
+            mat.set_frequency(omega)
             if mat.TYPE in ['Poroelastic']:
-                mat.set_frequency(omega)
                 mat_coeff = mat.gamma_til
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.ce[local_indices[:,0], local_indices[:,1]]
             self.C += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
-            # self.C[row, col] += data
 
         return self.C
     
