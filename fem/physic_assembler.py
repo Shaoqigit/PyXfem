@@ -80,6 +80,7 @@ class BaseAssembler:
 
         return self.K
     
+    
     def assemble_material_M(self, bases, var = None, omega = 0):
         self.omega = omega
         if var is None:
@@ -125,6 +126,14 @@ class HelmholtzAssembler(BaseAssembler):
 
         self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
         self.M = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+
+    def assembly_global_matrix(self, bases, var = None, omega = 0):
+        self.initial_matrix()
+        self.assemble_material_K(bases, var, omega)
+        self.assemble_material_M(bases, var, omega)
+    
+    def get_global_matrix(self):
+        return self.K - self.M
         
 
 class BiotAssembler(BaseAssembler):
@@ -133,7 +142,6 @@ class BiotAssembler(BaseAssembler):
     """
     def __init__(self, dof_handler, subdomains, dtype) -> None:
         super().__init__(dof_handler, subdomains, dtype)
-        import pdb; pdb.set_trace()
         self.C = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
         self.elem_mat = {}
         for mat, elems in subdomains.items():
@@ -171,4 +179,71 @@ class BiotAssembler(BaseAssembler):
 
         return self.C
     
-# class CouplingAssember:
+    def assembly_global_matrix(self, bases, vars, omega = 0):
+        if len(bases) != len(vars) != 2:
+            raise ValueError("the number of bases and variables have to be two")
+        self.initial_matrix()
+        K_p = self.assemble_material_K(bases[0], vars[0], omega)
+        M_p = self.assemble_material_M(bases[0], vars[0], omega)
+        self.initial_matrix()
+        K_u = self.assemble_material_K(bases[1], vars[1], omega)
+        M_u = self.assemble_material_M(bases[1], vars[1], omega)
+        C_pu = self.assemble_material_C(bases[0], vars[0], vars[1], omega)
+        C_up = C_pu.T
+
+        self.Mglobal = K_p+K_u-M_u-M_p-C_pu-C_up
+    
+    def get_global_matrix(self):
+        return self.Mglobal
+    
+class CouplingAssember:
+    """
+    Assembly (combine) the (global) matrices of each component (Helmholz, elastic and Biot, etc)
+    """
+    def __init__(self, mesh, subdomains, components, coupling_type="continue") -> None:
+        self.mesh = mesh
+        self.subdomains = subdomains
+        self.components = components
+        self.coupling_type = coupling_type
+        self.nb_global_dofs = 0
+        self.nb_external_dofs = 0
+        self.dtype = np.int8
+        self.comp_mesh = {}
+        for comp in components:
+            self.nb_global_dofs +=comp.num_dofs
+            self.nb_external_dofs += comp.dof_handler.num_external_dofs
+            self.dtype = comp.dtype
+
+        if "continue" in coupling_type:
+            self.nb_global_dofs -= 1  # minus the duplicated continueous dofs
+            self.nb_external_dofs -= 1
+            self.nb_internal_dofs = self.nb_global_dofs - self.nb_external_dofs
+        
+        self.global_matrix = lil_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
+
+    def assembly_gloabl_matrix(self):
+        # first assembly the external dofs
+        index_external_start = 0
+        index_internal_start = self.nb_external_dofs
+        for comp in self.components:
+            local_external_index = comp.dof_handler.num_external_dofs
+            index_external_end = index_external_start + comp.dof_handler.num_external_dofs
+            self.global_matrix[index_external_start: index_external_end, index_external_start:index_external_end] = comp.get_global_matrix().tolil()[:local_external_index, :local_external_index]
+
+            # retrive dofs index corresponding to each variable
+            dof_index = np.arange(index_external_start, index_external_end)
+
+            slice_index = len(dof_index)//len(comp.dof_handler.var_name)
+            for i, var in enumerate(comp.dof_handler.var_name):
+                self.comp_mesh.update({var:dof_index[i*slice_index:(i+1)*slice_index]})
+
+            local_internal_index = local_external_index + comp.dof_handler.num_internal_dofs
+            index_internal_end = index_internal_start+comp.dof_handler.num_internal_dofs
+            self.global_matrix[index_internal_start: index_internal_end, index_internal_start:index_internal_end] = comp.get_global_matrix().tolil()[local_external_index:local_internal_index, local_external_index:local_internal_index]
+
+
+            index_external_start = index_external_end-1
+            index_internal_start = index_internal_end
+
+        return self.global_matrix.tocsr()
+

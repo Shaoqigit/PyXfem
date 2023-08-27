@@ -320,10 +320,6 @@ class Assembler4Biot:
             left_hand_side_lil[:, dof_index] = 0
             left_hand_side_lil[dof_index, dof_index] = 1
             left_hand_side = left_hand_side_lil.tocsr()
-            # left_hand_side
-            # left_hand_side[dof_index, :] = 0
-            # left_hand_side[:, dof_index] = 0
-            # left_hand_side[dof_index, dof_index] = 1
             self.F = None
             return left_hand_side
 

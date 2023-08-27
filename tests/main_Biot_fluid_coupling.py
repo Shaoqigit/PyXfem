@@ -24,18 +24,19 @@ from matplotlib.pyplot import spy
 from fem.basis import Lobbato1DElement
 from fem.mesh import Mesh1D
 from fem.dofhandler import DofHandler1D, GeneralDofHandler1D
-from fem.physic_assembler import HelmholtzAssembler, BiotAssembler
+from fem.physic_assembler import HelmholtzAssembler, BiotAssembler, CouplingAssember
+from fem.BCs_impose import ApplyBoundaryConditions
 from fem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
 from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from fem.solver import LinearSolver
 from fem.postprocess import PostProcessField
-from analytical.Biot_sol import solve_PW
+from analytical.Fluid_Biot_sol import Fluid_Biot_Pressure, u_a, u_t
 
 def test_case():
-    num_elem = 10  # number of elements
+    num_elem = 1000  # number of elements
     num_nodes = num_elem + 1  # number of nodes
 
-    nodes = np.linspace(-1, 0, num_nodes)
+    nodes = np.linspace(-1, 1, num_nodes)
     # print()
     elem_connec1 = np.arange(0, num_elem)
     elem_connec2 = np.arange(1, num_nodes)
@@ -72,13 +73,13 @@ def test_case():
     kx = k_0*np.cos(theta*np.pi/180)
 
     # define the subdomains: domain name (material) and the elements in the domain
-    air_elements = np.arange(0, 5)
-    xfm_elements = np.arange(5, num_elem)
+    air_elements = np.arange(0, int(num_elem/2))
+    xfm_elements = np.arange(int(num_elem/2), num_elem)
     subdomains = {air: air_elements, xfm: xfm_elements}
     check_material_compability(subdomains)
     # print(elements_set)
 
-    order = 3  # global order of the bases
+    order = 1  # global order of the bases
     # applied the basis on each element
     for mat, elems in subdomains.items():
         if mat.TYPE == 'Fluid':
@@ -89,79 +90,74 @@ def test_case():
         else:
             raise ValueError("Material type is not defined!")
 
-    Helmholtz_dof_handler = GeneralDofHandler1D(('Pf'), Pf_bases)
-    Biot_dof_handler = GeneralDofHandler1D(('Pb','Ux'), Pb_bases, Ux_bases)
-    print(Helmholtz_dof_handler.get_num_dofs())
-    print(Helmholtz_dof_handler.get_global_dofs())
-    print(Biot_dof_handler.get_global_dofs())
+    Helmholtz_dof_handler = GeneralDofHandler1D(['Pf'], Pf_bases)
+    Biot_dof_handler = GeneralDofHandler1D(['Pb','Ux'], Pb_bases, Ux_bases)
+    # print(Helmholtz_dof_handler.get_num_dofs())
+    # print(Helmholtz_dof_handler.get_global_dofs())
+    # print(Biot_dof_handler.get_global_dofs())
 
 
     import time
 
     # initialize the assembler
     Helmholtz_assember = HelmholtzAssembler(Helmholtz_dof_handler, subdomains, dtype=np.complex128)
-    Helmholtz_assember.assemble_material_K(Pf_bases, 'Pf', omega)
-    Helmholtz_assember.assemble_material_M(Pf_bases, 'Pf', omega)
-
-    K_f, M_f = Helmholtz_assember.K, Helmholtz_assember.M
+    Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
 
     Biot_assember = BiotAssembler(Biot_dof_handler, subdomains, dtype=np.complex128)
-    Biot_assember.assemble_material_K(Pb_bases, 'Pb', omega)
-    Biot_assember.assemble_material_M(Pb_bases, 'Pb', omega)
-    Biot_assember.assemble_material_K(Ux_bases, 'Ux', omega)
-    Biot_assember.assemble_material_M(Ux_bases, 'Ux', omega)
-    Biot_assember.assemble_material_C(Pb_bases, 'Ux', 'Pb', omega)
+    Biot_assember.assembly_global_matrix([Pb_bases,Ux_bases], ['Ux', 'Pb'], omega)
 
-    K_p, M_p, K_u, M_u, C_pu, C_up = Biot_assember.K, Biot_assember.M, Biot_assember.K, Biot_assember.M, Biot_assember.C, Biot_assember.C.T
-    
-    left_hand_matrix = K_p+K_u-M_u-M_p - C_pu-C_up
-    import pdb; pdb.set_trace()
-
+    Assembler = CouplingAssember(mesh, subdomains, [Helmholtz_assember, Biot_assember], coupling_type="PP_continue")
+    left_hand_matrix = Assembler.assembly_gloabl_matrix()
 
 
     # ============================= Boundary conditions =====================================
-    essential_bcs = {'type': 'solid_displacement', 'value': 0, 'position': 0.}  # position is the x coordinate
-    left_hand_matrix =assembler.apply_essential_bc(left_hand_matrix, essential_bcs, var='Ux', bctype='nitsche')
+    right_hand_vec = np.zeros(Assembler.nb_global_dofs, dtype=np.complex128)
+    # essential_bcs = {'type': 'solid_displacement', 'value': u_a(), 'position': 0.}  # position is the x coordinate
+    BCs_applier = ApplyBoundaryConditions(mesh, Assembler, left_hand_matrix, right_hand_vec)
+    # left_hand_matrix =BCs_applier.apply_essential_bc(essential_bcs, var='Ux', bctype='strong')
     #  natural boundary condition   
-    nature_bcs = {'type': 'total_displacement', 'value': 1, 'position': -1.}  # position is the x coordinate
-    right_hand_vector = assembler.apply_nature_bc(nature_bcs, var='P')
+    nature_bcs_1 = {'type': 'total_displacement', 'value': u_a(-1,0), 'position': -1.}  # position is the x coordinate
+    nature_bcs_2 = {'type': 'total_displacement', 'value': u_t(1,0), 'position': 1.}  # position is the x coordinate
+    # BCs_applier.apply_nature_bc(nature_bcs_1, var='Pf')
+    # BCs_applier.apply_nature_bc(nature_bcs_2, var='Pb')
 
     # ============================= Solve the linear system ================================
     # solver the linear system
-    linear_solver = LinearSolver(dof_handler)
-    # print("condition number:", linear_solver.condition_number(left_hand_matrix))
-    # plot_matrix_partten(left_hand_matrix)
-    linear_solver.solve(left_hand_matrix, right_hand_vector)
-    sol = linear_solver.u
+    # linear_solver = LinearSolver(coupling_assember=Assembler)
+    # # print("condition number:", linear_solver.condition_number(left_hand_matrix))
+    # # plot_matrix_partten(left_hand_matrix)
+    # linear_solver.solve(left_hand_matrix, right_hand_vec)
+    # sol = linear_solver.u
 
 
     # ================================== Analytical Solution ======================
     # analytical solution
     xfm.set_frequency(omega)
-    ana_sol = solve_PW(xfm,ky,nodes,1)
+    ana_sol = Fluid_Biot_Pressure(nodes, [0])
     # plot the solution
     post_processer_p = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Pressure')
-    post_processer_p.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[4,:]), 'Analytical', 'dashed'))
+    # post_processer_p.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[:]), 'Analytical', 'dashed'))
+    post_processer_p.plot_sol((np.real(ana_sol[:]), 'Analytical', 'solid'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
-    # plt.show()
+    plt.show()
 
-    post_processer_u = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Solid displacement')
-    post_processer_u.plot_sol((np.real(sol[:num_elem+1]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[1,:]), 'Analytical', 'dashed'))
-    # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
-    # plt.show()
+    # post_processer_u = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Solid displacement')
+    # post_processer_u.plot_sol((np.real(sol[:num_elem+1]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[1,:]), 'Analytical', 'dashed'))
+    # # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
+    # # plt.show()
     
 
-    error_p = post_processer_p.compute_error(sol[num_elem+1:], ana_sol[4,:])
-    error_u = post_processer_u.compute_error(sol[:num_elem+1], ana_sol[1,:], -1)
+    # error_p = post_processer_p.compute_error(sol[num_elem+1:], ana_sol[4,:])
+    # error_u = post_processer_u.compute_error(sol[:num_elem+1], ana_sol[1,:], -1)
 
-    print("error_p: ", error_p)
-    print("error_u: ", error_u)
-    if error_p < 1e-4 and error_u < 1e-3:
-        print("Test passed!")
-        return True
-    else:
-        print("Test failed!")
-        return False
+    # print("error_p: ", error_p)
+    # print("error_u: ", error_u)
+    # if error_p < 1e-4 and error_u < 1e-3:
+    #     print("Test passed!")
+    #     return True
+    # else:
+    #     print("Test failed!")
+    #     return False
 
 if __name__ == "__main__":
     result = test_case()

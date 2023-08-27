@@ -241,7 +241,7 @@ class GeneralDofHandler1D(DofHandler1D):
 
     @property
     def num_external_dofs(self):
-        return self.num_nodes()*self.nb_var
+        return self.num_nodes*self.nb_var
     
     @property
     def num_internal_dofs(self):
