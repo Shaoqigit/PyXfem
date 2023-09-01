@@ -33,7 +33,7 @@ from fem.postprocess import PostProcessField
 from analytical.Biot_sol import solve_PW
 
 def test_case():
-    num_elem = 1000  # number of elements
+    num_elem = 5  # number of elements
     num_nodes = num_elem + 1  # number of nodes
 
     nodes = np.linspace(-1, 0, num_nodes)
@@ -52,7 +52,7 @@ def test_case():
 
     P_bases = []  # basis applied on each element, could be different order and type
     Ux_bases = []
-    order = 3  # global order of the bases
+    order = 1  # global order of the bases
     # applied the basis on each element
     for key, elem in elements_set.items():
         Ux_basis = Lobbato1DElement('Ux', order, elem)
@@ -61,7 +61,7 @@ def test_case():
         Ux_bases.append(Ux_basis)
 
     # handler the dofs: map the basis to mesh
-    dof_handler = DofHandler1DMutipleVariable(mesh, Ux_bases, P_bases)
+    dof_handler = DofHandler1DMutipleVariable(mesh, P_bases, Ux_bases)
     # import pdb;pdb.set_trace()
     # print(dof_handler.get_num_dofs())
     # print(dof_handler.get_global_dofs())
@@ -99,7 +99,7 @@ def test_case():
     import time
     # initialize the assembler
     assembler = Assembler4Biot(dof_handler, subdomains, dtype=np.complex128)
-
+    import pdb;pdb.set_trace()
     start = time.perf_counter()
     K_p= assembler.assemble_material_K(P_bases, 'P', omega)  # global stiffness matrix with material attribution
     end = time.perf_counter()
@@ -139,18 +139,18 @@ def test_case():
     ana_sol = solve_PW(xfm,ky,nodes,1)
     # plot the solution
     post_processer_p = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Pressure')
-    post_processer_p.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[4,:]), 'Analytical', 'dashed'))
+    post_processer_p.plot_sol((np.real(sol[:num_elem+1]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[4,:]), 'Analytical', 'dashed'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
-    # plt.show()
+    plt.show()
 
     post_processer_u = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Solid displacement')
-    post_processer_u.plot_sol((np.real(sol[:num_elem+1]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[1,:]), 'Analytical', 'dashed'))
+    post_processer_u.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[1,:]), 'Analytical', 'dashed'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
     # plt.show()
     
 
-    error_p = post_processer_p.compute_error(sol[num_elem+1:], ana_sol[4,:])
-    error_u = post_processer_u.compute_error(sol[:num_elem+1], ana_sol[1,:], -1)
+    error_p = post_processer_p.compute_error(sol[:num_elem+1], ana_sol[4,:])
+    error_u = post_processer_u.compute_error(sol[num_elem+1:], ana_sol[1,:], -1)
 
     print("error_p: ", error_p)
     print("error_u: ", error_u)

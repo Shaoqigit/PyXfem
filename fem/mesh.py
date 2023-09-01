@@ -52,6 +52,29 @@ class Mesh1D(BaseMesh):
             elems[i] = np.array([self.nodes[i], self.nodes[i+1]])
         return elems
     
+    def node2elem(self, node):
+        """return element number from node number"""
+        for i in range(len(self.elem_connect)):
+            if node in self.elem_connect[i]:
+                return i
+        raise ValueError("node not in mesh")
+
+    @property
+    def num_node2coord(self):
+        num_node2coord2 = {}
+        """return node number from coordinate"""
+        for i, coord in enumerate(self.nodes):
+            num_node2coord2[i] = coord
+        return num_node2coord2
+    @property
+    def coord2node_num(self):
+        """return element number from node number"""
+        coord2node_num = {}
+        for i, coord in enumerate(self.nodes):
+            coord2node_num[coord] = i
+        return coord2node_num
+    
+
     def refine_mesh(self, times):
         """refine mesh"""
         for _ in range(times):

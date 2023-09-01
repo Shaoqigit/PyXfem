@@ -246,5 +246,58 @@ class GeneralDofHandler1D(DofHandler1D):
     @property
     def num_internal_dofs(self):
         return self.get_num_dofs() - self.num_external_dofs
+    
+
+
+class FESpace:
+    def __init__(self, mesh, subdomains, *all_bases) -> None:
+        self.mesh = mesh
+        self.subdomains = subdomains
+
+        self.whole_bases = []
+        for bases in all_bases:
+            self.whole_bases += bases
+        self.nb_external_dof = len(all_bases)
+        self.elem_mat = {}
+        self.nodes2elem2var = {}
+
+        for base in self.whole_bases:
+            var = base.label
+            nodes = base.nodes
+
+        subdoamin_start_index = {}
+        for mat, elems in subdomains.items():
+            subdoamin_start_index[mat] = elems[0]
+            self.elem_mat.update({elem: mat for elem in elems})
+            
+        for i, node in enumerate(mesh.nodes):
+            for elem, nodes in mesh.get_mesh().items():
+                if node in nodes:
+                    self.nodes2elem2var[node] = {elem: self.elem_mat[elem]}
+
+        self.mat2dofs = {}
+        for mat, elems in subdomains.items():
+            start_index = subdoamin_start_index[mat]
+            for elem in elems:
+                local_dofs = self.mesh.connectivity[elem]
+                local_coord = [self.mesh.num_node2coord[node] for node in local_dofs]
+                if mat.TYPE in ['Air', 'Fluid']:
+                    coord2dofs = self.mat2dofs.get('Pf', dict())
+                    coord2dofs.update(dict(zip(local_coord, local_dofs)))
+                    self.mat2dofs['Pf'] = coord2dofs
+                elif mat.TYPE in ['Poroelastic']:
+                    coord2dofs1=self.mat2dofs.get('Pb', dict())
+                    coord2dofs1.update(dict(zip(local_coord, local_dofs)))
+                    self.mat2dofs['Pb'] = coord2dofs1
+                    local_dofs_2 = local_dofs + self.mesh.get_num_nodes()-start_index
+                    coord2dofs2=self.mat2dofs.get('Ux', dict())
+                    coord2dofs2.update(dict(zip(local_coord, local_dofs_2)))
+                    self.mat2dofs['Ux'] = coord2dofs2
+    
+    def get_dofs_from_var_coord(self, coord, var):
+        return self.mat2dofs[var][coord]
+
+                
+            
 
 

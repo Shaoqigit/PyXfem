@@ -67,7 +67,7 @@ class BaseAssembler:
             mat = self.elem_mat[i]
             mat.set_frequency(omega)
             if mat.TYPE in ['Fluid']:
-                mat_coeff = 1/mat.rho_f
+                mat_coeff = 1/(self.omega**2*mat.rho_f)
             elif mat.TYPE in ['Poroelastic']:
                 if 'P' in var:
                     mat_coeff = 1/(self.omega**2*mat.rho_f)
@@ -96,7 +96,7 @@ class BaseAssembler:
             mat = self.elem_mat[i]
             mat.set_frequency(omega)
             if mat.TYPE in ['Fluid']:
-                mat_coeff = 1/mat.rho_f*(omega/mat.c_f)**2
+                mat_coeff = 1/mat.K_f
             elif mat.TYPE in ['Poroelastic']:
                 mat.set_frequency(omega)
                 if 'P' in var:
@@ -147,7 +147,7 @@ class BiotAssembler(BaseAssembler):
         for mat, elems in subdomains.items():
             if mat.TYPE == 'Poroelastic':
                 self.elem_mat.update({i: mat for i in np.arange(len(elems))})
-
+        
 
     def initial_matrix(self):
         self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
@@ -188,7 +188,7 @@ class BiotAssembler(BaseAssembler):
         self.initial_matrix()
         K_u = self.assemble_material_K(bases[1], vars[1], omega)
         M_u = self.assemble_material_M(bases[1], vars[1], omega)
-        C_pu = self.assemble_material_C(bases[0], vars[0], vars[1], omega)
+        C_pu = self.assemble_material_C(bases[0], vars[1], vars[0], omega)
         C_up = C_pu.T
 
         self.Mglobal = K_p+K_u-M_u-M_p-C_pu-C_up
@@ -222,13 +222,14 @@ class CouplingAssember:
         self.global_matrix = lil_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
 
     def assembly_gloabl_matrix(self):
+        # import pdb;pdb.set_trace()
         # first assembly the external dofs
         index_external_start = 0
         index_internal_start = self.nb_external_dofs
         for comp in self.components:
             local_external_index = comp.dof_handler.num_external_dofs
             index_external_end = index_external_start + comp.dof_handler.num_external_dofs
-            self.global_matrix[index_external_start: index_external_end, index_external_start:index_external_end] = comp.get_global_matrix().tolil()[:local_external_index, :local_external_index]
+            self.global_matrix[index_external_start: index_external_end, index_external_start:index_external_end] += comp.get_global_matrix().tolil()[:local_external_index, :local_external_index]
 
             # retrive dofs index corresponding to each variable
             dof_index = np.arange(index_external_start, index_external_end)
@@ -239,7 +240,7 @@ class CouplingAssember:
 
             local_internal_index = local_external_index + comp.dof_handler.num_internal_dofs
             index_internal_end = index_internal_start+comp.dof_handler.num_internal_dofs
-            self.global_matrix[index_internal_start: index_internal_end, index_internal_start:index_internal_end] = comp.get_global_matrix().tolil()[local_external_index:local_internal_index, local_external_index:local_internal_index]
+            self.global_matrix[index_internal_start: index_internal_end, index_internal_start:index_internal_end] += comp.get_global_matrix().tolil()[local_external_index:local_internal_index, local_external_index:local_internal_index]
 
 
             index_external_start = index_external_end-1

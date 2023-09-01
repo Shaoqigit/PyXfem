@@ -106,17 +106,17 @@ P_i = lambda x, y: np.exp(-1j*kx*x-1j*ky*y)
 
 P_r = lambda x, y: C[0]*np.exp(1j*kx*x-1j*ky*y)
 
-P_a = lambda x, y: 100.*(np.exp(-1j*kx*x-1j*ky*y) + C[0]*np.exp(1j*kx*x-1j*ky*y))
+P_a = lambda x, y: 1.*(np.exp(-1j*kx*x-1j*ky*y) + C[0]*np.exp(1j*kx*x-1j*ky*y))
 
-u_a = lambda x, y: 100./(Air.rho*omega**2)*(-1j*kx*np.exp(-1j*kx*x-1j*ky*y) + 1j*kx*C[0]*np.exp(1j*kx*x-1j*ky*y))
+u_a = lambda x, y: 1./(Air.rho*omega**2)*((-1j*kx*np.exp(-1j*kx*x-1j*ky*y) + 1j*kx*C[0]*np.exp(1j*kx*x-1j*ky*y)))
 
-P_t = lambda x, y: 100*(C[1]*np.exp(-1j*kx_1*x-1j*ky*y) + C[2]*np.exp(-1j*kx_2*x-1j*ky*y))
+P_t = lambda x, y: 1*(C[1]*np.exp(-1j*kx_1*x-1j*ky*y) + C[2]*np.exp(-1j*kx_2*x-1j*ky*y))
 
-us_x = lambda x, y: 100*(-1j*kx_1*C[1]/(mat.mu_1*mat.K_eq_til*mat.delta_1**2)*np.exp(-1j*kx_1*x-1j*ky*y) -
+us_x = lambda x, y: 1*(-1j*kx_1*C[1]/(mat.mu_1*mat.K_eq_til*mat.delta_1**2)*np.exp(-1j*kx_1*x-1j*ky*y) -
                       1j*kx_2*C[2]/(mat.mu_2*mat.K_eq_til*mat.delta_2**2)*np.exp(-1j*kx_2*x-1j*ky*y) -
                       1j*C[3]*ky*np.exp(-1j*kx_3*x-1j*ky*y))
 
-u_t = lambda x, y: 100*(-1j*mat.mu_1*kx_1*C[1]/(mat.mu_1*mat.K_eq_til*mat.delta_1**2)*np.exp(-1j*kx_1*x-1j*ky*y) -
+u_t = lambda x, y: 1*(-1j*mat.mu_1*kx_1*C[1]/(mat.mu_1*mat.K_eq_til*mat.delta_1**2)*np.exp(-1j*kx_1*x-1j*ky*y) -
                       1j*mat.mu_2*kx_2*C[2]/(mat.mu_2*mat.K_eq_til*mat.delta_2**2)*np.exp(-1j*kx_2*x-1j*ky*y) -
                       1j*mat.mu_3*C[3]*ky*np.exp(-1j*kx_3*x-1j*ky*y))
 
@@ -152,3 +152,14 @@ def Fluid_Biot_Pressure(X, Y):
             else:
                 pre[i,j] = P_t(x, y)
     return np.real(pre)
+
+def Fluid_Biot_Ut(X, Y):
+    ux = np.zeros((len(X), len(Y)), dtype=complex)
+    for j, y in enumerate(Y):
+        for i, x in enumerate(X):    
+            if x <= 0:
+                ux[i,j] = u_a(x, y)
+            
+            else:
+                ux[i,j] = u_t(x, y)
+    return np.real(ux)

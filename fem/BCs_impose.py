@@ -3,19 +3,17 @@ from numba import jit
 from scipy.sparse import csr_array, lil_array
 
 class ApplyBoundaryConditions:
-    def __init__(self, mesh, assembler, left_hand_side, right_hand_side):
+    def __init__(self, mesh, FE_space, left_hand_side, right_hand_side):
         self.mesh = mesh
-        self.assembler = assembler
+        self.FE_space = FE_space
         self.left_hand_side = left_hand_side
         self.right_hand_side = right_hand_side
 
     def mesh2dof(self, position, var=None):
-        import pdb; pdb.set_trace()
-        for i, node in enumerate(self.mesh.nodes):
-            if node == position:
-                return self.assembler.comp_mesh[var][i]
+        return self.FE_space.get_dofs_from_var_coord(position, var)
 
     def apply_essential_bc(self, essential_bcs, var=None, bctype='strong', penalty=1e5):
+        import pdb; pdb.set_trace()
         dof_index = self.mesh2dof(essential_bcs['position'], var)
 
         if bctype == 'strong':
@@ -67,6 +65,8 @@ class ApplyBoundaryConditions:
         if nature_bc['type']=='velocity':
             self.right_hand_side[dof_index] += 1j * self.omega * nature_bc['value']
         elif nature_bc['type']=='total_displacement':
+            self.right_hand_side[dof_index] += nature_bc['value']
+        elif nature_bc['type']=='solid_stress':
             self.right_hand_side[dof_index] += nature_bc['value']
         else:
             print("Nature BC type not supported")
