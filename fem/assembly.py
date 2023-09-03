@@ -334,6 +334,7 @@ class Assembler4Biot:
             self.F[dof_index] = penalty*essential_bcs['value']
             return left_hand_side
         elif bctype == 'nitsche':
+            # imort pdb; pdb.set_trace()
             mat = self.elem_mat[0]
             alpha = 1e1
             scaling = 2*1000

@@ -27,28 +27,6 @@ from pymls import Solver, Layer, backing
 from fem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
 
 
-T = 293.15  # reference temperature [K]
-P = 1.01325e5  # atmospheric Pressure [Pa]
-gamma = 1.400  # polytropic coefficient []
-lambda_ = 0.0262  # thermal conductivity [W.m^-1.K^-1]
-mu = 0.1839e-4  # dynamic viscosity [kg.m^-1.s^-1]
-Pr = 0.710  # Prandtl's number []
-molar_mass = 0.29e-1  # molar mass [kg.mol^-1]
-rho_a = 1.213  # density [kg.m^-3]
-C_p = 1006  # (mass) specific heat capacity as constant pressure [J.K^-1]
-
-K_a = gamma*P  # adiabatic bulk modulus
-c_a = np.sqrt(K_a / rho_a)  # adiabatic sound speed
-Z_a = rho_a * c_a  # characteristic impedance
-C_v = C_p/gamma  # (mass) specific heat capacity as constant volume [J.K^-1]
-nu = mu/rho_a  # kinematic viscosity [m.s^-2]
-nu_prime = nu/Pr  # viscothermal losses
-
-L1 = 0.2
-L2 = 0.2
-v0 = 1
-name_file = "toto.pyplanes"
-
 phi          = 0.99  # porosity
 sigma        = 1.0567e4 # resistivity
 alpha        = 1.2  # Tortuosity
@@ -64,7 +42,8 @@ air = Air('classical air')
 
 sigmaF = 0.
 d = 1e-3
-omega = 2000*2.*np.pi
+freq = 2000
+omega = 2*np.pi*freq
 theta_d = 0.
 theta = theta_d*(np.pi/180)
 mat.set_frequency(omega)
@@ -72,21 +51,28 @@ mat.set_frequency(omega)
 k_0 = omega/Air.c
 ky = k_0*np.sin(theta_d*np.pi/180)
 kx = k_0*np.cos(theta_d*np.pi/180)
+M = np.zeros((2,2), dtype=complex)
+
+
+M[0,0] = 1.
+M[0,1] = 1j * omega * sigmaF * d
+M[1,0] = 0.
+M[1,1] = 1.
 
 kx_1=np.sqrt(mat.delta_1**2-ky**2)
 kx_2=np.sqrt(mat.delta_2**2-ky**2)
 kx_3=np.sqrt(mat.delta_3**2-ky**2)
 
-
-
 # # linear system matrix
 SV =np.zeros((4,4),dtype=complex)
-SV[0,:] = np.array([kx/(Air.rho*omega**2), kx_1/(mat.K_eq_til*mat.delta_1**2), 
-                    kx_2/(mat.K_eq_til*mat.delta_2**2), ky*mat.mu_3])
+# u^t
+SV[0,:] = np.array([1j*kx/(Air.rho*omega**2), -M[1,0]+M[1,1]*1j*kx_1/(mat.K_eq_til*mat.delta_1**2), 
+                    -M[1,0]+M[1,1]*1j*kx_2/(mat.K_eq_til*mat.delta_2**2), M[1,1]*1j*ky*mat.mu_3])
+# p
 # SV[1,:] = np.array([1+sigmaF*d*kx/(omega*Air.rho), -1, -1, 0])
-SV[1,:] = np.array([1, -1-sigmaF*d*omega*kx_1*mat.mu_1/(mat.mu_1*mat.K_eq_til*mat.delta_1**2), 
-                    -1-sigmaF*d*omega*kx_2*mat.mu_2/(mat.mu_2*mat.K_eq_til*mat.delta_2**2), 
-                    0-sigmaF*d*omega*ky*mat.mu_3])
+SV[1,:] = np.array([1, -M[0,0]+M[0,1]*1j*kx_1*mat.mu_1/(mat.mu_1*mat.K_eq_til*mat.delta_1**2), 
+                    -M[0,0]+M[0,1]*1j*kx_2*mat.mu_2/(mat.mu_2*mat.K_eq_til*mat.delta_2**2), 
+                    0+M[0,1]*1j*ky*mat.mu_3])
 SV[2,:] = np.array([0, 2*mat.N*kx_1**2/(mat.mu_1*mat.K_eq_til*mat.delta_1**2)+mat.A_hat/(mat.mu_1*mat.K_eq_til),
                     2*mat.N*kx_2**2/(mat.mu_2*mat.K_eq_til*mat.delta_2**2)+mat.A_hat/(mat.mu_2*mat.K_eq_til),
                     2*mat.N*ky*kx_3])
@@ -95,7 +81,7 @@ SV[3,:] = np.array([0, -2*mat.N*kx_1*ky/(mat.mu_1*mat.K_eq_til*mat.delta_1**2),
                     +(mat.N*kx_3**2-mat.N*ky**2)])
 # vector
 F = np.zeros(4,dtype=complex)
-F[0] = kx/(Air.rho*omega**2)
+F[0] = 1j*kx/(Air.rho*omega**2)
 # F[1] = -1+sigmaF*d*kx/(omega*Air.rho)
 F[1] = -1
 
@@ -118,7 +104,7 @@ us_x = lambda x, y: 1*(-1j*kx_1*C[1]/(mat.mu_1*mat.K_eq_til*mat.delta_1**2)*np.e
 
 u_t = lambda x, y: 1*(-1j*mat.mu_1*kx_1*C[1]/(mat.mu_1*mat.K_eq_til*mat.delta_1**2)*np.exp(-1j*kx_1*x-1j*ky*y) -
                       1j*mat.mu_2*kx_2*C[2]/(mat.mu_2*mat.K_eq_til*mat.delta_2**2)*np.exp(-1j*kx_2*x-1j*ky*y) -
-                      1j*mat.mu_3*C[3]*ky*np.exp(-1j*kx_3*x-1j*ky*y))
+                      1j*mat.mu_3*C[3]*ky*np.exp(-1j*kx_3*x-1j*ky*y)) - 1/(omega**2*mat.rho_f)*P_t(x,y)
 
 us_y = lambda x, y: (-1j*ky*C[1]/(mat.mu_1*mat.K_eq_til*mat.delta_1**2)*np.exp(-1j*kx_1*x-1j*ky*y) -
                       1j*ky*C[2]/(mat.mu_2*mat.K_eq_til*mat.delta_2**2)*np.exp(-1j*kx_2*x-1j*ky*y) +
@@ -151,7 +137,18 @@ def Fluid_Biot_Pressure(X, Y):
             
             else:
                 pre[i,j] = P_t(x, y)
-    return np.real(pre)
+    return pre
+
+def Fluid_Biot_Displacement(X, Y):
+    Usx = np.zeros((len(X), len(Y)), dtype=complex)
+    for j, y in enumerate(Y):
+        for i, x in enumerate(X):    
+            if x < 0:
+                Usx[i,j] = 0
+            
+            else:
+                Usx[i,j] = us_x(x, y)
+    return Usx
 
 def Fluid_Biot_Ut(X, Y):
     ux = np.zeros((len(X), len(Y)), dtype=complex)
@@ -162,4 +159,4 @@ def Fluid_Biot_Ut(X, Y):
             
             else:
                 ux[i,j] = u_t(x, y)
-    return np.real(ux)
+    return ux

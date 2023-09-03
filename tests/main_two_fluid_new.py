@@ -24,8 +24,9 @@ from matplotlib.pyplot import spy
 
 from fem.basis import Lobbato1DElement
 from fem.mesh import Mesh1D
-from fem.dofhandler import DofHandler1D
-from fem.assembly import Assembler
+from fem.dofhandler import DofHandler1D, GeneralDofHandler1D, FESpace
+from fem.physic_assembler import HelmholtzAssembler, BiotAssembler, CouplingAssember
+from fem.BCs_impose import ApplyBoundaryConditions
 from fem.materials import Air, Fluid, EquivalentFluid
 from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from fem.solver import LinearSolver
@@ -34,44 +35,9 @@ from analytical.fluid_sol import DoubleleLayerKundltTube
 
 
 def test_case_1():
-    num_elem = 100  # number of elements
-    num_nodes = num_elem + 1  # number of nodes
-
-    nodes = np.linspace(-1, 1, num_nodes)
-
-    elem_connec1 = np.arange(0, num_elem)
-    elem_connec2 = np.arange(1, num_nodes)
-    connectivity = np.vstack((elem_connec1, elem_connec2)).T
-    # print(connectivity)
-
-
-    # read the mesh data structure
-    mesh = Mesh1D(nodes, connectivity)
-    # mesh.refine_mesh(1)
-
-    elements_set = mesh.get_mesh()  # dict: elements number with nodes coodinates
-    # print(elements_set)
-
-    bases = []  # basis applied on each element, could be different order and type
-    order = 3  # global order of the bases
-    # applied the basis on each element
-    for key, elem in elements_set.items():
-        basis = Lobbato1DElement('P', order, elem)
-        bases.append(basis)
-        # print(basis.ke)
-        # print(basis.me)
-
-    # handler the dofs: map the basis to mesh
-    dof_handler = DofHandler1D(mesh, bases)
-    # print("global dofs index: ", dof_handler.get_global_dofs())
-    # print(dof_handler.get_num_dofs())
-    # print(dof_handler.num_internal_dofs)
-    # print(dof_handler.num_external_dofs)
-
     # ====================== Pysical Problem ======================
     # define the materials
     air = Air('classical air')
-    water=Fluid('water', 997, 1481)
 
     # given JCA porous material properties
     phi          = 0.98  # porosity
@@ -85,39 +51,58 @@ def test_case_1():
     freq = 2000
     omega = 2 * np.pi * freq  # angular frequency
 
+    # ====================== Mesh and basis definition ======================
+    num_elem = 10  # number of elements
+    num_nodes = num_elem + 1  # number of nodes
+    nodes = np.linspace(-1, 1, num_nodes)
+    elem_connec1 = np.arange(0, num_elem)
+    elem_connec2 = np.arange(1, num_nodes)
+    connectivity = np.vstack((elem_connec1, elem_connec2)).T
+    # read the mesh data structure
+    mesh = Mesh1D(nodes, connectivity)
+
     # define the subdomains: domain name (material) and the elements in the domain
-    air_elements = np.arange(0, num_elem/2)
-    xfm_elements = np.arange(num_elem/2, num_nodes)
+    air_elements = np.arange(0, int(num_elem/2))
+    xfm_elements = np.arange(int(num_elem/2), num_elem)
     subdomains = {air: air_elements, xfm: xfm_elements}
     check_material_compability(subdomains)
+    elements2node = mesh.get_mesh()  # dict: elements number with nodes coodinates
+    # print(elements_set)
+    order = 1  # global order of the bases
+    # applied the basis on each element
+    Pf_bases = []
+    for mat, elems in subdomains.items():
+        if mat.TYPE == 'Fluid':
+            Pf_bases += [Lobbato1DElement('Pf', order, elements2node[elem]) for elem in elems] 
+        # print(basis.ke)
+        # print(basis.me)
 
+    # handler the dofs: map the basis to mesh
+    Helmholtz_dof_handler = GeneralDofHandler1D(['Pf'], Pf_bases)
 
     # initialize the assembler
-    assembler = Assembler(dof_handler, bases, subdomains, dtype=np.complex128)
-    K_g= assembler.assemble_material_K(omega)  # global stiffness matrix with material attribution
-    M_g= assembler.assemble_material_M(omega)  # global mass matrix with material attribution
-    # print("K_g:", assembler.get_matrix_in_array(K_g))
-    # print("M_g:", assembler.get_matrix_in_array(M_g))
-    # construct linear system
-    left_hand_matrix = K_g-M_g
-    # plot_matrix_partten(left_hand_matrix)
+    Helmholtz_assember = HelmholtzAssembler(Helmholtz_dof_handler, subdomains, dtype=np.complex128)
+    Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
+    left_hand_matrix = Helmholtz_assember.get_global_matrix()
 
-    # print(assembler.get_matrix_in_array(left_hand_matrix))
+    fe_space = FESpace(mesh, subdomains, Pf_bases)
+
+    right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs, dtype=np.complex128)
+
     #  natural boundary condition   
-    nature_bcs = {'type': 'velocity', 'value': 1*np.exp(-1j*omega), 'position': 0}
-    right_hand_vector = assembler.assemble_nature_bc(nature_bcs)
-    # print(right_hand_vector)
+    nature_bcs = {'type': 'velocity', 'value': 1*np.exp(-1j*omega), 'position': -1}
+    
+    BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix, right_hand_vec, omega)
+
+    BCs_applier.apply_nature_bc(nature_bcs, var='Pf')
 
     # solver the linear system
-    linear_solver = LinearSolver(dof_handler)
-    # left_hand_matrix, right_hand_vector = linear_solver.optimize_matrix_pattern(left_hand_matrix, right_hand_vector)
-    # left_hand_matrix = left_hand_matrix[optimal_order, optimal_order]
-    # print(left_hand_matrix[0], left_hand_matrix[1])
-    # plot_matrix_partten(left_hand_matrix)
-    linear_solver.solve(left_hand_matrix, right_hand_vector)
+    linear_solver = LinearSolver(dof_handler=Helmholtz_dof_handler)
+    linear_solver.solve(left_hand_matrix, right_hand_vec)
     sol = linear_solver.u
     # print("solution:", abs(sol))
 
+    import pdb; pdb.set_trace()
 
     # ====================== Analytical Solution ======================
     # analytical solution

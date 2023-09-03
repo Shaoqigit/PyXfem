@@ -77,7 +77,7 @@ class Air(BaseMaterial):
         self.rho_f = self.rho
         self.c_f = self.c
         self.Z_f = self.Z
-        self.K_f = self.c_f**2*self.rho_f
+        self.K_f = self.K
 
     def set_frequency(self, omega):
         pass
@@ -102,6 +102,8 @@ class Fluid(BaseMaterial):
         self.rho_f = self.rho
         self.c_f = self.c
         self.Z_f = self.rho*self.c
+        self.K_f = self.c_f**2*self.rho_f
+
 
     def set_frequency(self, omega):
         return super().set_frequency(omega)
@@ -151,7 +153,7 @@ class EquivalentFluid(BaseMaterial):
         self.rho_f = self.rho_eq_til
         self.c_f = self.c_eq_til 
         self.Z_f = self.rho_f*self.c_f
-        self.K_f = self.c_f**2*self.rho_f
+        self.K_f = self.K_eq_til
 
 
 
@@ -193,7 +195,7 @@ class LimpPorousMaterial(EquivalentFluid):
         self.rho_f = self.rho_limp
         self.c_f= self.c_eq_til
         self.Z_f = self.rho_f*self.c_f
-        self.K_f = self.c_f**2*self.rho_f
+        self.K_f = self.K_eq_til
 
 
 class ElasticMaterial(BaseMaterial):
@@ -285,6 +287,8 @@ class PoroElasticMaterial(LimpPorousMaterial):
 
         self.rho_f = self.rho_eq_til
         self.c_f = self.c_eq_til
+        self.Z_f = self.rho_f*self.c_f
+        self.K_f = self.K_eq_til
 
 
 

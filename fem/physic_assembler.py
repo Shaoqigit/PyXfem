@@ -40,18 +40,18 @@ class BaseAssembler:
         subdomains: dict of subdomains
         dtype: data type of linear system"""
         self.dof_handler = dof_handler
-        self.num_dofs = dof_handler.get_num_dofs()
+        self.nb_global_dofs = dof_handler.get_num_dofs()
         self.dtype = dtype
         self.elem_mat = {}
         for mat, elems in subdomains.items():
             self.elem_mat.update({i: mat for i in np.arange(len(elems))})
 
-        self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.M = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.K = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
+        self.M = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
 
     def initial_matrix(self):
-        self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.M = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.K = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
+        self.M = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
 
     def assemble_material_K(self, bases, var = None, omega = 0):
         self.omega = omega
@@ -66,17 +66,15 @@ class BaseAssembler:
             col = global_indices[:,1]
             mat = self.elem_mat[i]
             mat.set_frequency(omega)
-            if mat.TYPE in ['Fluid']:
+            if mat.TYPE in ['Fluid'] or (mat.TYPE in ['Poroelastic'] and 'P' in var):
                 mat_coeff = 1/(self.omega**2*mat.rho_f)
             elif mat.TYPE in ['Poroelastic']:
-                if 'P' in var:
-                    mat_coeff = 1/(self.omega**2*mat.rho_f)
-                elif var in ['Ux', 'Uy', 'Uz']:
+                if var in ['Ux', 'Uy', 'Uz']:
                     mat_coeff = mat.P_hat
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.ke[local_indices[:,0], local_indices[:,1]]
-            self.K += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.K += csr_array((data, (row, col)), shape=(self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
 
         return self.K
     
@@ -95,18 +93,15 @@ class BaseAssembler:
             col = global_indices[:,1]
             mat = self.elem_mat[i]
             mat.set_frequency(omega)
-            if mat.TYPE in ['Fluid']:
+            if mat.TYPE in ['Fluid'] or (mat.TYPE in ['Poroelastic'] and 'P' in var):
                 mat_coeff = 1/mat.K_f
             elif mat.TYPE in ['Poroelastic']:
-                mat.set_frequency(omega)
-                if 'P' in var:
-                    mat_coeff = 1/mat.K_eq_til
-                elif var in ['Ux', 'Uy', 'Uz']:
+                if var in ['Ux', 'Uy', 'Uz']:
                     mat_coeff = (omega**2)*mat.rho_til
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.me[local_indices[:,0], local_indices[:,1]]
-            self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.M += csr_array((data, (row, col)), shape=(self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
 
         return self.M
 
@@ -124,8 +119,8 @@ class HelmholtzAssembler(BaseAssembler):
             if mat.TYPE == 'Fluid':
                 self.elem_mat.update({elem: mat for elem in elems})
 
-        self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.M = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.K = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
+        self.M = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
 
     def assembly_global_matrix(self, bases, var = None, omega = 0):
         self.initial_matrix()
@@ -142,7 +137,7 @@ class BiotAssembler(BaseAssembler):
     """
     def __init__(self, dof_handler, subdomains, dtype) -> None:
         super().__init__(dof_handler, subdomains, dtype)
-        self.C = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.C = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
         self.elem_mat = {}
         for mat, elems in subdomains.items():
             if mat.TYPE == 'Poroelastic':
@@ -150,9 +145,9 @@ class BiotAssembler(BaseAssembler):
         
 
     def initial_matrix(self):
-        self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.M = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.C = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.K = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
+        self.M = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
+        self.C = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
 
 
     def assemble_material_C(self, bases, var_1=None, var_2=None, omega = 0):
@@ -175,7 +170,7 @@ class BiotAssembler(BaseAssembler):
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.ce[local_indices[:,0], local_indices[:,1]]
-            self.C += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.C += csr_array((data, (row, col)), shape=(self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
 
         return self.C
     
@@ -208,9 +203,8 @@ class CouplingAssember:
         self.nb_global_dofs = 0
         self.nb_external_dofs = 0
         self.dtype = np.int8
-        self.comp_mesh = {}
         for comp in components:
-            self.nb_global_dofs +=comp.num_dofs
+            self.nb_global_dofs +=comp.nb_global_dofs
             self.nb_external_dofs += comp.dof_handler.num_external_dofs
             self.dtype = comp.dtype
 
@@ -231,12 +225,6 @@ class CouplingAssember:
             index_external_end = index_external_start + comp.dof_handler.num_external_dofs
             self.global_matrix[index_external_start: index_external_end, index_external_start:index_external_end] += comp.get_global_matrix().tolil()[:local_external_index, :local_external_index]
 
-            # retrive dofs index corresponding to each variable
-            dof_index = np.arange(index_external_start, index_external_end)
-
-            slice_index = len(dof_index)//len(comp.dof_handler.var_name)
-            for i, var in enumerate(comp.dof_handler.var_name):
-                self.comp_mesh.update({var:dof_index[i*slice_index:(i+1)*slice_index]})
 
             local_internal_index = local_external_index + comp.dof_handler.num_internal_dofs
             index_internal_end = index_internal_start+comp.dof_handler.num_internal_dofs

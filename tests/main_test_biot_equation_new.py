@@ -24,8 +24,9 @@ from matplotlib.pyplot import spy
 
 from fem.basis import Lobbato1DElement
 from fem.mesh import Mesh1D
-from fem.dofhandler import DofHandler1D, DofHandler1DMutipleVariable
-from fem.assembly import Assembler, Assembler4Biot
+from fem.dofhandler import GeneralDofHandler1D, FESpace
+from fem.physic_assembler import HelmholtzAssembler, BiotAssembler, CouplingAssember
+from fem.BCs_impose import ApplyBoundaryConditions
 from fem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
 from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from fem.solver import LinearSolver
@@ -33,41 +34,6 @@ from fem.postprocess import PostProcessField
 from analytical.Biot_sol import solve_PW
 
 def test_case():
-    num_elem = 1000  # number of elements
-    num_nodes = num_elem + 1  # number of nodes
-
-    nodes = np.linspace(-1, 0, num_nodes)
-    # print()
-    elem_connec1 = np.arange(0, num_elem)
-    elem_connec2 = np.arange(1, num_nodes)
-    connectivity = np.vstack((elem_connec1, elem_connec2)).T
-    # print(connectivity)
-
-    # read the mesh data structure
-    mesh = Mesh1D(nodes, connectivity)
-    # mesh.refine_mesh(1)
-
-    elements_set = mesh.get_mesh()  # dict: elements number with nodes coodinates
-    # print(elements_set)
-
-    P_bases = []  # basis applied on each element, could be different order and type
-    Ux_bases = []
-    order = 1  # global order of the bases
-    # applied the basis on each element
-    for key, elem in elements_set.items():
-        Ux_basis = Lobbato1DElement('Ux', order, elem)
-        P_basis = Lobbato1DElement('P', order, elem)
-        P_bases.append(P_basis)
-        Ux_bases.append(Ux_basis)
-
-    # handler the dofs: map the basis to mesh
-    dof_handler = DofHandler1DMutipleVariable(mesh, P_bases, Ux_bases)
-    # import pdb;pdb.set_trace()
-    # print(dof_handler.get_num_dofs())
-    # print(dof_handler.get_global_dofs())
-
-
-
     # ====================== Pysical Problem ======================
     # define the materials
     # given JCA porous material properties
@@ -91,45 +57,60 @@ def test_case():
     ky = k_0*np.sin(theta*np.pi/180)
     kx = k_0*np.cos(theta*np.pi/180)
 
+
+    num_elem = 500  # number of elements
+    num_nodes = num_elem + 1  # number of nodes
+
+    nodes = np.linspace(-1, 0, num_nodes)
+    # print()
+    elem_connec1 = np.arange(0, num_elem)
+    elem_connec2 = np.arange(1, num_nodes)
+    connectivity = np.vstack((elem_connec1, elem_connec2)).T
+    # print(connectivity)
+
+    # read the mesh data structure
+    mesh = Mesh1D(nodes, connectivity)
+    # mesh.refine_mesh(1)
+
+    elements2node = mesh.get_mesh()  # dict: elements number with nodes coodinates
     # define the subdomains: domain name (material) and the elements in the domain
-    xfm_elements = np.arange(0, num_nodes)
+    xfm_elements = np.arange(0, num_elem)
     subdomains = {xfm: xfm_elements}
     check_material_compability(subdomains)
 
-    import time
+    order = 3  # global order of the bases
+    # applied the basis on each element
+    for mat, elems in subdomains.items():
+        if mat.TYPE == 'Poroelastic':
+            Pb_bases = [Lobbato1DElement('Pb', order, elements2node[elem]) for elem in elems]  # basis for pressure in porous domain
+            Ux_bases = [Lobbato1DElement('Ux', order, elements2node[elem]) for elem in elems]  # 
+
+    # handler the dofs: map the basis to mesh
+    Biot_dof_handler = GeneralDofHandler1D(['Pb','Ux'], Pb_bases, Ux_bases)
+    fe_space = FESpace(mesh, subdomains, Ux_bases)
     # initialize the assembler
-    assembler = Assembler4Biot(dof_handler, subdomains, dtype=np.complex128)
+    Biot_assember = BiotAssembler(Biot_dof_handler, subdomains, dtype=np.complex128)
+    Biot_assember.assembly_global_matrix([Pb_bases,Ux_bases], ['Pb', 'Ux'], omega)
+    left_hand_matrix = Biot_assember.get_global_matrix()
+    fe_space = FESpace(mesh, subdomains, Pb_bases, Ux_bases)
+    right_hand_vec = np.zeros(Biot_assember.nb_global_dofs, dtype=np.complex128)
     import pdb;pdb.set_trace()
-    start = time.perf_counter()
-    K_p= assembler.assemble_material_K(P_bases, 'P', omega)  # global stiffness matrix with material attribution
-    end = time.perf_counter()
-    print("Elapsed (with compilation) = {}s".format((end - start)))
 
-    
-    M_p= assembler.assemble_material_M(P_bases, 'P', omega)  # global mass matrix with material attribution
-    assembler.initial_matrix()
-    K_u= assembler.assemble_material_K(Ux_bases, 'Ux', omega)  # global stiffness matrix with material attribution
-    M_u= assembler.assemble_material_M(Ux_bases, 'Ux', omega)  # global mass matrix with material attribution
-
-    C_up= assembler.assemble_material_C(P_bases, 'Ux', 'P', omega)  # global coupling matrix with material attribution
-    
-    C_pu= C_up.T  # global coupling matrix with material attribution 
-    # construct linear system
-    left_hand_matrix = K_p+K_u-M_u-M_p - C_pu-C_up
-    import pdb;pdb.set_trace()
     # ============================= Boundary conditions =====================================
+    BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix, right_hand_vec, omega)
+
     essential_bcs = {'type': 'solid_displacement', 'value': 0, 'position': 0.}  # position is the x coordinate
-    left_hand_matrix =assembler.apply_essential_bc(left_hand_matrix, essential_bcs, var='Ux', bctype='nitsche')
+    BCs_applier.apply_essential_bc( essential_bcs, var='Ux', bctype='nitsche')
     #  natural boundary condition   
     nature_bcs = {'type': 'total_displacement', 'value': 1, 'position': -1.}  # position is the x coordinate
-    right_hand_vector = assembler.apply_nature_bc(nature_bcs, var='P')
+    BCs_applier.apply_nature_bc(nature_bcs, var='Pb')
 
     # ============================= Solve the linear system ================================
     # solver the linear system
-    linear_solver = LinearSolver(dof_handler)
+    linear_solver = LinearSolver(dof_handler=Biot_dof_handler)
     # print("condition number:", linear_solver.condition_number(left_hand_matrix))
     # plot_matrix_partten(left_hand_matrix)
-    linear_solver.solve(left_hand_matrix, right_hand_vector)
+    linear_solver.solve(BCs_applier.left_hand_side, BCs_applier.right_hand_side)
     sol = linear_solver.u
 
 
