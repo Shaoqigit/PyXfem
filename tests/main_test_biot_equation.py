@@ -52,7 +52,7 @@ def test_case():
 
     P_bases = []  # basis applied on each element, could be different order and type
     Ux_bases = []
-    order = 1  # global order of the bases
+    order = 3  # global order of the bases
     # applied the basis on each element
     for key, elem in elements_set.items():
         Ux_basis = Lobbato1DElement('Ux', order, elem)
@@ -99,7 +99,7 @@ def test_case():
     import time
     # initialize the assembler
     assembler = Assembler4Biot(dof_handler, subdomains, dtype=np.complex128)
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     start = time.perf_counter()
     K_p= assembler.assemble_material_K(P_bases, 'P', omega)  # global stiffness matrix with material attribution
     end = time.perf_counter()
@@ -116,7 +116,7 @@ def test_case():
     C_pu= C_up.T  # global coupling matrix with material attribution 
     # construct linear system
     left_hand_matrix = K_p+K_u-M_u-M_p - C_pu-C_up
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # ============================= Boundary conditions =====================================
     essential_bcs = {'type': 'solid_displacement', 'value': 0, 'position': 0.}  # position is the x coordinate
     left_hand_matrix =assembler.apply_essential_bc(left_hand_matrix, essential_bcs, var='Ux', bctype='nitsche')

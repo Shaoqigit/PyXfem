@@ -34,7 +34,7 @@ from analytical.fluid_sol import DoubleleLayerKundltTube
 
 
 def test_case_1():
-    num_elem = 100  # number of elements
+    num_elem = 200  # number of elements
     num_nodes = num_elem + 1  # number of nodes
 
     nodes = np.linspace(-1, 1, num_nodes)

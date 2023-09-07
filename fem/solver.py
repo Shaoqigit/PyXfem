@@ -34,11 +34,11 @@ class BaseSolver(metaclass=ABCMeta):
         if dof_handler is None:
             self.internal_dofs = coupling_assember.nb_internal_dofs
             self.external_dofs = coupling_assember.nb_external_dofs
-            self.num_dofs = coupling_assember.nb_global_dofs
+            self.nb_dofs = coupling_assember.nb_global_dofs
         else:
             self.internal_dofs = dof_handler.num_internal_dofs
             self.external_dofs = dof_handler.num_external_dofs
-            self.num_dofs = dof_handler.get_num_dofs()
+            self.nb_dofs = dof_handler.get_nb_dofs()
         if dof_handler is None and coupling_assember is None:
             raise ValueError("dof_handler and coupling_assember cannot be None at the same time")
         
@@ -58,9 +58,13 @@ class LinearSolver(BaseSolver):
         right hand side vector
     """
     def solve(self, left_hand_side, right_hand_side):
+        import time
+        start = time.time()
         u = spsolve(left_hand_side, right_hand_side)
         # u = np.linalg.solve(left_hand_side.toarray(), right_hand_side)
         self.u = u[:self.external_dofs]
+        end = time.time()
+        print("solving time: ", end-start)
 
     def condition_number(self, left_hand_side):
         return np.linalg.cond(left_hand_side.toarray())
@@ -69,14 +73,14 @@ class LinearSolver(BaseSolver):
         row = left_hand_side.tocoo().row
         col = left_hand_side.tocoo().col
         perm_rcm = reverse_cuthill_mckee(left_hand_side,symmetric_mode=True)
-        iperm_rcm = np.zeros(shape=self.num_dofs,dtype=np.int32)
+        iperm_rcm = np.zeros(shape=self.nb_dofs,dtype=np.int32)
         for js,jt in enumerate(perm_rcm):
             iperm_rcm[jt] = js
         I_rcm   = iperm_rcm[row]
         J_rcm   = iperm_rcm[col]
         V_rcm   = left_hand_side.data
         print(I_rcm)
-        left_hand_side = csr_array((V_rcm,(I_rcm,J_rcm)),shape=(self.num_dofs,self.num_dofs))
+        left_hand_side = csr_array((V_rcm,(I_rcm,J_rcm)),shape=(self.nb_dofs,self.nb_dofs))
         import pdb; pdb.set_trace()
         right_hand_side[I_rcm[0]],right_hand_side[row[0]] = right_hand_side[row[0]],right_hand_side[I_rcm[0]]
         return left_hand_side, right_hand_side

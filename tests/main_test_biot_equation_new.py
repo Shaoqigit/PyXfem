@@ -94,7 +94,7 @@ def test_case():
     left_hand_matrix = Biot_assember.get_global_matrix()
     fe_space = FESpace(mesh, subdomains, Pb_bases, Ux_bases)
     right_hand_vec = np.zeros(Biot_assember.nb_global_dofs, dtype=np.complex128)
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
 
     # ============================= Boundary conditions =====================================
     BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix, right_hand_vec, omega)
@@ -122,7 +122,7 @@ def test_case():
     post_processer_p = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Pressure')
     post_processer_p.plot_sol((np.real(sol[:num_elem+1]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[4,:]), 'Analytical', 'dashed'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
-    plt.show()
+    # plt.show()
 
     post_processer_u = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Solid displacement')
     post_processer_u.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[1,:]), 'Analytical', 'dashed'))

@@ -40,7 +40,7 @@ class BaseAssembler:
         subdomains: dict of subdomains
         dtype: data type of linear system"""
         self.dof_handler = dof_handler
-        self.nb_global_dofs = dof_handler.get_num_dofs()
+        self.nb_global_dofs = dof_handler.get_nb_dofs()
         self.dtype = dtype
         self.elem_mat = {}
         for mat, elems in subdomains.items():

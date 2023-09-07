@@ -33,7 +33,7 @@ from fem.postprocess import PostProcessField
 from analytical.Fluid_Biot_sol import Fluid_Biot_Pressure, Fluid_Biot_Displacement, u_a, u_t, sigma_xx, P_a
 
 def test_case():
-    num_elem = 10  # number of elements
+    num_elem = 400  # number of elements
     num_nodes = num_elem + 1  # number of nodes
 
     nodes = np.linspace(-1, 1, num_nodes)
@@ -78,7 +78,7 @@ def test_case():
     check_material_compability(subdomains)
     # print(elements_set)
 
-    order =1  # global order of the bases
+    order =3  # global order of the bases
     # applied the basis on each element
     for mat, elems in subdomains.items():
         if mat.TYPE == 'Fluid':
@@ -91,7 +91,7 @@ def test_case():
 
     Helmholtz_dof_handler = GeneralDofHandler1D(['Pf'], Pf_bases)
     Biot_dof_handler = GeneralDofHandler1D(['Pb','Ux'], Pb_bases, Ux_bases)
-    # print(Helmholtz_dof_handler.get_num_dofs())
+    # print(Helmholtz_dof_handler.get_nb_dofs())
     # print(Helmholtz_dof_handler.get_global_dofs())
     # print(Biot_dof_handler.get_global_dofs())
     fe_space = FESpace(mesh, subdomains, Pf_bases, Pb_bases, Ux_bases)
@@ -143,7 +143,7 @@ def test_case():
     # post_processer_p.plot_sol((np.real(ana_sol[:]), 'Analytical', 'solid'))
     # post_processer_p.plot_sol((np.real(sol[:num_elem+1]), 'Analytical', 'solid'))
     plt.show()
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
 
     post_processer_u = PostProcessField(mesh.nodes[int(num_elem/2):], r'1D Biot (2000$Hz$) Solid displacement')
     post_processer_u.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol_u[:]), 'Analytical', 'dashed'))

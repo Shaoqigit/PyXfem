@@ -28,13 +28,13 @@ def check_material_compability(subdomains):
         mats.append(key)
 
     compatibale_mats = mats[0].COMPATIBLE
-    print(compatibale_mats)
+    # print(compatibale_mats)
     for mat in mats:
-        print(mat.TYPE)
+        # print(mat.TYPE)
         if mat.TYPE not in compatibale_mats:
             raise ValueError("Material model is not compatible")
         else:
-            print("Material models are compatible, computation continues ...")
+            print(f"Material models {mat.name} are compatible, computation continues ...")
 
 
 def display_matrix_in_array(M:csr_array):

@@ -47,11 +47,11 @@ class Assembler:
         dtype: data type of linear system"""
 
         self.dof_handler = dof_handler
-        self.num_dofs = dof_handler.get_num_dofs()
+        self.nb_dofs = dof_handler.get_nb_dofs()
         self.bases = bases
         self.dtype = dtype
-        self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.M = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.K = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+        self.M = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
         self.omega = 0.
         self.elem_mat = {}
         for key, elems in subdomains.items():
@@ -69,7 +69,7 @@ class Assembler:
             row = global_indices.T[0]
             col = global_indices.T[1]
             data = basis.ke[local_indices.T[0], local_indices.T[1]]
-            self.K += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs))
+            self.K += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs))
 
     def assemble_M(self): 
         """
@@ -83,7 +83,7 @@ class Assembler:
             row = global_indices.T[0]
             col = global_indices.T[1]
             data = basis.me[local_indices.T[0], local_indices.T[1]]
-            self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs))
+            self.M += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs))
 
         
 
@@ -105,7 +105,7 @@ class Assembler:
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.ke[local_indices.T[0], local_indices[:,1]]
-            self.K += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.K += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
         return self.K
     
@@ -127,7 +127,7 @@ class Assembler:
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.me[local_indices[:,0], local_indices[:,1]]
-            self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.M += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
         return self.M
     
@@ -149,7 +149,7 @@ class Assembler:
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.me[local_indices[:,0], local_indices[:,1]]
-            self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.M += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
         return self.M
     
@@ -165,7 +165,7 @@ class Assembler:
         mat.set_frequency(self.omega)
         mat_coeff = 1j*1/mat.rho_f*(self.omega/mat.c_f)*impedence_bcs['value']
         data = np.array([mat_coeff*1])
-        C = csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+        C = csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
         return C
     
@@ -175,7 +175,7 @@ class Assembler:
         nature_bc: dict of nature boundary conditions
         return the global vector contributed from nature boundary conditions
         """
-        F = np.zeros(self.num_dofs, dtype=self.dtype)
+        F = np.zeros(self.nb_dofs, dtype=self.dtype)
         if nature_bc['type']=='velocity':
             F[nature_bc['position']] = 1j * self.omega * nature_bc['value']
         else:
@@ -184,7 +184,7 @@ class Assembler:
         return F
     
     def get_dim(self):
-        return self.num_dofs
+        return self.nb_dofs
 
 
 class Assembler4Biot:
@@ -193,11 +193,11 @@ class Assembler4Biot:
     """
     def __init__(self, dof_handler, subdomains, dtype) -> None:
         self.dof_handler = dof_handler
-        self.num_dofs = dof_handler.get_num_dofs()
+        self.nb_dofs = dof_handler.get_nb_dofs()
         self.dtype = dtype
-        self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.M = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.C = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.K = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+        self.M = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+        self.C = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
         self.omega = 0.
         self.elem_mat = {}
         for key, elems in subdomains.items():
@@ -211,7 +211,7 @@ class Assembler4Biot:
             row = global_indices.T[0]
             col = global_indices.T[1]
             data = basis.ke[local_indices.T[0], local_indices.T[1]]
-            self.K += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs))
+            self.K += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs))
 
     def assemble_M(self, bases):  
         for dofs, basis in zip(self.dof_handler.get_global_dofs(), bases):
@@ -221,12 +221,12 @@ class Assembler4Biot:
             row = global_indices.T[0]
             col = global_indices.T[1]
             data = basis.me[local_indices.T[0], local_indices.T[1]]
-            self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs))
+            self.M += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs))
 
     def initial_matrix(self):
-        self.K = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.M = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
-        self.C = csr_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.K = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+        self.M = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+        self.C = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
     def assemble_material_K(self, bases, var = None, omega = 0):
         self.omega = omega
@@ -251,7 +251,7 @@ class Assembler4Biot:
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.ke[local_indices[:,0], local_indices[:,1]]
-            self.K += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.K += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
         return self.K
 
@@ -282,7 +282,7 @@ class Assembler4Biot:
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.me[local_indices[:,0], local_indices[:,1]]
-            self.M += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.M += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
         return self.M
     
@@ -307,7 +307,7 @@ class Assembler4Biot:
             else:
                 print("Material type not supported")
             data = mat_coeff*basis.ce[local_indices[:,0], local_indices[:,1]]
-            self.C += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.C += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
         return self.C
     
@@ -329,8 +329,8 @@ class Assembler4Biot:
             mat = self.elem_mat[0]
             data = penalty*mat.P_hat*np.ones((1), dtype=self.dtype)
             # data = penalty*basis.me[1,1]
-            left_hand_side += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
-            self.F = np.zeros(self.num_dofs, dtype=self.dtype)
+            left_hand_side += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+            self.F = np.zeros(self.nb_dofs, dtype=self.dtype)
             self.F[dof_index] = penalty*essential_bcs['value']
             return left_hand_side
         elif bctype == 'nitsche':
@@ -343,7 +343,7 @@ class Assembler4Biot:
             left_hand_side_lil[dof_index-1:dof_index+1, dof_index-1:dof_index+1] += nitsch
             left_hand_side = left_hand_side_lil.tocsr()
 
-            self.F = np.zeros(self.num_dofs, dtype=self.dtype)
+            self.F = np.zeros(self.nb_dofs, dtype=self.dtype)
             self.F[dof_index-1] += 0.5*essential_bcs['value']
             self.F[dof_index] += alpha*essential_bcs['value']-0.5*essential_bcs['value']
             return left_hand_side
@@ -358,7 +358,7 @@ class Assembler4Biot:
         mat.set_frequency(self.omega)
         mat_coeff = 1j*1/mat.rho_f*(self.omega/mat.c_f)*impedence_bcs['value']
         data = np.array([mat_coeff*1])
-        C = csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+        C = csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
         return C
     
@@ -366,7 +366,7 @@ class Assembler4Biot:
     def apply_nature_bc(self, nature_bc, var=None):
         dof_index = self.dof_handler.mesh2dof(nature_bc['position'], var)
         if self.F is None:
-            right_hand_side = np.zeros(self.num_dofs, dtype=self.dtype)
+            right_hand_side = np.zeros(self.nb_dofs, dtype=self.dtype)
         else:
             right_hand_side = self.F
         if nature_bc['type']=='velocity':
@@ -379,4 +379,4 @@ class Assembler4Biot:
         return right_hand_side
     
     def get_dim(self):
-        return self.num_dofs
+        return self.nb_dofs

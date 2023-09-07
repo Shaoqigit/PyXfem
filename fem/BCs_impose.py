@@ -9,6 +9,7 @@ class ApplyBoundaryConditions:
         self.elem_mat = FE_space.elem_mat
         self.left_hand_side = left_hand_side
         self.right_hand_side = right_hand_side
+        self.nb_dofs = self.left_hand_side.shape[0]
         self.omega = omega
 
     def mesh2dof(self, position, var=None):
@@ -32,7 +33,7 @@ class ApplyBoundaryConditions:
             mat = self.elem_mat[0]
             data = penalty*mat.P_hat*np.ones((1), dtype=self.dtype)
             # data = penalty*basis.me[1,1]
-            self.left_hand_side += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+            self.left_hand_side += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
             self.right_hand_side[dof_index] += penalty*essential_bcs['value']
 
         elif bctype == 'nitsche':
@@ -58,7 +59,7 @@ class ApplyBoundaryConditions:
         mat.set_frequency(self.omega)
         mat_coeff = 1j*1/mat.rho_f*(self.omega/mat.c_f)*impedence_bcs['value']
         data = np.array([mat_coeff*1])
-        self.left_hand_side += csr_array((data, (row, col)), shape=(self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.left_hand_side += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
         
     def apply_nature_bc(self, nature_bc, var=None):

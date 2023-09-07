@@ -10,7 +10,7 @@ class AdmAssembler:
         self.dtype = dtype
         self.omega = omega
         self.mesh = mesh.get_mesh()
-        self.num_dofs = mesh.get_num_nodes()
+        self.nb_dofs = mesh.get_nb_nodes()
         self.elem_mats = {}
         for key, elems in subdomains.items():
             self.elem_mats.update({elem: key for elem in elems})
@@ -21,21 +21,21 @@ class AdmAssembler:
         parameters:
         mat: admittance material
         """
-        self.global_adm = lil_array((self.num_dofs, self.num_dofs), dtype=self.dtype)
+        self.global_adm = lil_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
         for i, elem in self.mesh.items():
             mat = self.elem_mats[i]
             mat.set_frequency(self.omega)
             adm = fluid_elem(mat, self.omega, theta, k_0, elem, mode)
             adm.admittance()
             if i==len(self.mesh)-1:
-                import pdb; pdb.set_trace()
+                # import pdb; pdb.set_trace()
             self.global_adm[i:i+2, i:i+2] += adm.adm
         return self.global_adm.tocsr()
     
     def assemble_nature_bc(self, nature_bc):
-        F = np.zeros(self.num_dofs, dtype=self.dtype)
+        F = np.zeros(self.nb_dofs, dtype=self.dtype)
         if nature_bc['type']=='velocity':
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             F[nature_bc['position']] = -1*nature_bc['value']/(1j*self.omega)
         else:
             print("Nature BC type not supported")

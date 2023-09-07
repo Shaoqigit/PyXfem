@@ -33,16 +33,16 @@ class DofHandler1D:
             raise TypeError("mesh must be 1D mesh")
 
 
-    def get_num_dofs(self):
+    def get_nb_dofs(self):
         """return global dof"""
-        num_dofs = 0
+        nb_dofs = 0
         for basis in self.bases:
             if basis.is_discontinue:
                 num_discontiue = self.basis.interface
                 return self.mesh.get_num_elems()*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
             else:
-                num_dofs += basis.get_order()
-        return num_dofs+1
+                nb_dofs += basis.get_order()
+        return nb_dofs+1
 
             
     
@@ -71,7 +71,7 @@ class DofHandler1D:
     
     @property
     def num_internal_dofs(self):
-        return self.get_num_dofs() - self.num_external_dofs
+        return self.get_nb_dofs() - self.num_external_dofs
     
 class DofHandler1DMutipleVariable(DofHandler1D):
     def __init__(self, mesh, *mbases) -> None:
@@ -90,16 +90,16 @@ class DofHandler1DMutipleVariable(DofHandler1D):
             raise TypeError("mesh must be 1D mesh")
 
 
-    def get_num_dofs(self):
+    def get_nb_dofs(self):
         """return global dof"""
-        num_dofs = 0
+        nb_dofs = 0
         for basis in self.whole_bases:
             if basis.is_discontinue:
                 num_discontiue = self.basis.interface
                 return self.mesh.get_num_elems()*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
             else:
-                num_dofs += basis.get_order()
-        return (num_dofs+self.nb_var)
+                nb_dofs += basis.get_order()
+        return (nb_dofs+self.nb_var)
 
             
     
@@ -157,7 +157,7 @@ class DofHandler1DMutipleVariable(DofHandler1D):
     
     @property
     def num_internal_dofs(self):
-        return self.get_num_dofs() - self.num_external_dofs
+        return self.get_nb_dofs() - self.num_external_dofs
 
 
 class GeneralDofHandler1D(DofHandler1D):
@@ -176,16 +176,16 @@ class GeneralDofHandler1D(DofHandler1D):
         self.nb_elem = len(mbases[0])
         self.num_nodes = self.nb_elem+1
             
-    def get_num_dofs(self):
+    def get_nb_dofs(self):
         """return global dof"""
-        num_dofs = 0
+        nb_dofs = 0
         for basis in self.whole_bases:
             if basis.is_discontinue:
                 num_discontiue = self.basis.interface
                 return self.num_nodes*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
             else:
-                num_dofs += basis.get_order()
-        return (num_dofs+self.nb_var)
+                nb_dofs += basis.get_order()
+        return (nb_dofs+self.nb_var)
 
             
     
@@ -245,7 +245,7 @@ class GeneralDofHandler1D(DofHandler1D):
     
     @property
     def num_internal_dofs(self):
-        return self.get_num_dofs() - self.num_external_dofs
+        return self.get_nb_dofs() - self.num_external_dofs
     
 
 
