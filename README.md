@@ -13,15 +13,14 @@
 * The proposed Finite Admittance Method **(FAM)** (experimental) is supported
 
 ### Up to this moment:
-
 * High order lobatto shape function supported (up to $p=4$)
 * JCA and Limp model to account for porous acoustic materials
 * **Biot equation** modeling for poro-elastic materials
 * Impedence boundary condition supported
 * Weakly enforced essential boundary condition (penalty method and **Nitche's method**)
+* Biot UP and Fluid coupling model (implemented but not fully validated)
 
 ### To do list
-* Biot UP and Fluid coupling model
 * Perfect Matched Layer (PML) for free field boundary condition
 * Infinite Element for free field boundary condition
 * Finite Admittance Method (FAM) for high precision multi-layered configuration
@@ -31,7 +30,7 @@
 ### Roadmap:
 * Message and log system
 
-## For development
+## For development and contribution
 Every time one new feature is developed, a new test case has to be added in the /tests folder. The run_test must to be run and passed with all green light before created Pull Request as:
 ```bash
 Test case:  main_test1_two_layer.py                                      SUCCESS
