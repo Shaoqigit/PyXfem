@@ -81,7 +81,7 @@ class LinearSolver(BaseSolver):
         V_rcm   = left_hand_side.data
         print(I_rcm)
         left_hand_side = csr_array((V_rcm,(I_rcm,J_rcm)),shape=(self.nb_dofs,self.nb_dofs))
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         right_hand_side[I_rcm[0]],right_hand_side[row[0]] = right_hand_side[row[0]],right_hand_side[I_rcm[0]]
         return left_hand_side, right_hand_side
 
