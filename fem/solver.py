@@ -30,16 +30,16 @@ class BaseSolver(metaclass=ABCMeta):
     """base abstract FE solver class
 
     """
-    def __init__(self, dof_handler=None, coupling_assember=None, symmetric=True):
-        if dof_handler is None:
+    def __init__(self, fe_space=None, coupling_assember=None, symmetric=True):
+        if fe_space is None:
             self.internal_dofs = coupling_assember.nb_internal_dofs
             self.external_dofs = coupling_assember.nb_external_dofs
             self.nb_dofs = coupling_assember.nb_global_dofs
         else:
-            self.internal_dofs = dof_handler.num_internal_dofs
-            self.external_dofs = dof_handler.num_external_dofs
-            self.nb_dofs = dof_handler.get_nb_dofs()
-        if dof_handler is None and coupling_assember is None:
+            self.internal_dofs = fe_space.nb_internal_dofs
+            self.external_dofs = fe_space.nb_external_dofs
+            self.nb_dofs = fe_space.get_nb_dofs()
+        if fe_space is None and coupling_assember is None:
             raise ValueError("dof_handler and coupling_assember cannot be None at the same time")
         
         self.u = None

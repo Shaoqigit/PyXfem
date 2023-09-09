@@ -46,7 +46,7 @@ class Mesh1D(BaseMesh):
         self.elem_connect = elem_connect
 
     def get_mesh(self):
-        """read mesh file"""
+        """dict of element number and nodes coordinates"""
         elems = {}
         for i in range(len(self.elem_connect)):
             elems[i] = np.array([self.nodes[i], self.nodes[i+1]])
@@ -75,6 +75,12 @@ class Mesh1D(BaseMesh):
         return coord2node_num
     
 
+    @property
+    def connectivity(self):
+        """return connectivity"""
+        return self.elem_connect
+    
+
     def refine_mesh(self, times):
         """refine mesh"""
         for _ in range(times):
@@ -90,22 +96,18 @@ class Mesh1D(BaseMesh):
             self.elem_connect = np.array(new_elem_connect)
         
 
-    def get_num_nodes(self):
+    def get_nb_nodes(self):
         """return number of nodes"""
         return len(self.nodes)
     
-    def get_num_elems(self):
+    def get_nb_elems(self):
         """return number of elements"""
         return len(self.elem_connect)
     
-    def get_nodes(self, elem):
+    def get_nodes_from_elem(self, elem):
         """return nodes of corresoinding element"""
         return self.get_mesh()[elem]
     
-    @property
-    def connectivity(self):
-        """return connectivity"""
-        return self.elem_connect
     
 
 

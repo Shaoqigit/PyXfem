@@ -7,6 +7,7 @@ import subprocess
 
 test_path = "tests/"
 test_cases = ['test_material_pem.py', 
+              'main_absorption_comp.py',
               'main_test1_two_layer.py', 
               'main_two_fluid_new.py', 
               'main_test2_impedance_bc.py', 

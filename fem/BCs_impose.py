@@ -39,7 +39,7 @@ class ApplyBoundaryConditions:
         elif bctype == 'nitsche':
             mat = self.elem_mat[0]
             alpha = 1e1
-            scaling = 2*self.mesh.get_num_elems()
+            scaling = 2*self.mesh.get_nb_elems()
             nitsch = -1*mat.P_hat*scaling*np.array([[0, 0], [-0.5, 0.5]])-1*mat.P_hat*scaling*np.array([[0, -0.5], [0, 0.5]])+alpha*np.array([[0, 0], [0, 1]])
             left_hand_side_lil = self.left_hand_side.tolil()
             left_hand_side_lil[dof_index-1:dof_index+1, dof_index-1:dof_index+1] += nitsch

@@ -28,7 +28,7 @@ class AdmAssembler:
             adm = fluid_elem(mat, self.omega, theta, k_0, elem, mode)
             adm.admittance()
             if i==len(self.mesh)-1:
-                # import pdb; pdb.set_trace()
+                import pdb; pdb.set_trace()
             self.global_adm[i:i+2, i:i+2] += adm.adm
         return self.global_adm.tocsr()
     

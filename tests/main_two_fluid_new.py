@@ -78,31 +78,26 @@ def test_case_1():
         # print(basis.me)
 
     # handler the dofs: map the basis to mesh
-    Helmholtz_dof_handler = GeneralDofHandler1D(['Pf'], Pf_bases)
+    fe_space = FESpace(mesh, subdomains, Pf_bases)
 
     # initialize the assembler
-    Helmholtz_assember = HelmholtzAssembler(Helmholtz_dof_handler, subdomains, dtype=np.complex128)
+    Helmholtz_assember = HelmholtzAssembler(fe_space, subdomains, dtype=np.complex128)
     Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
     left_hand_matrix = Helmholtz_assember.get_global_matrix()
 
-    fe_space = FESpace(mesh, subdomains, Pf_bases)
 
     right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs, dtype=np.complex128)
 
     #  natural boundary condition   
     nature_bcs = {'type': 'velocity', 'value': 1*np.exp(-1j*omega), 'position': -1}
-    
     BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix, right_hand_vec, omega)
-
     BCs_applier.apply_nature_bc(nature_bcs, var='Pf')
 
     # solver the linear system
-    linear_solver = LinearSolver(dof_handler=Helmholtz_dof_handler)
+    linear_solver = LinearSolver(fe_space=fe_space)
     linear_solver.solve(left_hand_matrix, right_hand_vec)
     sol = linear_solver.u
-    # print("solution:", abs(sol))
 
-    # import pdb; pdb.set_trace()
 
     # ====================== Analytical Solution ======================
     # analytical solution
@@ -113,7 +108,9 @@ def test_case_1():
     # plot the solution
     post_processer = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
     post_processer.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol), 'Analytical', 'dashed'))
-    plt.show()
+    plt.show(block=False)
+    plt.pause(1)
+    plt.close('all')
 
     error = post_processer.compute_error(sol, ana_sol)
     print("error:", error)

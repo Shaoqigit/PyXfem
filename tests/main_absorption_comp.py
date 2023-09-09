@@ -74,8 +74,6 @@ def discrete_in_frequency(freq):
     air_elements = np.arange(0, num_elem/2)
     xfm_elements = np.arange(num_elem/2, num_nodes)
     subdomains = {air: air_elements, xfm: xfm_elements}
-    check_material_compability(subdomains)
-
 
     # adm_assembler = AdmAssembler(mesh, subdomains, omega, dtype=np.complex128)
     # left_hand_side = adm_assembler.assemble_global_adm(theta, k_0, 'continue')
@@ -112,8 +110,14 @@ freqs = np.linspace(1, 1e5, 1000)
 for i, freq in enumerate(freqs):
     absops[0,i], absops[1,i] = discrete_in_frequency(freq)
     # plt.plot(freq, absop_analy, 'o')
+error = np.mean(np.abs(absops[0] - absops[1]))
+if error < 1e-5:
+    print("Test passed!")
+print("error:", error)
 
 plt.plot(freqs, absops[0], '-', label='analytical')
 plt.plot(freqs, absops[1], '--', label='tmm')
 plt.legend()
-plt.show()
+plt.show(block=False)
+plt.pause(1)
+plt.close('all')

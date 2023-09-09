@@ -86,13 +86,13 @@ def test_case():
             Ux_bases = [Lobbato1DElement('Ux', order, elements2node[elem]) for elem in elems]  # 
 
     # handler the dofs: map the basis to mesh
-    Biot_dof_handler = GeneralDofHandler1D(['Pb','Ux'], Pb_bases, Ux_bases)
-    fe_space = FESpace(mesh, subdomains, Ux_bases)
+    fe_space = FESpace(mesh, subdomains, Pb_bases, Ux_bases)
+
     # initialize the assembler
-    Biot_assember = BiotAssembler(Biot_dof_handler, subdomains, dtype=np.complex128)
+    Biot_assember = BiotAssembler(fe_space, subdomains, dtype=np.complex128)
     Biot_assember.assembly_global_matrix([Pb_bases,Ux_bases], ['Pb', 'Ux'], omega)
     left_hand_matrix = Biot_assember.get_global_matrix()
-    fe_space = FESpace(mesh, subdomains, Pb_bases, Ux_bases)
+
     right_hand_vec = np.zeros(Biot_assember.nb_global_dofs, dtype=np.complex128)
     # import pdb;pdb.set_trace()
 
@@ -107,7 +107,7 @@ def test_case():
 
     # ============================= Solve the linear system ================================
     # solver the linear system
-    linear_solver = LinearSolver(dof_handler=Biot_dof_handler)
+    linear_solver = LinearSolver(fe_space=fe_space)
     # print("condition number:", linear_solver.condition_number(left_hand_matrix))
     # plot_matrix_partten(left_hand_matrix)
     linear_solver.solve(BCs_applier.left_hand_side, BCs_applier.right_hand_side)
@@ -122,12 +122,15 @@ def test_case():
     post_processer_p = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Pressure')
     post_processer_p.plot_sol((np.real(sol[:num_elem+1]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[4,:]), 'Analytical', 'dashed'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
-    # plt.show()
+    plt.show(block=False)
+    plt.pause(1)
 
     post_processer_u = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Solid displacement')
     post_processer_u.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[1,:]), 'Analytical', 'dashed'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
-    # plt.show()
+    plt.show(block=False)
+    plt.pause(1)
+    plt.close('all')
     
 
     error_p = post_processer_p.compute_error(sol[:num_elem+1], ana_sol[4,:])

@@ -131,8 +131,6 @@ def discrete_in_frequency(freq):
     return alpha
 
 
-
-
 num_samp = int(1e5)
 absops = np.zeros((1, num_samp))
 freqs = np.linspace(10, 1e6, num=num_samp)

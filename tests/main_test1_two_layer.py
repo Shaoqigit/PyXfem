@@ -128,7 +128,9 @@ def test_case_1():
     # plot the solution
     post_processer = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
     post_processer.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol), 'Analytical', 'dashed'))
-    plt.show()
+    plt.show(block=False)
+    plt.pause(1)
+    plt.close('all')
 
     error = post_processer.compute_error(sol, ana_sol)
     print("error:", error)

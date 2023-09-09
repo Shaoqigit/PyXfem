@@ -39,7 +39,7 @@ class DofHandler1D:
         for basis in self.bases:
             if basis.is_discontinue:
                 num_discontiue = self.basis.interface
-                return self.mesh.get_num_elems()*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
+                return self.mesh.get_nb_elems()*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
             else:
                 nb_dofs += basis.get_order()
         return nb_dofs+1
@@ -53,7 +53,7 @@ class DofHandler1D:
         [.....],
         [.....]]"""
         global_dof = []
-        internal_dof_index_start = self.mesh.get_num_nodes()
+        internal_dof_index_start = self.mesh.get_nb_nodes()
         for i, basis in enumerate(self.bases):
             # print("internal_dof_index_start", internal_dof_index_start)
             if basis.num_internal_dofs() == 0:
@@ -66,12 +66,12 @@ class DofHandler1D:
         return global_dof
         
     @property
-    def num_external_dofs(self):
-        return self.mesh.get_num_nodes()
+    def nb_external_dofs(self):
+        return self.mesh.get_nb_nodes()
     
     @property
-    def num_internal_dofs(self):
-        return self.get_nb_dofs() - self.num_external_dofs
+    def nb_internal_dofs(self):
+        return self.get_nb_dofs() - self.nb_external_dofs
     
 class DofHandler1DMutipleVariable(DofHandler1D):
     def __init__(self, mesh, *mbases) -> None:
@@ -96,7 +96,7 @@ class DofHandler1DMutipleVariable(DofHandler1D):
         for basis in self.whole_bases:
             if basis.is_discontinue:
                 num_discontiue = self.basis.interface
-                return self.mesh.get_num_elems()*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
+                return self.mesh.get_nb_elems()*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
             else:
                 nb_dofs += basis.get_order()
         return (nb_dofs+self.nb_var)
@@ -110,7 +110,7 @@ class DofHandler1DMutipleVariable(DofHandler1D):
         [.....],
         [.....]]"""
         global_dof = []
-        internal_dof_index_start = self.mesh.get_num_nodes()*self.nb_var
+        internal_dof_index_start = self.mesh.get_nb_nodes()*self.nb_var
 
         new_connect = self.connect
         whole_connect = self.connect
@@ -147,17 +147,17 @@ class DofHandler1DMutipleVariable(DofHandler1D):
         index_var = self.var_name.index(var)
         for i, node in enumerate(self.mesh.nodes):
             if node == position:
-                return i+index_var*self.mesh.get_num_nodes()
+                return i+index_var*self.mesh.get_nb_nodes()
         
 
 
     @property
-    def num_external_dofs(self):
-        return self.mesh.get_num_nodes()*self.nb_var
+    def nb_external_dofs(self):
+        return self.mesh.get_nb_nodes()*self.nb_var
     
     @property
-    def num_internal_dofs(self):
-        return self.get_nb_dofs() - self.num_external_dofs
+    def nb_internal_dofs(self):
+        return self.get_nb_dofs() - self.nb_external_dofs
 
 
 class GeneralDofHandler1D(DofHandler1D):
@@ -235,7 +235,7 @@ class GeneralDofHandler1D(DofHandler1D):
         index_var = self.var_name.index(var)
         for i, node in enumerate(self.mesh.nodes):
             if node == position:
-                return i+index_var*self.mesh.get_num_nodes()
+                return i+index_var*self.mesh.get_nb_nodes()
         
 
 
@@ -253,23 +253,23 @@ class FESpace:
     def __init__(self, mesh, subdomains, *all_bases) -> None:
         self.mesh = mesh
         self.subdomains = subdomains
+        self.nb_var = len(all_bases)
 
         self.whole_bases = []
         for bases in all_bases:
             self.whole_bases += bases
-        self.nb_external_dof = len(all_bases)
+
+        self.nb_external_dof = len(self.whole_bases)
+
+        self.var_names = [base.label for base in self.whole_bases ]
+
         self.elem_mat = {}
-        self.nodes2elem2var = {}
-
-        for base in self.whole_bases:
-            var = base.label
-            nodes = base.nodes
-
         subdoamin_start_index = {}
         for mat, elems in subdomains.items():
             subdoamin_start_index[mat] = elems[0]
             self.elem_mat.update({elem: mat for elem in elems})
-            
+        
+        self.nodes2elem2var = {}
         for i, node in enumerate(mesh.nodes):
             for elem, nodes in mesh.get_mesh().items():
                 if node in nodes:
@@ -289,13 +289,83 @@ class FESpace:
                     coord2dofs1=self.mat2dofs.get('Pb', dict())
                     coord2dofs1.update(dict(zip(local_coord, local_dofs)))
                     self.mat2dofs['Pb'] = coord2dofs1
-                    local_dofs_2 = local_dofs + self.mesh.get_num_nodes()-start_index
+                    local_dofs_2 = local_dofs + self.mesh.get_nb_nodes()-start_index
                     coord2dofs2=self.mat2dofs.get('Ux', dict())
                     coord2dofs2.update(dict(zip(local_coord, local_dofs_2)))
                     self.mat2dofs['Ux'] = coord2dofs2
+
     
+    @property
+    def nb_external_dofs(self):
+        return self.mesh.get_nb_nodes()*self.nb_var
+    
+    @property
+    def nb_internal_dofs(self):
+        return self.get_nb_dofs() - self.nb_external_dofs
+    
+    def get_nb_dofs(self):
+        nb_dofs = 0
+        nb_nodes = self.mesh.get_nb_nodes()
+        for basis in self.whole_bases:
+            if basis.is_discontinue:
+                num_discontiue = self.basis.interface
+                return nb_nodes*self.basis.get_order() +1 + num_discontiue*(self.basis.get_order()+1)
+            else:
+                nb_dofs += basis.get_order()
+        return (nb_dofs+self.nb_var)
+    
+    def get_global_dofs(self):
+        """return local dof
+        return: global dof index
+        [node_1_index, node_2_index, internal_dof_index],
+        [.....],
+        [.....]]"""
+        global_dof = []
+        internal_dof_index_start = self.mesh.get_nb_nodes()*self.nb_var
+        elem_connec1 = np.arange(0, self.mesh.get_nb_elems())
+        elem_connec2 = np.arange(1, self.mesh.get_nb_nodes())
+        connect = np.vstack((elem_connec1, elem_connec2)).T
+        new_connect = connect
+        whole_connect = connect
+        for i in range(1, self.nb_var):
+            index_1 = new_connect[:,1]+connect.shape[0]*i
+            index_2 = new_connect[:,1]+1+connect.shape[0]*i
+            new_connect = np.vstack((index_1, index_2)).T
+            whole_connect = np.vstack((whole_connect, new_connect))
+
+        for i, basis in enumerate(self.whole_bases):
+            if basis.num_internal_dofs() == 0:
+                global_dof.append(whole_connect[i])
+                continue
+            elem = whole_connect[i]
+            global_dof.append(np.hstack((np.array([elem[0], elem[1]]), np.array([internal_dof_index_start + j for j in range(0, basis.get_order()-1)]))))
+            internal_dof_index_start += basis.get_order()-1 
+
+        return global_dof
+
+    def base4global_dofs(self):
+        global_dofs = self.get_global_dofs()
+        base2dofs = {}
+        for i, bases in enumerate(self.whole_bases):
+            index = base2dofs.get(bases.label, [])
+            index.append(global_dofs[i])
+            base2dofs[bases.label] = index
+        return base2dofs
+
+    def get_global_dofs_by_base(self, label):
+        base4dofs = self.base4global_dofs()
+        return base4dofs.get(label, None)
+    
+
     def get_dofs_from_var_coord(self, coord, var):
         return self.mat2dofs[var][coord]
+    
+
+    def mesh2dof(self, position, var):
+        index_var = self.var_name.index(var)
+        for i, node in enumerate(self.mesh.nodes):
+            if node == position:
+                return i+index_var*self.mesh.get_nb_nodes()
 
                 
             

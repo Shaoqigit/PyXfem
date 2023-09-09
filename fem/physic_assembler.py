@@ -33,14 +33,14 @@ def get_indeces(*dofs):
         raise ValueError("wrong number of arguments")
 
 class BaseAssembler:
-    def __init__(self, dof_handler, subdomains, dtype) -> None:
+    def __init__(self, fe_space, subdomains, dtype) -> None:
         """
         General assembler for Helmholtz equation
         bases: list of basis
         subdomains: dict of subdomains
         dtype: data type of linear system"""
-        self.dof_handler = dof_handler
-        self.nb_global_dofs = dof_handler.get_nb_dofs()
+        self.fe_space = fe_space
+        self.nb_global_dofs = fe_space.get_nb_dofs()
         self.dtype = dtype
         self.elem_mat = {}
         for mat, elems in subdomains.items():
@@ -56,9 +56,9 @@ class BaseAssembler:
     def assemble_material_K(self, bases, var = None, omega = 0):
         self.omega = omega
         if var is None:
-            dofs_index = self.dof_handler.get_global_dofs()
+            dofs_index = self.fe_space.get_global_dofs()
         else:
-            dofs_index = self.dof_handler.get_global_dofs_by_base(var)
+            dofs_index = self.fe_space.get_global_dofs_by_base(var)
         for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
             local_indices = get_indeces(basis.local_dofs_index())
             global_indices = get_indeces(dofs)
@@ -82,9 +82,9 @@ class BaseAssembler:
     def assemble_material_M(self, bases, var = None, omega = 0):
         self.omega = omega
         if var is None:
-            dofs_index = self.dof_handler.get_global_dofs()
+            dofs_index = self.fe_space.get_global_dofs()
         else:
-            dofs_index = self.dof_handler.get_global_dofs_by_base(var)
+            dofs_index = self.fe_space.get_global_dofs_by_base(var)
         for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
             local_indices = get_indeces(basis.local_dofs_index())
             global_indices = get_indeces(dofs)
@@ -107,13 +107,13 @@ class BaseAssembler:
 
 
 class HelmholtzAssembler(BaseAssembler):
-    def __init__(self, dof_handler, subdomains, dtype) -> None:
+    def __init__(self, fe_space, subdomains, dtype) -> None:
         """
         General assembler for Helmholtz equation
         bases: list of basis
         subdomains: dict of subdomains
         dtype: data type of linear system"""
-        super().__init__(dof_handler, subdomains, dtype)
+        super().__init__(fe_space, subdomains, dtype)
         self.elem_mat = {}
         for mat, elems in subdomains.items():
             if mat.TYPE == 'Fluid':
@@ -135,8 +135,8 @@ class BiotAssembler(BaseAssembler):
     """
     Assembler for Biot's equation (only for Biot UP coupling equations)
     """
-    def __init__(self, dof_handler, subdomains, dtype) -> None:
-        super().__init__(dof_handler, subdomains, dtype)
+    def __init__(self, fe_space, subdomains, dtype) -> None:
+        super().__init__(fe_space, subdomains, dtype)
         self.C = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
         self.elem_mat = {}
         for mat, elems in subdomains.items():
@@ -153,10 +153,10 @@ class BiotAssembler(BaseAssembler):
     def assemble_material_C(self, bases, var_1=None, var_2=None, omega = 0):
         self.omega = omega
         if var_1 is None:
-            dofs_index_1 = self.dof_handler.get_global_dofs()
+            dofs_index_1 = self.fe_space.get_global_dofs()
         else:
-            dofs_index_1 = self.dof_handler.get_global_dofs_by_base(var_1)
-            dofs_index_2 = self.dof_handler.get_global_dofs_by_base(var_2)
+            dofs_index_1 = self.fe_space.get_global_dofs_by_base(var_1)
+            dofs_index_2 = self.fe_space.get_global_dofs_by_base(var_2)
         for i, (dofs_1, dofs_2, basis) in enumerate(zip(dofs_index_1, dofs_index_2, bases)):
             local_indices = get_indeces(basis.local_dofs_index())
             global_indices = get_indeces(dofs_1, dofs_2)

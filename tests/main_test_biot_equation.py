@@ -126,7 +126,7 @@ def test_case():
 
     # ============================= Solve the linear system ================================
     # solver the linear system
-    linear_solver = LinearSolver(dof_handler)
+    linear_solver = LinearSolver(fe_space=dof_handler)
     # print("condition number:", linear_solver.condition_number(left_hand_matrix))
     # plot_matrix_partten(left_hand_matrix)
     linear_solver.solve(left_hand_matrix, right_hand_vector)
@@ -141,12 +141,15 @@ def test_case():
     post_processer_p = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Pressure')
     post_processer_p.plot_sol((np.real(sol[:num_elem+1]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[4,:]), 'Analytical', 'dashed'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
-    plt.show()
+    plt.show(block=False)
+    plt.pause(1)
 
     post_processer_u = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Solid displacement')
     post_processer_u.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[1,:]), 'Analytical', 'dashed'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
-    # plt.show()
+    plt.show(block=False)
+    plt.pause(1)
+    plt.close('all')
     
 
     error_p = post_processer_p.compute_error(sol[:num_elem+1], ana_sol[4,:])
