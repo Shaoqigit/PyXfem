@@ -36,4 +36,7 @@ Every time one new feature is developed, a new test case has to be added in the 
 Test case:  main_test1_two_layer.py                                      SUCCESS
 Test case:  main_test2_impedance_bc.py                                   SUCCESS
 Test case:  main_test3_lobatto.py                                        SUCCESS
+Test case:  main_test4_biot.py                                           SUCCESS
+Test case:  main_test5_biot_up.py                                        SUCCESS
+Test case:  main_absorption_comp.py                                      SUCCESS
 ```
