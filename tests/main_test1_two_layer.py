@@ -22,7 +22,6 @@ import sys
 sys.path.append(working_dir)
 
 import numpy as np
-import meshio
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
