@@ -15,8 +15,12 @@
 # copies or substantial portions of the Software.
 
 # Main Test case 
+import os
+current_dir = os.path.dirname(os.path.realpath(__file__))
+working_dir = os.path.join(current_dir , "..")
 import sys
-sys.path.append('/home/shaoqi/Devlop/PyXfem/PyAcoustiX/')
+sys.path.append(working_dir)
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pymls import *
