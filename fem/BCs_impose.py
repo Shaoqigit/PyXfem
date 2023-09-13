@@ -59,7 +59,9 @@ class ApplyBoundaryConditions:
         mat.set_frequency(self.omega)
         mat_coeff = 1j*1/mat.rho_f*(self.omega/mat.c_f)*impedence_bcs['value']
         data = np.array([mat_coeff*1])
-        self.left_hand_side += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+        C_damp = csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+        self.left_hand_side += C_damp
+        return C_damp
 
         
     def apply_nature_bc(self, nature_bc, var=None):

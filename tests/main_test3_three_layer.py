@@ -15,10 +15,15 @@
 # copies or substantial portions of the Software.
 
 # Main Test case 
+import os
+current_dir = os.path.dirname(os.path.realpath(__file__))
+working_dir = os.path.join(current_dir , "..")
+import sys
+sys.path.append(working_dir)
 
 import numpy as np
-import meshio
 import matplotlib.pyplot as plt
+from matplotlib import animation
 from matplotlib.pyplot import spy
 
 from fem.basis import Lobbato1DElement
@@ -55,7 +60,7 @@ bases = []  # basis applied on each element, could be different order and type
 order = 2  # global order of the bases
 # applied the basis on each element
 for key, elem in elements_set.items():
-    basis = Lobbato1DElement(order, elem)
+    basis = Lobbato1DElement('Pf', order, elem)
     bases.append(basis)
     # print(basis.ke)
     # print(basis.me)
@@ -121,8 +126,21 @@ sol = linear_solver.u
 
 
 # plot the solution
-post_process = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
-post_process.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'))
-post_process.display_layers(nodes[99], nodes[119])
-plt.show()
+# post_process = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
+# post_process.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'))
+# post_process.display_layers(nodes[99], nodes[119])
+# plt.show()
+
+# plot the solution as animation as with change of time
+fig = plt.figure()
+ax = plt.axes(xlim=(-1, 1), ylim=(-300, 300))
+line, = ax.plot([], [], lw=2)
+
+time = np.linspace(0, 1, 201)
+
+plt.ion()
+for i in range(len(time)):
+    plt.clf()
+    plt.plot(nodes, np.real(sol*np.exp(-1j*omega*i)))
+    plt.pause(0.1)
 

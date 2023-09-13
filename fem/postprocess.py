@@ -48,10 +48,6 @@ class PostProcessField(object):
 
     def compute_error(self, sol, ana_sol, remove=None):
         # relative error
-        # rough error computation
-        # sol = sol[:remove]
-        # ana_sol = ana_sol[:remove]
-        # error = np.mean(np.abs(sol-ana_sol)/np.abs(ana_sol))
 
         # Compute the differences between the solutions
         differences = np.abs(ana_sol - sol)
@@ -72,9 +68,6 @@ class PostProcessField(object):
         # Relative error
         l2_error = np.sqrt(mean_squared_difference/abs_analytical)
 
-        # Take the square root to get the L2 error
-        # l2_error = np.sqrt(mean_squared_difference)
-        # error = np.mean(np.abs(sol-ana_sol))
         return l2_error
     
     # def compute_L2_error(self, mesh, sol, ana_sol):

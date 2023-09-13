@@ -66,6 +66,7 @@ class Mesh1D(BaseMesh):
         for i, coord in enumerate(self.nodes):
             num_node2coord2[i] = coord
         return num_node2coord2
+    
     @property
     def coord2node_num(self):
         """return element number from node number"""

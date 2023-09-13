@@ -19,6 +19,7 @@
 
 import numpy as np
 from abc import ABCMeta, abstractmethod
+from functools import cached_property
 
 from fem.precompute_matrices import Ke1D, Me1D, Ce1D
 
@@ -41,7 +42,7 @@ class Base1DElement(metaclass=ABCMeta):
         self.nodes = nodes
         self.is_discontinue = False
 
-    @property
+    @cached_property
     def Jacobian(self):
         """
         compute the Jacobian of the element
@@ -51,7 +52,7 @@ class Base1DElement(metaclass=ABCMeta):
 
         return np.abs(self.nodes[0]-self.nodes[1])/2
 
-    @property
+    @cached_property
     def inverse_Jacobian(self):
         return 2/np.abs(self.nodes[0]-self.nodes[1])
 
@@ -67,7 +68,7 @@ class Lobbato1DElement(Base1DElement):
     def __init__(self, label, order, nodes):
         super().__init__(label, order, nodes)
 
-    @property
+    @cached_property
     def ke(self):
         """compute the elementary stiffness matrix
         returns:
@@ -87,7 +88,7 @@ class Lobbato1DElement(Base1DElement):
             print("quadrtic lobatto not supported yet")
         return Ke
     
-    @property
+    @cached_property
     def me(self):
         """compute the elementary stiffness matrix
         returns:
@@ -106,7 +107,7 @@ class Lobbato1DElement(Base1DElement):
             print("quadrtic lobatto not supported yet")
         return Me
     
-    @property
+    @cached_property
     def ce(self):
         """compute the elementary coupling matrix, N(x)B(x)
         returns:
@@ -128,9 +129,11 @@ class Lobbato1DElement(Base1DElement):
     def get_order(self):
         return self.order
     
-    def num_internal_dofs(self):
+    @property
+    def nb_internal_dofs(self):
         return self.order-1
     
+    @property
     def local_dofs_index(self):
         return np.arange(self.order+1)
     

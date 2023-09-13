@@ -89,18 +89,14 @@ def test_case():
         else:
             raise ValueError("Material type is not defined!")
 
-    Helmholtz_dof_handler = GeneralDofHandler1D(['Pf'], Pf_bases)
-    Biot_dof_handler = GeneralDofHandler1D(['Pb','Ux'], Pb_bases, Ux_bases)
-    # print(Helmholtz_dof_handler.get_nb_dofs())
-    # print(Helmholtz_dof_handler.get_global_dofs())
-    # print(Biot_dof_handler.get_global_dofs())
-    fe_space = FESpace(mesh, subdomains, Pf_bases, Pb_bases, Ux_bases)
+    Helmholtz_fe_space = FESpace(mesh, subdomains, Pf_bases)
+    Biot_fe_space = FESpace(mesh, subdomains, Pb_bases, Ux_bases)
 
     # initialize the assembler
-    Helmholtz_assember = HelmholtzAssembler(Helmholtz_dof_handler, subdomains, dtype=np.complex128)
+    Helmholtz_assember = HelmholtzAssembler(Helmholtz_fe_space, subdomains, dtype=np.complex128)
     Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
 
-    Biot_assember = BiotAssembler(Biot_dof_handler, subdomains, dtype=np.complex128)
+    Biot_assember = BiotAssembler(Biot_fe_space, subdomains, dtype=np.complex128)
     Biot_assember.assembly_global_matrix([Pb_bases,Ux_bases], ['Pb', 'Ux'], omega)
     import pdb;pdb.set_trace()
     Assembler = CouplingAssember(mesh, subdomains, [Helmholtz_assember, Biot_assember], coupling_type="PP_continue")
@@ -109,6 +105,7 @@ def test_case():
     # import pdb; pdb.set_trace()
 
     # ============================= Boundary conditions =====================================
+    fe_space = FESpace(mesh, subdomains, Pf_bases, Pb_bases, Ux_bases)
     right_hand_vec = np.zeros(Assembler.nb_global_dofs, dtype=np.complex128)
     # essential_bcs = {'type': 'solid_displacement', 'value': P_a(-1,0), 'position': -1.}  # position is the x coordinate
     BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix, right_hand_vec, omega)

@@ -56,7 +56,7 @@ class DofHandler1D:
         internal_dof_index_start = self.mesh.get_nb_nodes()
         for i, basis in enumerate(self.bases):
             # print("internal_dof_index_start", internal_dof_index_start)
-            if basis.num_internal_dofs() == 0:
+            if basis.nb_internal_dofs == 0:
                 global_dof.append(self.mesh.connectivity[i])
                 continue
             elem = self.mesh.connectivity[i]
@@ -121,7 +121,7 @@ class DofHandler1DMutipleVariable(DofHandler1D):
             whole_connect = np.vstack((whole_connect, new_connect))
 
         for i, basis in enumerate(self.whole_bases):
-            if basis.num_internal_dofs() == 0:
+            if basis.nb_internal_dofs == 0:
                 global_dof.append(whole_connect[i])
                 continue
             elem = whole_connect[i]
@@ -209,7 +209,7 @@ class GeneralDofHandler1D(DofHandler1D):
             whole_connect = np.vstack((whole_connect, new_connect))
 
         for i, basis in enumerate(self.whole_bases):
-            if basis.num_internal_dofs() == 0:
+            if basis.nb_internal_dofs == 0:
                 global_dof.append(whole_connect[i])
                 continue
             elem = whole_connect[i]
@@ -258,8 +258,6 @@ class FESpace:
         self.whole_bases = []
         for bases in all_bases:
             self.whole_bases += bases
-
-        self.nb_external_dof = len(self.whole_bases)
 
         self.var_names = [base.label for base in self.whole_bases ]
 
@@ -334,7 +332,7 @@ class FESpace:
             whole_connect = np.vstack((whole_connect, new_connect))
 
         for i, basis in enumerate(self.whole_bases):
-            if basis.num_internal_dofs() == 0:
+            if basis.nb_internal_dofs == 0:
                 global_dof.append(whole_connect[i])
                 continue
             elem = whole_connect[i]

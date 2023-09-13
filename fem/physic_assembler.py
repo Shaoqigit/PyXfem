@@ -60,7 +60,7 @@ class BaseAssembler:
         else:
             dofs_index = self.fe_space.get_global_dofs_by_base(var)
         for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-            local_indices = get_indeces(basis.local_dofs_index())
+            local_indices = get_indeces(basis.local_dofs_index)
             global_indices = get_indeces(dofs)
             row = global_indices[:,0]
             col = global_indices[:,1]
@@ -86,7 +86,7 @@ class BaseAssembler:
         else:
             dofs_index = self.fe_space.get_global_dofs_by_base(var)
         for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-            local_indices = get_indeces(basis.local_dofs_index())
+            local_indices = get_indeces(basis.local_dofs_index)
             global_indices = get_indeces(dofs)
             # print(global_indices)
             row = global_indices[:,0]
@@ -118,6 +118,8 @@ class HelmholtzAssembler(BaseAssembler):
         for mat, elems in subdomains.items():
             if mat.TYPE == 'Fluid':
                 self.elem_mat.update({elem: mat for elem in elems})
+            # self.elem_mat.update({i: mat for i in np.arange(len(elems))})
+
 
         self.K = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
         self.M = csr_array((self.nb_global_dofs, self.nb_global_dofs), dtype=self.dtype)
@@ -141,7 +143,9 @@ class BiotAssembler(BaseAssembler):
         self.elem_mat = {}
         for mat, elems in subdomains.items():
             if mat.TYPE == 'Poroelastic':
-                self.elem_mat.update({i: mat for i in np.arange(len(elems))})
+                self.elem_mat.update({elem: mat for elem in elems})
+
+                # self.elem_mat.update({i: mat for i in np.arange(len(elems))})
         
 
     def initial_matrix(self):
@@ -158,7 +162,7 @@ class BiotAssembler(BaseAssembler):
             dofs_index_1 = self.fe_space.get_global_dofs_by_base(var_1)
             dofs_index_2 = self.fe_space.get_global_dofs_by_base(var_2)
         for i, (dofs_1, dofs_2, basis) in enumerate(zip(dofs_index_1, dofs_index_2, bases)):
-            local_indices = get_indeces(basis.local_dofs_index())
+            local_indices = get_indeces(basis.local_dofs_index)
             global_indices = get_indeces(dofs_1, dofs_2)
             # print(global_indices)
             row = global_indices[:,0]
@@ -205,7 +209,7 @@ class CouplingAssember:
         self.dtype = np.int8
         for comp in components:
             self.nb_global_dofs +=comp.nb_global_dofs
-            self.nb_external_dofs += comp.dof_handler.num_external_dofs
+            self.nb_external_dofs += comp.dof_handler.nb_external_dofs
             self.dtype = comp.dtype
 
         if "continue" in coupling_type:
@@ -221,13 +225,13 @@ class CouplingAssember:
         index_external_start = 0
         index_internal_start = self.nb_external_dofs
         for comp in self.components:
-            local_external_index = comp.dof_handler.num_external_dofs
-            index_external_end = index_external_start + comp.dof_handler.num_external_dofs
+            local_external_index = comp.dof_handler.nb_external_dofs
+            index_external_end = index_external_start + comp.dof_handler.nb_external_dofs
             self.global_matrix[index_external_start: index_external_end, index_external_start:index_external_end] += comp.get_global_matrix().tolil()[:local_external_index, :local_external_index]
 
 
-            local_internal_index = local_external_index + comp.dof_handler.num_internal_dofs
-            index_internal_end = index_internal_start+comp.dof_handler.num_internal_dofs
+            local_internal_index = local_external_index + comp.dof_handler.nb_internal_dofs
+            index_internal_end = index_internal_start+comp.dof_handler.nb_internal_dofs
             self.global_matrix[index_internal_start: index_internal_end, index_internal_start:index_internal_end] += comp.get_global_matrix().tolil()[local_external_index:local_internal_index, local_external_index:local_internal_index]
 
 

@@ -63,7 +63,7 @@ class Assembler:
         """
 
         for dofs, basis in zip(self.dof_handler.get_global_dofs(), self.bases):
-            local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
+            local_indices = np.array([(row, col) for row in basis.local_dofs_index for col in basis.local_dofs_index])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
             # print(global_indices)
             row = global_indices.T[0]
@@ -77,7 +77,7 @@ class Assembler:
         """
 
         for dofs, basis in zip(self.dof_handler.get_global_dofs(), self.bases):
-            local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
+            local_indices = np.array([(row, col) for row in basis.local_dofs_index for col in basis.local_dofs_index])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
             # print(global_indices)
             row = global_indices.T[0]
@@ -93,7 +93,7 @@ class Assembler:
         """
         self.omega = omega
         for i, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
-            local_indices = get_indeces(basis.local_dofs_index())
+            local_indices = get_indeces(basis.local_dofs_index)
             global_indices = get_indeces(dofs)
             # print(global_indices)
             row = global_indices[:,0]
@@ -115,7 +115,7 @@ class Assembler:
         """
         self.omega = omega
         for i, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
-            local_indices = get_indeces(basis.local_dofs_index())
+            local_indices = get_indeces(basis.local_dofs_index)
             global_indices = get_indeces(dofs)
             # print(global_indices)
             row = global_indices[:,0]
@@ -137,7 +137,7 @@ class Assembler:
         """
         self.omega = omega
         for i, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
-            local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
+            local_indices = np.array([(row, col) for row in basis.local_dofs_index for col in basis.local_dofs_index])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
             # print(global_indices)
             row = global_indices[:,0]
@@ -205,7 +205,7 @@ class Assembler4Biot:
 
     def assemble_K(self, bases):
         for dofs, basis in zip(self.dof_handler.get_global_dofs(), bases):
-            local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
+            local_indices = np.array([(row, col) for row in basis.local_dofs_index for col in basis.local_dofs_index])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
             # print(global_indices)
             row = global_indices.T[0]
@@ -215,7 +215,7 @@ class Assembler4Biot:
 
     def assemble_M(self, bases):  
         for dofs, basis in zip(self.dof_handler.get_global_dofs(), bases):
-            local_indices = np.array([(row, col) for row in basis.local_dofs_index() for col in basis.local_dofs_index()])
+            local_indices = np.array([(row, col) for row in basis.local_dofs_index for col in basis.local_dofs_index])
             global_indices = np.array([(row, col) for row in dofs for col in dofs])
             # print(global_indices)
             row = global_indices.T[0]
@@ -235,7 +235,7 @@ class Assembler4Biot:
         else:
             dofs_index = self.dof_handler.get_global_dofs_by_base(var)
         for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-            local_indices = get_indeces(basis.local_dofs_index())
+            local_indices = get_indeces(basis.local_dofs_index)
             global_indices = get_indeces(dofs)
             row = global_indices[:,0]
             col = global_indices[:,1]
@@ -264,7 +264,7 @@ class Assembler4Biot:
         else:
             dofs_index = self.dof_handler.get_global_dofs_by_base(var)
         for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-            local_indices = get_indeces(basis.local_dofs_index())
+            local_indices = get_indeces(basis.local_dofs_index)
             global_indices = get_indeces(dofs)
             # print(global_indices)
             row = global_indices[:,0]
@@ -295,7 +295,7 @@ class Assembler4Biot:
             dofs_index_1 = self.dof_handler.get_global_dofs_by_base(var_1)
             dofs_index_2 = self.dof_handler.get_global_dofs_by_base(var_2)
         for i, (dofs_1, dofs_2, basis) in enumerate(zip(dofs_index_1, dofs_index_2, bases)):
-            local_indices = get_indeces(basis.local_dofs_index())
+            local_indices = get_indeces(basis.local_dofs_index)
             global_indices = get_indeces(dofs_1, dofs_2)
             # print(global_indices)
             row = global_indices[:,0]

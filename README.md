@@ -21,6 +21,7 @@
 * Biot UP and Fluid coupling model (implemented but not fully validated)
 
 ### To do list
+* Modal domain reduction method
 * Perfect Matched Layer (PML) for free field boundary condition
 * Infinite Element for free field boundary condition
 * Finite Admittance Method (FAM) for high precision multi-layered configuration
