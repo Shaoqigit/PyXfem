@@ -13,13 +13,16 @@ class EigenSolver(BaseSolver):
     def solve(self, stiffness_matrix, mass_matrix, nb_modes):
         import time
         start = time.time()
-        from scipy.linalg import eig
-        from scipy.sparse.linalg import eigsh
-        from scipy.sparse.linalg import eigs
+        # from scipy.linalg import eig
+        # from scipy.sparse.linalg import eigsh
+        # from scipy.sparse.linalg import eigs
+        from scipy.linalg import eigh
+
         end = time.time()
         print("Eigenvalue problem solving time: ", end-start)
 
-        eig_freq, modes = eigsh(stiffness_matrix, k=nb_modes, M=mass_matrix, which='SM', return_eigenvectors=True)
+        # eig_freq, modes = eigs(stiffness_matrix, k=nb_modes, M=mass_matrix, which='LM', return_eigenvectors=True)
+        eig_freq, modes = eigh(stiffness_matrix.toarray(), mass_matrix.toarray(), type=1, subset_by_index=[0, nb_modes-1])
 
         return eig_freq, modes
     

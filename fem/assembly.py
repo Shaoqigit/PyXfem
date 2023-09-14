@@ -57,34 +57,42 @@ class Assembler:
         for key, elems in subdomains.items():
             self.elem_mat.update({elem: key for elem in elems})
 
+    def initial_matrix(self):
+        self.K = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+        self.M = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)  
+
     def assemble_K(self):
         """
         get the global stiffness matrix without material property
         """
 
-        for dofs, basis in zip(self.dof_handler.get_global_dofs(), self.bases):
-            local_indices = np.array([(row, col) for row in basis.local_dofs_index for col in basis.local_dofs_index])
-            global_indices = np.array([(row, col) for row in dofs for col in dofs])
+        for _, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
+            local_indices = get_indeces(basis.local_dofs_index)
+            global_indices = get_indeces(dofs)
             # print(global_indices)
-            row = global_indices.T[0]
-            col = global_indices.T[1]
-            data = basis.ke[local_indices.T[0], local_indices.T[1]]
-            self.K += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs))
+            row = global_indices[:,0]
+            col = global_indices[:,1]
+            data = basis.ke[local_indices.T[0], local_indices[:,1]]
+            self.K += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
+
+
+        return self.K
 
     def assemble_M(self): 
         """
         get the global mass matrix without material property
         """
-
-        for dofs, basis in zip(self.dof_handler.get_global_dofs(), self.bases):
-            local_indices = np.array([(row, col) for row in basis.local_dofs_index for col in basis.local_dofs_index])
-            global_indices = np.array([(row, col) for row in dofs for col in dofs])
+        for _, (dofs, basis) in enumerate(zip(self.dof_handler.get_global_dofs(), self.bases)):
+            local_indices = get_indeces(basis.local_dofs_index)
+            global_indices = get_indeces(dofs)
             # print(global_indices)
-            row = global_indices.T[0]
-            col = global_indices.T[1]
-            data = basis.me[local_indices.T[0], local_indices.T[1]]
-            self.M += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs))
+            row = global_indices[:,0]
+            col = global_indices[:,1]
+            data = basis.me[local_indices[:,0], local_indices[:,1]]
+            self.M += csr_array((data, (row, col)), shape=(self.nb_dofs, self.nb_dofs), dtype=self.dtype)
 
+
+        return self.M
         
 
     def assemble_material_K(self, omega = 0):

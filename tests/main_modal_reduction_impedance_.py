@@ -39,6 +39,8 @@ from analytical.fluid_sol import ImpedenceKundltTube
 
 
 def FEM_model(omega, assembler, nature_bcs):
+    assembler.initial_matrix()
+
     K_g= assembler.assemble_material_K(omega)  # global stiffness matrix with material attribution
     M_g= assembler.assemble_material_M(omega)  # global mass matrix with material attribution
 
@@ -56,22 +58,27 @@ def FEM_model(omega, assembler, nature_bcs):
 
 
 def reduction_model(omega, assembler, nature_bcs, nb_modes):
+    assembler.initial_matrix()
+    # import pdb; pdb.set_trace()
 
-    K_w= assembler.assemble_material_K(omega=1)  # global stiffness matrix no frequency dependent material
-    M_w= assembler.assemble_material_M(omega=1)  # global mass matrix: the eigen freq should be omega^2
+    K_w= assembler.assemble_K()  # global stiffness matrix no frequency dependent material
+    M_w= assembler.assemble_M()  # global mass matrix: the eigen freq should be omega^2
   
     # construct modal domain
-    import pdb; pdb.set_trace()
     eigen_value_solver = EigenSolver(dof_handler)
     eig_omega_sq, modes = eigen_value_solver.solve(K_w, M_w, nb_modes)
     eig_freqs = np.sqrt(eig_omega_sq)/(2*np.pi)
     
+    post_process = PostProcessField(mesh.nodes, f'1D modal analysis ({eig_freqs[10]}$Hz$)')
+    post_process.plot_sol((np.real(modes[:,10]), f'FEM ($m=1$)', 'solid'))
+    plt.show()
+
     modal_reduction_method = ModalReduction(eig_freqs, modes)
 
     # print(assembler.get_matrix_in_array(left_hand_matrix))
     #  natural boundary condition   
     assembler.omega = omega
-    nature_bcs = {'type': 'velocity', 'value': 1, 'position': 0}
+    nature_bcs = {'type': 'velocity', 'value': 1*np.exp(1j), 'position': 0}
     right_hand_vector = assembler.assemble_nature_bc(nature_bcs)
     # print(display_matrix_in_array(C_g))
 
@@ -81,7 +88,7 @@ def reduction_model(omega, assembler, nature_bcs, nb_modes):
     M_r = modal_reduction_method.projection(M_w)
     f_r = modal_reduction_method.projection(right_hand_vector)
 
-    left_hand_matrix = K_r-omega**2*M_r
+    left_hand_matrix = 1/air.rho_f*(K_r-omega**2/air.c_f**2)*M_r
 
 
     # solver the linear system
@@ -103,7 +110,7 @@ if __name__ == "__main__":
     freq = 2000
     omega = 2 * np.pi * freq  # angular frequency
 
-    num_elem = 400  # number of elements
+    num_elem = 500  # number of elements
     num_nodes = num_elem + 1  # number of nodes
     nodes = np.linspace(-1, 0, num_nodes)
     elem_connec1 = np.arange(0, num_elem)
