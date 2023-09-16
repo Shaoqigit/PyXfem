@@ -65,8 +65,6 @@ def reduction_model(omega, K_r, M_r, f_r):
     return sol
     
 
-
-
 if __name__ == "__main__":
     # ====================== Pysical Problem ======================
     # define the materials
@@ -122,7 +120,7 @@ if __name__ == "__main__":
     # construct modal domain
     eigen_value_solver = EigenSolver(dof_handler)
     eig_omega_sq, modes = eigen_value_solver.solve(K_w, M_w, nb_modes)
-    eig_freqs = np.sqrt(eig_omega_sq)/(2*np.pi)
+    # eig_freqs = np.sqrt(eig_omega_sq)/(2*np.pi)
     
     modal_reduction_method = ModalReduction(K_w, M_w, modes)
 
@@ -148,9 +146,9 @@ if __name__ == "__main__":
     # # plot the solution
     post_process = PostProcessFRF(freq, r'1D Helmholtz FRF', 'SPL(dB)')
     post_process.plot_sol((np.real(sol_fem), f'FEM (dofs$={num_elem}$)', 'solid'), (np.real(sol_modal), f'Modal reduction ($m={nb_modes}$)', 'dashed'))
-    plt.show()
-    # plt.pause(1)
-    # plt.close('all')
+    plt.show(block=False)
+    plt.pause(1)
+    plt.close('all')
 
     # compute the error
     error = post_process.compute_error(sol_fem, sol_modal)

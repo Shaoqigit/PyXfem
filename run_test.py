@@ -7,12 +7,13 @@ import subprocess
 
 test_path = "tests/"
 test_cases = ['test_material_pem.py', 
-              'main_absorption_comp.py',
-              'main_test1_two_layer.py', 
-              'main_two_fluid_new.py', 
-              'main_test2_impedance_bc.py', 
-              'main_test_biot_equation.py',
-              'main_test_biot_equation_new.py']
+              'test_absorption_comp.py',
+              'test1_two_layer.py', 
+              'test_two_fluid_new.py', 
+              'test2_impedance_bc.py', 
+              'test_biot_equation.py',
+              'test_biot_equation_new.py',
+              'test_modal_reduction_FRF.py',]
 for test_case in test_cases:
     cmd = ['python3', test_path+test_case]
     # print(cmd)

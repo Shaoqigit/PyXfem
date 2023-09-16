@@ -32,24 +32,6 @@ class BasePostProcess(object):
         self.ax.set_xlabel(xaxis)
         self.ax.set_ylabel(yaxis)
 
-class PostProcessField(BasePostProcess):
-
-    def __init__(self, x_nodes, title):
-        self.x_nodes = x_nodes
-        self.set_figure('Position(m)', 'Pressure(Pa)')
-
-    
-    def plot_sol(self, *sols):
-        for sol in sols:
-            self.ax.plot(self.x_nodes, sol[0], label=sol[1], linestyle=sol[2])
-        
-        self.ax.legend()
-
-    def display_layers(self, *layers_pos):
-        for pos in layers_pos:
-            self.ax.axvline(x=pos, ls='--', c='k')
-
-
     def compute_error(self, sol, ana_sol, remove=None):
         # relative error
 
@@ -73,15 +55,39 @@ class PostProcessField(BasePostProcess):
         l2_error = np.sqrt(mean_squared_difference/abs_analytical)
 
         return l2_error
+
+class PostProcessField(BasePostProcess):
+
+    def __init__(self, x_nodes, title):
+        super().__init__(title)
+        self.x_nodes = x_nodes
+        self.set_figure('Position(m)', 'Pressure(Pa)')
+
+    
+    def plot_sol(self, *sols):
+        for sol in sols:
+            self.ax.plot(self.x_nodes, sol[0], label=sol[1], linestyle=sol[2])
+        
+        self.ax.legend()
+
+    def display_layers(self, *layers_pos):
+        for pos in layers_pos:
+            self.ax.axvline(x=pos, ls='--', c='k')
+
+
+
     
 # frequency response function postprocessor
 class PostProcessFRF(BasePostProcess):  
 
-    def __init__(self, freqs, title, acoustic_indicator='SPL(dB)'):
+    def __init__(self, freqs, title, acoustic_indicator='SPL'):
         super().__init__(title)
         self.freqs = freqs
         self.operator=acoustic_indicator
-        self.set_figure('Frequency(Hz)', acoustic_indicator)
+        unit = ''
+        if acoustic_indicator == 'SPL':
+            unit = 'dB'
+        self.set_figure('Frequency(Hz)', acoustic_indicator+f'({unit})')
 
     def get_operator(self):
         if self.operator == 'SPL(dB)':
@@ -96,10 +102,3 @@ class PostProcessFRF(BasePostProcess):
             self.ax.plot(self.freqs, sol_r, label=sol[1], linestyle=sol[2])
         
         self.ax.legend()
-    # def compute_L2_error(self, mesh, sol, ana_sol):
-    #     # L2 error
-    #     # rough error computation
-    #     error = 0
-    #     for i in range(len(mesh.elements)):
-    #         error += 
-    #     return error

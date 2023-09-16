@@ -13,9 +13,6 @@ class EigenSolver(BaseSolver):
     def solve(self, stiffness_matrix, mass_matrix, nb_modes):
         import time
         start = time.time()
-        # from scipy.linalg import eig
-        # from scipy.sparse.linalg import eigsh
-        # from scipy.sparse.linalg import eigs
         from scipy.linalg import eigh
 
         end = time.time()
@@ -30,12 +27,9 @@ class EigenSolver(BaseSolver):
 class ModalReduction:
     """modal reduction class
     parameters:
-    order: int
-        element order
-    nodes: ndarray
-        1d: [x1, x2]
-        2d: [(x1, y1), (x2, y2)]
-        3d: [(x1, y1, z1), (x2, y2, z2)]
+    K_w: ndarray original stiffness matrix
+    M_w: ndarray original mass matrix
+    modes: ndarray modal matrix [solution at modes]
     """
     def __init__(self, K_w, M_w, modes):
         self.K_w = K_w
@@ -43,13 +37,12 @@ class ModalReduction:
         self.Phi_m = modes
 
     def projection(self, original_array):
-        """project f to modal space
+        """project original matrix/vector on modal basis to modal space
         parameters:
-        f: ndarray
-            f(x)
+        original_array: ndarray
         returns:
-        f_m: ndarray
-            f_m(x)
+        array: ndarray
+            projected reducded matrix/vector
         """
         if len(original_array.shape) == 1:
             array = self.Phi_m.T @ original_array
@@ -76,13 +69,12 @@ class ModalReduction:
         return sol
     
     def recover_sol(self, reducde_sol):
-        """recover the solution from modal space
+        """recover the physical solution from modal space
         parameters:
-        f_m: ndarray
-            f_m(x)
+        reduced_sol: ndarray/solution vector
+
         returns:
-        f: ndarray
-            f(x)
+        sol: recoverd solution in physical space
         """
         sol = self.Phi_m @ reducde_sol
         return sol
