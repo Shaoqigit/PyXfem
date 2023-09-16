@@ -34,18 +34,15 @@ from fem.utilities import check_material_compability, display_matrix_in_array, p
 from fem.solver import LinearSolver
 
 from mor.modal_reduction import EigenSolver, ModalReduction
-from fem.postprocess import PostProcessField
+from fem.postprocess import PostProcessField, PostProcessFRF
 from analytical.fluid_sol import ImpedenceKundltTube
 
 
 def FEM_model(omega, assembler, nature_bcs):
     assembler.initial_matrix()
-
     K_g= assembler.assemble_material_K(omega)  # global stiffness matrix with material attribution
     M_g= assembler.assemble_material_M(omega)  # global mass matrix with material attribution
-
     right_hand_vector = assembler.assemble_nature_bc(nature_bcs)
-
     left_hand_matrix = K_g-M_g
 
     # solver the linear system
@@ -57,44 +54,12 @@ def FEM_model(omega, assembler, nature_bcs):
     return sol
 
 
-def reduction_model(omega, assembler, nature_bcs, nb_modes):
-    assembler.initial_matrix()
-    # import pdb; pdb.set_trace()
+def reduction_model(omega, K_r, M_r, f_r):
 
-    K_w= assembler.assemble_K()  # global stiffness matrix no frequency dependent material
-    M_w= assembler.assemble_M()  # global mass matrix: the eigen freq should be omega^2
-  
-    # construct modal domain
-    eigen_value_solver = EigenSolver(dof_handler)
-    eig_omega_sq, modes = eigen_value_solver.solve(K_w, M_w, nb_modes)
-    eig_freqs = np.sqrt(eig_omega_sq)/(2*np.pi)
-    
-    post_process = PostProcessField(mesh.nodes, f'1D modal analysis ({eig_freqs[10]}$Hz$)')
-    post_process.plot_sol((np.real(modes[:,10]), f'FEM ($m=1$)', 'solid'))
-    plt.show()
-
-    modal_reduction_method = ModalReduction(eig_freqs, modes)
-
-    # print(assembler.get_matrix_in_array(left_hand_matrix))
-    #  natural boundary condition   
-    assembler.omega = omega
-    nature_bcs = {'type': 'velocity', 'value': 1*np.exp(1j), 'position': 0}
-    right_hand_vector = assembler.assemble_nature_bc(nature_bcs)
-    # print(display_matrix_in_array(C_g))
-
-    # ====================== Reduced System ======================
-    # reduced the system
-    K_r = modal_reduction_method.projection(K_w)
-    M_r = modal_reduction_method.projection(M_w)
-    f_r = modal_reduction_method.projection(right_hand_vector)
-
-    left_hand_matrix = 1/air.rho_f*(K_r-omega**2/air.c_f**2)*M_r
-
-
+    left_hand_matrix = K_r-omega**2*M_r
     # solver the linear system
     reduced_sol = modal_reduction_method.solve(left_hand_matrix, f_r)
     
-    import pdb; pdb.set_trace()
     sol = modal_reduction_method.recover_sol(reduced_sol)
 
     return sol
@@ -107,8 +72,8 @@ if __name__ == "__main__":
     # define the materials
     air = Air('classical air')
     # Harmonic Acoustic problem define the frequency
-    freq = 2000
-    omega = 2 * np.pi * freq  # angular frequency
+    freq = np.linspace(10, 2000, 100)  # frequency range
+    omegas = 2 * np.pi * freq  # angular frequency
 
     num_elem = 500  # number of elements
     num_nodes = num_elem + 1  # number of nodes
@@ -136,23 +101,53 @@ if __name__ == "__main__":
     dof_handler = DofHandler1D(mesh, bases)
 
     assembler = Assembler(dof_handler, bases, subdomains, dtype=np.complex128)
-    nature_bcs = {'type': 'velocity', 'value': 1*np.exp(1j), 'position': 0}
+    nature_bcs = {'type': 'total_displacement', 'value': 1, 'position': 0}
     impedence_bcs = {'type': 'impedence', 'value': 0., 'position': num_elem}
 
+    import time
+    start = time.time()
+    sol_fem = np.zeros(100, dtype=np.complex128)
+    for i, omega in enumerate(omegas):
+        sol_fem[i] = FEM_model(omega, assembler, nature_bcs)[int(num_nodes/2)]
+    end = time.time()
+    print("FEM solving time: ", end-start)
 
-    sol_fem = FEM_model(omega, assembler, nature_bcs)
-    nb_modes = 100
-    sol_modal = reduction_model(omega, assembler, nature_bcs, nb_modes)
+    # ====================== Modal Reduction ======================
+    start = time.time()
+    nb_modes = 5
+    assembler.initial_matrix()
+    # import pdb; pdb.set_trace()
+    K_w= assembler.assemble_material_K(omega=1)  # global stiffness matrix no frequency dependent material
+    M_w= assembler.assemble_material_M(omega=1)  # global mass matrix: the eigen freq should be omega^2
+    # construct modal domain
+    eigen_value_solver = EigenSolver(dof_handler)
+    eig_omega_sq, modes = eigen_value_solver.solve(K_w, M_w, nb_modes)
+    eig_freqs = np.sqrt(eig_omega_sq)/(2*np.pi)
+    
+    modal_reduction_method = ModalReduction(K_w, M_w, modes)
 
+    #  natural boundary condition   
+    right_hand_vector = assembler.assemble_nature_bc(nature_bcs)
+    # ====================== Reduced System ======================
+    # reduced the system
+    K_r = modal_reduction_method.projection(K_w)
+    M_r = modal_reduction_method.projection(M_w)
+    f_r = modal_reduction_method.projection(right_hand_vector)
+
+    sol_modal = np.zeros(100, dtype=np.complex128)
+    for i, omega in enumerate(omegas):
+        sol_modal[i] = reduction_model(omega, K_r, M_r, f_r)[int(num_nodes/2)]
+    end = time.time()
+    print("Modal reduction solving time: ", end-start)
         # ====================== Analytical Solution ======================
     # analytical solution
-    kundlt_tube = ImpedenceKundltTube(mesh, air, omega, nature_bcs, impedence_bcs)
-    ana_sol = np.zeros(num_nodes, dtype=np.complex128)  #initialize the analytical solution vector
-    kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
+    # kundlt_tube = ImpedenceKundltTube(mesh, air, omega, nature_bcs, impedence_bcs)
+    # ana_sol = np.zeros(num_nodes, dtype=np.complex128)  #initialize the analytical solution vector
+    # kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
 
     # # plot the solution
-    post_process = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
-    post_process.plot_sol((np.real(sol_fem), f'FEM ($p=1$)', 'solid'), (np.real(sol_modal), f'Modal reduction ($m={nb_modes}$)', 'solid'), (np.real(ana_sol), 'Analytical', 'dashed'))
+    post_process = PostProcessFRF(freq, r'1D Helmholtz FRF', 'SPL(dB)')
+    post_process.plot_sol((np.real(sol_fem), f'FEM (dofs$={num_elem}$)', 'solid'), (np.real(sol_modal), f'Modal reduction ($m={nb_modes}$)', 'dashed'))
     plt.show()
     # plt.pause(1)
     # plt.close('all')

@@ -37,8 +37,9 @@ class ModalReduction:
         2d: [(x1, y1), (x2, y2)]
         3d: [(x1, y1, z1), (x2, y2, z2)]
     """
-    def __init__(self, eigenvalue, modes):
-        self.eigenvalues = eigenvalue
+    def __init__(self, K_w, M_w, modes):
+        self.K_w = K_w
+        self.M_w = M_w
         self.Phi_m = modes
 
     def projection(self, original_array):
@@ -67,7 +68,11 @@ class ModalReduction:
         sol: ndarray
             solution
         """
+        import time
+        start = time.time()
         sol = np.linalg.solve(left_hand_matrix, right_hand_vector)
+        end = time.time()
+        print("solving time: ", end-start)
         return sol
     
     def recover_sol(self, reducde_sol):

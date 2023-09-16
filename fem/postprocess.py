@@ -16,16 +16,14 @@
 
 # simple postprocessor for plotting and error computation
 
+from typing import Any
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-class PostProcessField(object):
-
-    def __init__(self, x_nodes, title):
-        self.x_nodes = x_nodes
+class BasePostProcess(object):
+    def __init__(self, title, *args, **kwargs):
         self.title = title
-        self.set_figure('Position(m)', 'Pressure(Pa)')
 
     def set_figure(self, xaxis, yaxis):
         self.fig = plt.figure()
@@ -33,7 +31,13 @@ class PostProcessField(object):
         self.ax.set_title(self.title)
         self.ax.set_xlabel(xaxis)
         self.ax.set_ylabel(yaxis)
-        
+
+class PostProcessField(BasePostProcess):
+
+    def __init__(self, x_nodes, title):
+        self.x_nodes = x_nodes
+        self.set_figure('Position(m)', 'Pressure(Pa)')
+
     
     def plot_sol(self, *sols):
         for sol in sols:
@@ -70,6 +74,28 @@ class PostProcessField(object):
 
         return l2_error
     
+# frequency response function postprocessor
+class PostProcessFRF(BasePostProcess):  
+
+    def __init__(self, freqs, title, acoustic_indicator='SPL(dB)'):
+        super().__init__(title)
+        self.freqs = freqs
+        self.operator=acoustic_indicator
+        self.set_figure('Frequency(Hz)', acoustic_indicator)
+
+    def get_operator(self):
+        if self.operator == 'SPL(dB)':
+            return lambda x: 20*np.log10(np.abs(x))
+        elif self.operator == 'SPL(dB) - 2':
+            print("Warning: SPL(dB) - 2 is not implemented yet!")
+
+
+    def plot_sol(self, *sols):
+        for sol in sols:
+            sol_r = self.get_operator()(sol[0])
+            self.ax.plot(self.freqs, sol_r, label=sol[1], linestyle=sol[2])
+        
+        self.ax.legend()
     # def compute_L2_error(self, mesh, sol, ana_sol):
     #     # L2 error
     #     # rough error computation
