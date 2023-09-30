@@ -47,6 +47,7 @@ def FEM_model(omega, assembler, nature_bcs):
 
     # solver the linear system
     linear_solver = LinearSolver(dof_handler)
+    # import pdb; pdb.set_trace() 
     # plot_matrix_partten(left_hand_matrix)
     linear_solver.solve(left_hand_matrix, right_hand_vector)
     sol = linear_solver.u
@@ -112,7 +113,7 @@ if __name__ == "__main__":
 
     # ====================== Modal Reduction ======================
     start = time.time()
-    nb_modes = 50
+    nb_modes = 30
     assembler.initial_matrix()
     # import pdb; pdb.set_trace()
     K_w= assembler.assemble_material_K(omega=1)  # global stiffness matrix no frequency dependent material
@@ -147,8 +148,9 @@ if __name__ == "__main__":
     post_process = PostProcessFRF(freq, r'1D Helmholtz FRF', 'SPL(dB)')
     post_process.plot_sol((np.real(sol_fem), f'FEM (dofs$={num_elem}$)', 'solid'), (np.real(sol_modal), f'Modal reduction ($m={nb_modes}$)', 'dashed'))
     plt.show(block=False)
-    plt.pause(1)
-    plt.close('all')
+    plt.show()
+    # plt.pause(1)
+    # plt.close('all')
 
     # compute the error
     error = post_process.compute_error(sol_fem, sol_modal)

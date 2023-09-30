@@ -65,7 +65,7 @@ def test_case_1():
     connectivity = np.vstack((elem_connec1, elem_connec2)).T
     # read the mesh data structure
     mesh = Mesh1D(nodes, connectivity)
-
+    # mesh.plotmesh(withnode=True)
     # define the subdomains: domain name (material) and the elements in the domain
     air_elements = np.arange(0, int(num_elem/2))
     xfm_elements = np.arange(int(num_elem/2), num_elem)
