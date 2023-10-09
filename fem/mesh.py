@@ -43,6 +43,7 @@ class Mesh1D(BaseMesh):
 
     def __init__(self, nodes, elem_connect):
         self.nodes = nodes
+        self.nb_nodes = len(nodes)
         self.elem_connect = elem_connect
 
     def get_mesh(self):
@@ -95,6 +96,30 @@ class Mesh1D(BaseMesh):
             new_nodes.append(self.nodes[-1])
             self.nodes = np.array(new_nodes)
             self.elem_connect = np.array(new_elem_connect)
+
+    def plotmesh(self,withnode=False,withnodeid=False):
+        """
+        plot the 1d mesh
+
+        Parameters
+        ----------
+        withnode : boolean
+            True to show the node
+        withnodeid : boolean
+            True to show the node id
+        """
+        y=np.zeros(self.nb_nodes)
+        plt.figure()
+        plt.plot(self.nodes,y,'k')
+        if withnode:
+            plt.plot(self.nodes,y,'r*')
+        if withnodeid:
+            for i, node in enumerate(self.nodes):
+                x=self.nodes[i]
+                plt.text(x,0.0,'%d'%(i+1))
+        plt.xlabel('X',fontsize=14)
+        plt.ylabel('Y',fontsize=14)
+        plt.show()
         
 
     def get_nb_nodes(self):

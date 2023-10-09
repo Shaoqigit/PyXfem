@@ -64,7 +64,7 @@ class LinearSolver(BaseSolver):
         # u = np.linalg.solve(left_hand_side.toarray(), right_hand_side)
         self.u = u[:self.external_dofs]
         end = time.time()
-        print("solving time: ", end-start)
+        print("Linear system solving time: ", end-start)
 
     def condition_number(self, left_hand_side):
         return np.linalg.cond(left_hand_side.toarray())

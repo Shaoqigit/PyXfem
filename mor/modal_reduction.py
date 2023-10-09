@@ -1,5 +1,7 @@
 import numpy as np
 from fem.solver import BaseSolver
+from scipy import sparse
+from scipy.sparse.linalg import spsolve
 
 
 class EigenSolver(BaseSolver):
@@ -46,9 +48,10 @@ class ModalReduction:
         """
         if len(original_array.shape) == 1:
             array = self.Phi_m.T @ original_array
+            return array
         else:
             array = self.Phi_m.T @ original_array @ self.Phi_m
-        return array
+            return sparse.csr_matrix(array)
     
     def solve(self, left_hand_matrix, right_hand_vector):
         """solve the reduced system
@@ -63,9 +66,9 @@ class ModalReduction:
         """
         import time
         start = time.time()
-        sol = np.linalg.solve(left_hand_matrix, right_hand_vector)
+        sol = spsolve(left_hand_matrix, right_hand_vector)
         end = time.time()
-        print("solving time: ", end-start)
+        print("Reduced Linear solving time: ", end-start)
         return sol
     
     def recover_sol(self, reducde_sol):
