@@ -20,7 +20,6 @@ sys.path.append('/home/shaoqi/Devlop/PyXfem/PyAcoustiX/')
 import numpy as np
 import matplotlib.pyplot as plt
 
-from tmm.adm_basis import admittance_element
 from tmm.adm_assembler import AdmAssembler
 from fem.mesh import Mesh1D
 from fem.materials import Air, Fluid, EquivalentFluid

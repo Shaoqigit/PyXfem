@@ -41,7 +41,6 @@ def test_case_2D():
     mesh = meshio.read('mesh/tube_c.msh')
     connectivity = mesh.cells_dict['triangle']
     nodes = mesh.points
-    import pdb; pdb.set_trace()
 
 
     num_elem = 100  # number of elements
@@ -122,7 +121,7 @@ def test_case_2D():
     # ====================== Analytical Solution ======================
     # analytical solution
     kundlt_tube = ImpedenceKundltTube(mesh, air, omega, nature_bcs, impedence_bcs)
-    ana_sol = np.zeros(num_nodes, dtype=np.complex128)  #initialize the analytical solution vector
+    ana_sol = np.zeros_like(sol)  #initialize the analytical solution vector
     kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
 
     # # plot the solution
