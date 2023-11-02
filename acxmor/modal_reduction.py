@@ -1,5 +1,5 @@
 import numpy as np
-from fem.solver import BaseSolver
+from acxfem.solver import BaseSolver
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
 

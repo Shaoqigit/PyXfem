@@ -21,15 +21,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from fem.basis import Lobbato1DElement
-from fem.mesh import Mesh1D
-from fem.dofhandler import DofHandler1D, GeneralDofHandler1D, FESpace
-from fem.physic_assembler import HelmholtzAssembler, BiotAssembler, CouplingAssember
-from fem.BCs_impose import ApplyBoundaryConditions
-from fem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
-from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from fem.solver import LinearSolver
-from fem.postprocess import PostProcessField
+from acxfem.basis import Lobbato1DElement
+from acxfem.mesh import Mesh1D
+from acxfem.dofhandler import DofHandler1D, GeneralDofHandler1D, FESpace
+from acxfem.physic_assembler import HelmholtzAssembler, BiotAssembler, CouplingAssember
+from acxfem.BCs_impose import ApplyBoundaryConditions
+from acxfem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
+from acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from acxfem.solver import LinearSolver
+from acxfem.postprocess import PostProcessField
 from analytical.Fluid_Biot_sol import Fluid_Biot_Pressure, Fluid_Biot_Displacement, u_a, u_t, sigma_xx, P_a
 
 def test_case():

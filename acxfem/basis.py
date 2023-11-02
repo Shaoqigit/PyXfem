@@ -21,7 +21,7 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 from functools import cached_property
 
-from fem.precompute_matrices import Ke1D, Me1D, Ce1D
+from acxfem.precompute_matrices import Ke1D, Me1D, Ce1D
 
             
 

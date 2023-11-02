@@ -15,8 +15,8 @@
 # copies or substantial portions of the Software.
 
 # assembly the global/partial matrices according to the physic of the components
-from fem.mesh import Mesh1D
-from fem.dofhandler import DofHandler1D
+from acxfem.mesh import Mesh1D
+from acxfem.dofhandler import DofHandler1D
 
 import numpy as np
 from numba import jit

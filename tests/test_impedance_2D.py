@@ -25,15 +25,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from fem.basis import Lobbato1DElement
-from fem.mesh import Mesh1D
+from acxfem.basis import Lobbato1DElement
+from acxfem.mesh import Mesh1D
 import meshio
-from fem.dofhandler import DofHandler1D
-from fem.assembly import Assembler
-from fem.materials import Air, Fluid, EquivalentFluid
-from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from fem.solver import LinearSolver
-from fem.postprocess import PostProcessField
+from acxfem.dofhandler import DofHandler1D
+from acxfem.assembly import Assembler
+from acxfem.materials import Air, Fluid, EquivalentFluid
+from acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from acxfem.solver import LinearSolver
+from acxfem.postprocess import PostProcessField
 from analytical.fluid_sol import ImpedenceKundltTube
 
 

@@ -23,15 +23,15 @@ sys.path.append('/home/shaoqi/Devlop/PyXfem/PyAcoustiX/')
 import numpy as np
 import matplotlib.pyplot as plt
 
-from fem.basis import Lobbato1DElement
-from fem.mesh import Mesh1D
-from fem.dofhandler import GeneralDofHandler1D, FESpace
-from fem.physic_assembler import HelmholtzAssembler
-from fem.BCs_impose import ApplyBoundaryConditions
-from fem.materials import Air, EquivalentFluid
-from fem.utilities import check_material_compability, plot_matrix_partten
-from fem.solver import LinearSolver
-from fem.postprocess import PostProcessField
+from acxfem.basis import Lobbato1DElement
+from acxfem.mesh import Mesh1D
+from acxfem.dofhandler import GeneralDofHandler1D, FESpace
+from acxfem.physic_assembler import HelmholtzAssembler
+from acxfem.BCs_impose import ApplyBoundaryConditions
+from acxfem.materials import Air, EquivalentFluid
+from acxfem.utilities import check_material_compability, plot_matrix_partten
+from acxfem.solver import LinearSolver
+from acxfem.postprocess import PostProcessField
 from analytical.fluid_sol import DoubleleLayerKundltTube
 
 

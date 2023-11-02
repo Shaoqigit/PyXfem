@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from pymls import from_yaml, Solver, Layer, backing
 
 from pymls import Solver, Layer, backing
-from fem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
+from acxfem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
 
 
 phi          = 0.99  # porosity

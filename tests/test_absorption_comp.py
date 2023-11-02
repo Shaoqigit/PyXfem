@@ -27,11 +27,11 @@ import matplotlib.pyplot as plt
 from tmm.adm_basis import AdmFluid
 from tmm.tmm import TMMFluid, TMMPoroElastic1, TMMPoroElastic2
 from tmm.adm_assembler import AdmAssembler
-from fem.mesh import Mesh1D
-from fem.materials import Air, Fluid, EquivalentFluid
-from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from fem.solver import AdmittanceSolver
-from fem.postprocess import PostProcessField
+from acxfem.mesh import Mesh1D
+from acxfem.materials import Air, Fluid, EquivalentFluid
+from acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from acxfem.solver import AdmittanceSolver
+from acxfem.postprocess import PostProcessField
 from analytical.fluid_sol import DoubleleLayerKundltTube
 
 
