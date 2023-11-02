@@ -134,6 +134,13 @@ class Mesh1D(BaseMesh):
         """return nodes of corresoinding element"""
         return self.get_mesh()[elem]
     
+class Mesh2D(BaseMesh):
+    def __init__(self, nodes, elem_connect):
+        self.nodes = nodes
+        self.nb_nodes = len(nodes)
+        self.elem_connect = elem_connect
+
+    
     
 
 
