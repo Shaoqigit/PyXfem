@@ -25,15 +25,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from fem.basis import Lobbato1DElement
-from fem.mesh import Mesh1D
-from fem.dofhandler import GeneralDofHandler1D, FESpace
-from fem.physic_assembler import HelmholtzAssembler, BiotAssembler, CouplingAssember
-from fem.BCs_impose import ApplyBoundaryConditions
-from fem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
-from fem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from fem.solver import LinearSolver
-from fem.postprocess import PostProcessField
+from acxfem.basis import Lobbato1DElement
+from acxfem.mesh import Mesh1D
+from acxfem.dofhandler import GeneralDofHandler1D, FESpace
+from acxfem.physic_assembler import HelmholtzAssembler, BiotAssembler, CouplingAssember
+from acxfem.BCs_impose import ApplyBoundaryConditions
+from acxfem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
+from acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from acxfem.solver import LinearSolver
+from acxfem.postprocess import PostProcessField
 from analytical.Biot_sol import solve_PW
 
 def test_case():
@@ -130,10 +130,11 @@ def test_case():
 
     post_processer_u = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Solid displacement')
     post_processer_u.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[1,:]), 'Analytical', 'dashed'))
-    # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
-    plt.show(block=False)
-    plt.pause(1)
-    plt.close('all')
+    # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))test
+    # plt.show(block=False)
+    plt.show()
+    # plt.pause(1)
+    # plt.close('all')
     
 
     error_p = post_processer_p.compute_error(sol[:num_elem+1], ana_sol[4,:])
