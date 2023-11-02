@@ -147,7 +147,7 @@ if __name__ == "__main__":
     # # plot the solution
     post_process = PostProcessFRF(freq, r'1D Helmholtz FRF', 'SPL(dB)')
     post_process.plot_sol((np.real(sol_fem), f'FEM (dofs$={num_elem}$)', 'solid'), (np.real(sol_modal), f'Modal reduction ($m={nb_modes}$)', 'dashed'))
-    plt.show(block=True)
+    plt.show(block=False)
     # plt.show()
     plt.pause(1)
     plt.close('all')

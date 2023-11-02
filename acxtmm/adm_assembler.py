@@ -2,7 +2,7 @@ import numpy as np
 from numba import jit
 from scipy.sparse import csr_array, lil_array
 
-from tmm.adm_basis import AdmFluid as fluid_elem
+from acxtmm.adm_basis import AdmFluid as fluid_elem
 
 
 class AdmAssembler:
