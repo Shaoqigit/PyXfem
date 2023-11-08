@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 
 from acxtmm.adm_assembler import AdmAssembler
 from acxfem.mesh import Mesh1D
-from acxfem.materials import Air, Fluid, EquivalentFluid
+from acxfem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
 from acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from acxfem.solver import AdmittanceSolver
 from acxfem.postprocess import PostProcessField
