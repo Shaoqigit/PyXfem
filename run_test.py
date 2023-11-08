@@ -13,7 +13,9 @@ test_cases = ['test_material_pem.py',
               'test2_impedance_bc.py', 
               'test_biot_equation.py',
               'test_biot_equation_new.py',
-              'test_modal_reduction_FRF.py',]
+              'test_modal_reduction_FRF.py',
+              'main_test_fadm.py',
+              'test_tmm_biot.py']
 for test_case in test_cases:
     cmd = ['python3', test_path+test_case]
     # print(cmd)

@@ -20,10 +20,10 @@ sys.path.append('/home/shaoqi/Devlop/PyXfem/PyAcoustiX/')
 import numpy as np
 import matplotlib.pyplot as plt
 
-from tmm.adm_basis import AdmFluid
-from tmm.tmm import TMMFluid, TMMPoroElastic1, TMMPoroElastic2, TMMPoroElastic3
-from tmm.BC_matrix import bcm_poro_fluid, bcm_fluid_poro2, bcm_poro_rigid_wall, bcm_rigid_wall, bcm_rigid_wall2
-from tmm.adm_assembler import AdmAssembler
+from acxtmm.adm_basis import AdmFluid
+from acxtmm.tmm import TMMFluid, TMMPoroElastic1, TMMPoroElastic2, TMMPoroElastic3
+from acxtmm.BC_matrix import bcm_poro_fluid, bcm_fluid_poro2, bcm_poro_rigid_wall, bcm_rigid_wall, bcm_rigid_wall2
+from acxtmm.adm_assembler import AdmAssembler
 from acxfem.mesh import Mesh1D
 from acxfem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
 from acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
@@ -138,7 +138,7 @@ freqs = np.linspace(10, 1e6, num=num_samp)
 from mediapack import from_yaml
 from pymls import Solver, Layer, backing
 thickness_foam = 0.1
-foam = from_yaml('foam.yaml')
+foam = from_yaml('/home/shaoqi/Devlop/PyXfem/PyAcoustiX/tests/foam.yaml')
 # instanciate the solver
 # the layers are specified in order with the termination on the right
 # Here:
@@ -171,9 +171,15 @@ for i, freq in enumerate(freqs):
     absops[0,i] = discrete_in_frequency(freq)
     # plt.plot(freq, absop_analy, 'o')
 
+# import pdb;pdb.set_trace()
+if np.mean(np.abs(absops[0,:30] - A[:30])) < 1e-4:
+    print("Test passed!")
+
 # plt.plot(freqs, absops[0], '-', label='analytical')
 plt.plot(freqs, absops[0], '--', label='tmm')
 plt.ylim(0., 1.0)
 plt.xscale('log')
 plt.legend()
-plt.show()
+plt.show(block=False)
+plt.pause(1)
+plt.close('all')

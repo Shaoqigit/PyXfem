@@ -56,7 +56,12 @@ def test_case_1():
     alpha        = 1.17  # Tortuosity
     Lambda_prime = 742e-6  # Viscous characteristic length
     Lambda      = 110e-6  # 
-    xfm = EquivalentFluid('xfm', phi, sigma, alpha, Lambda_prime, Lambda)
+    rho_1 = 120
+    nu = 0.3
+    E = 4e4
+    eta = 0.2
+    xfm = PoroElasticMaterial('xfm', phi, sigma, alpha, Lambda_prime, Lambda, rho_1, E, nu, eta)
+
 
 
 
@@ -93,9 +98,7 @@ def test_case_1():
     post_processer = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
     post_processer.plot_sol((np.real(sol), f'FADM (n=500)', 'solid'), (np.real(ana_sol), 'Analytical', 'dashed'))
 
-    plt.show(block=False)
-    plt.pause(1)
-    plt.close('all')
+    plt.show()
 
 
     error = post_processer.compute_error(sol, ana_sol)
