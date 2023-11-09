@@ -3,7 +3,7 @@ from numba import jit
 from scipy.sparse import csr_array, lil_array
 
 from acxtmm.adm_basis import AdmFluid as fluid_elem
-
+from acxtmm.adm_basis import AdmPoroElastic2 as poroelastic_elem
 
 class AdmAssembler:
     def __init__(self, mesh, subdomains, omega, dtype):
@@ -25,17 +25,19 @@ class AdmAssembler:
         for i, elem in self.mesh.items():
             mat = self.elem_mats[i]
             mat.set_frequency(self.omega)
-            adm = fluid_elem(mat, self.omega, theta, k_0, elem, mode)
-            adm.admittance()
-            # if i==len(self.mesh)-1:
-            #     import pdb; pdb.set_trace()
+            if mat.TYPE in ['Fluid']:
+                adm = fluid_elem(mat, self.omega, theta, k_0, elem, mode)
+                adm.admittance()
+            elif mat.TYPE in ['Poroelastic']:
+                adm = poroelastic_elem(mat, self.omega, theta, k_0, elem, mode)
+                adm.admittance()
             self.global_adm[i:i+2, i:i+2] += adm.adm
+            
         return self.global_adm.tocsr()
     
     def assemble_nature_bc(self, nature_bc):
         F = np.zeros(self.nb_dofs, dtype=self.dtype)
         if nature_bc['type']=='velocity':
-            # import pdb; pdb.set_trace()
             F[nature_bc['position']] = -1*nature_bc['value']/(1j*self.omega)
         else:
             print("Nature BC type not supported")
