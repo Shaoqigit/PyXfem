@@ -15,8 +15,12 @@
 # copies or substantial portions of the Software.
 
 # Main Test case 
+import os
+current_dir = os.path.dirname(os.path.realpath(__file__))
+working_dir = os.path.join(current_dir , "..")
 import sys
-sys.path.append('/home/shaoqi/Devlop/PyXfem/PyAcoustiX/')
+sys.path.append(working_dir)
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -104,7 +108,7 @@ def discrete_in_frequency(freq):
     Tmm_a = TMMFluid(air, omega)
     T_a = Tmm_a.transfer_matrix(thickness)
 
-    Tmm_xfm = TMMPoroElastic2(xfm, omega, ky)
+    Tmm_xfm = TMMPoroElastic3(xfm, omega, ky)
     T_xfm = Tmm_xfm.transfer_matrix(thickness)
 
     I_fp, J_pf = bcm_fluid_poro2(xfm.phi)
@@ -180,7 +184,7 @@ plt.plot(freqs, absops[0], '--', label='tmm')
 plt.ylim(0., 1.0)
 plt.xscale('log')
 plt.legend()
-plt.show()
-# plt.show(block=False)
-# plt.pause(1)
-# plt.close('all')
+# plt.show()
+plt.show(block=False)
+plt.pause(1)
+plt.close('all')
