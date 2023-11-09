@@ -142,7 +142,7 @@ freqs = np.linspace(10, 1e6, num=num_samp)
 from mediapack import from_yaml
 from pymls import Solver, Layer, backing
 thickness_foam = 0.1
-foam = from_yaml('/home/shaoqi/Devlop/PyXfem/PyAcoustiX/tests/foam.yaml')
+foam = from_yaml('tests/foam.yaml')
 # instanciate the solver
 # the layers are specified in order with the termination on the right
 # Here:
