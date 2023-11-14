@@ -39,6 +39,8 @@ class AdmAssembler:
         F = np.zeros(self.nb_dofs, dtype=self.dtype)
         if nature_bc['type']=='velocity':
             F[nature_bc['position']] = -1*nature_bc['value']/(1j*self.omega)
+        elif nature_bc['type'] == 'total_displacement':
+            F[nature_bc['position']] = nature_bc['value']
         else:
             print("Nature BC type not supported")
 
