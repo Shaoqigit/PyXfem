@@ -96,6 +96,7 @@ class Mesh1D(BaseMesh):
             new_nodes.append(self.nodes[-1])
             self.nodes = np.array(new_nodes)
             self.elem_connect = np.array(new_elem_connect)
+            self.nb_nodes = len(self.nodes)
 
     def plotmesh(self,withnode=False,withnodeid=False):
         """
@@ -108,7 +109,7 @@ class Mesh1D(BaseMesh):
         withnodeid : boolean
             True to show the node id
         """
-        y=np.zeros(self.nb_nodes)
+        y=np.zeros(len(self.nodes))
         plt.figure()
         plt.plot(self.nodes,y,'k')
         if withnode:
