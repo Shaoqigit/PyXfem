@@ -58,10 +58,10 @@ class BasePostProcess(object):
 
 class PostProcessField(BasePostProcess):
 
-    def __init__(self, x_nodes, title):
+    def __init__(self, x_nodes, title, quantity='Pressure', unit='Pa'):
         super().__init__(title)
         self.x_nodes = x_nodes
-        self.set_figure('Position(m)', 'Pressure(Pa)')
+        self.set_figure('Position(m)', quantity+'('+unit+')')
 
     
     def plot_sol(self, *sols):

@@ -141,13 +141,13 @@ def test_case():
     xfm.set_frequency(omega)
     ana_sol = solve_PW(xfm,ky,nodes,1)
     # plot the solution
-    post_processer_p = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Pressure')
+    post_processer_p = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Pressure', quantity='Pressure', unit='Pa')
     post_processer_p.plot_sol((np.real(sol[:num_elem+1]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[4,:]), 'Analytical', 'dashed'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
     plt.show(block=False)
     plt.pause(1)
 
-    post_processer_u = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Solid displacement')
+    post_processer_u = PostProcessField(mesh.nodes, r'1D Biot (2000$Hz$) Solid displacement', quantity='Displacement', unit='m')
     post_processer_u.plot_sol((np.real(sol[num_elem+1:]), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol[1,:]), 'Analytical', 'dashed'))
     # post_processer.plot_sol((np.real(sol[:101]), f'FEM ($p=3$)', 'solid'))
     plt.show(block=False)
