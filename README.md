@@ -1,4 +1,4 @@
-# AcoustiX Simple Acoustic Simulator
+# **S**imple **A**coustic **S**imulator(SAcouS) - AcoustiX based Sound simulation library
                    based on Finite Element Method
                     contact: Shaoqiwu@outlook.com
 
@@ -22,6 +22,7 @@
 * Modal domain reduction method
 
 ### To do list
+* MoR for damped systems (porous materials)
 * Perfect Matched Layer (PML) for free field boundary condition
 * Infinite Element for free field boundary condition
 * Finite Admittance Method (FAM) for high precision multi-layered configuration
