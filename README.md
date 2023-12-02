@@ -22,7 +22,7 @@
 * Modal domain reduction method
 
 ### To do list
-* MoR for damped systems (porous materials)
+* MoR for damped systems (RB+EIM algorithme for porous materials)
 * Perfect Matched Layer (PML) for free field boundary condition
 * Infinite Element for free field boundary condition
 * Finite Admittance Method (FAM) for high precision multi-layered configuration
