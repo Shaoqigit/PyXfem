@@ -12,6 +12,7 @@
 * **Extended elements** and double node techinique are used to deal with discontitnuity
 * Various common Acoustic materials are supported, including porous rigid, Limp and **Biot-up** models.
 * FEM-**TMM** coupling is supported to model multi-layered configuration in general geometry problems
+
 [comment]: <> (* The proposed Finite Admittance Method **(FAM)** (experimental) is supported)
 
 ### Up to this moment:
