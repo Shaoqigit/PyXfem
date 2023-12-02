@@ -1,4 +1,5 @@
-# **S**imple **A**coustic **S**imulator(SAcouS) - AcoustiX based Sound simulation library
+# **S**imple **A**coustic **S**imulator(SAcouS)
+[comment]: <> ( - AcoustiX based Sound simulation library)
                    based on Finite Element Method
                     contact: Shaoqiwu@outlook.com
 
