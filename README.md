@@ -1,5 +1,6 @@
 # **S**imple **A**coustic **S**imulator(SAcouS)
 [comment]: <> ( - AcoustiX based Sound simulation library)
+
                    based on Finite Element Method
                     contact: Shaoqiwu@outlook.com
 
@@ -11,7 +12,7 @@
 * **Extended elements** and double node techinique are used to deal with discontitnuity
 * Various common Acoustic materials are supported, including porous rigid, Limp and **Biot-up** models.
 * FEM-**TMM** coupling is supported to model multi-layered configuration in general geometry problems
-* The proposed Finite Admittance Method **(FAM)** (experimental) is supported
+[comment]: <> (* The proposed Finite Admittance Method **(FAM)** (experimental) is supported)
 
 ### Up to this moment:
 * High order lobatto shape function supported (up to $p=4$)
