@@ -34,17 +34,7 @@ from acxfem.postprocess import PostProcessField, PostProcessFRF
 from analytical.fluid_sol import ImpedenceKundltTube
 
 
-def reduction_model(omega, K_r, M_r, f_r):
-
-    left_hand_matrix = K_r-omega**2*M_r
-    # solver the linear system
-    reduced_sol = modal_reduction_method.solve(left_hand_matrix, f_r)
     
-    sol = modal_reduction_method.recover_sol(reduced_sol)
-
-    return sol
-    
-
 
 def int_or_str(text):
     """Helper function for argument parsing."""
