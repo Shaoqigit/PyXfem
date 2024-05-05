@@ -17,8 +17,8 @@
 # precompte and store the elementary matrices for 1D Lobatto elements
 
 import numpy as np
-from acxfem.quadratures import GaussLegendreQuadrature
-from acxfem.polynomial import Lobatto, Larange
+from SAcouS.acxfem.quadratures import GaussLegendreQuadrature
+from SAcouS.acxfem.polynomial import Lobatto, Larange
 # from numpy.polynomial.legendre import leggauss
 
 def compute_matrix(Ke, Me, Ce, order):

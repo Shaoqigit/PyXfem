@@ -26,7 +26,8 @@ import matplotlib.pyplot as plt
 from pymls import *
 from mediapack import Air, PEM, EqFluidJCA
 
-from acxfem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
+from mediapack import Air, Fluid
+from SAcouS.acxfem.materials import EquivalentFluid, PoroElasticMaterial
 
 
 def test_case():

@@ -2,8 +2,8 @@ import numpy as np
 from numba import jit
 from scipy.sparse import csr_array, lil_array
 
-from acxtmm.adm_basis import AdmFluid as fluid_elem
-from acxtmm.adm_basis import AdmPoroElastic2 as poroelastic_elem
+from SAcouS.acxtmm.adm_basis import AdmFluid as fluid_elem
+from SAcouS.acxtmm.adm_basis import AdmPoroElastic2 as poroelastic_elem
 
 class AdmAssembler:
     def __init__(self, mesh, subdomains, omega, dtype):

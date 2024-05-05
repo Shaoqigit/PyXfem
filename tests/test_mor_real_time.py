@@ -25,16 +25,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from acxfem.basis import Lobbato1DElement
-from acxfem.mesh import Mesh1D
-from acxfem.dofhandler import DofHandler1D
-from acxfem.assembly import Assembler
-from acxfem.materials import Air, Fluid, EquivalentFluid
-from acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from acxfem.solver import LinearSolver
+from SAcouS.acxfem.basis import Lobbato1DElement
+from SAcouS.acxfem.mesh import Mesh1D
+from SAcouS.acxfem.dofhandler import DofHandler1D
+from SAcouS.acxfem.assembly import Assembler
+from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid
+from SAcouS.acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from SAcouS.acxfem.solver import LinearSolver
 
-from acxmor.modal_reduction import EigenSolver, ModalReduction
-from acxfem.postprocess import PostProcessField, PostProcessFRF
+from SAcouS.acxmor.modal_reduction import EigenSolver, ModalReduction
+from SAcouS.acxfem.postprocess import PostProcessField, PostProcessFRF
 from analytical.fluid_sol import ImpedenceKundltTube
 
 

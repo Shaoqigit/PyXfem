@@ -25,14 +25,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from acxfem.basis import Lobbato1DElement
-from acxfem.mesh import Mesh1D
-from acxfem.dofhandler import DofHandler1D, DofHandler1DMutipleVariable
-from acxfem.assembly import Assembler, Assembler4Biot
-from acxfem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
-from acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from acxfem.solver import LinearSolver
-from acxfem.postprocess import PostProcessField
+from SAcouS.acxfem.basis import Lobbato1DElement
+from SAcouS.acxfem.mesh import Mesh1D
+from SAcouS.acxfem.dofhandler import DofHandler1D, DofHandler1DMutipleVariable
+from SAcouS.acxfem.assembly import Assembler, Assembler4Biot
+from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
+from SAcouS.acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from SAcouS.acxfem.solver import LinearSolver
+from SAcouS.acxfem.postprocess import PostProcessField
 from analytical.Biot_sol import solve_PW
 
 def test_case():

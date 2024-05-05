@@ -25,15 +25,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from acxfem.basis import Lobbato1DElement
-from acxfem.mesh import Mesh1D
+from SAcouS.acxfem.basis import Lobbato1DElement
+from SAcouS.acxfem.mesh import Mesh1D
 import meshio
-from acxfem.dofhandler import DofHandler1D
-from acxfem.assembly import Assembler
-from acxfem.materials import Air, Fluid, EquivalentFluid
-from acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from acxfem.solver import LinearSolver
-from acxfem.postprocess import PostProcessField
+from SAcouS.acxfem.dofhandler import DofHandler1D
+from SAcouS.acxfem.assembly import Assembler
+from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid
+from SAcouS.acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from SAcouS.acxfem.solver import LinearSolver
+from SAcouS.acxfem.postprocess import PostProcessField
 from analytical.fluid_sol import ImpedenceKundltTube
 
 
@@ -41,7 +41,7 @@ def test_case_2D():
     mesh = meshio.read('mesh/tube_c.msh')
     connectivity = mesh.cells_dict['triangle']
     nodes = mesh.points
-    from acxfem.precompute_matrices_lag import Ke1D, Me1D, Ce1D, compute_matrix
+    from SAcouS.acxfem.precompute_matrices_lag import Ke1D, Me1D, Ce1D, compute_matrix
 
 
 
