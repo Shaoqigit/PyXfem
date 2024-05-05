@@ -1,13 +1,15 @@
-from .precompute_matrices import *
-from .quadratures import *
-from .dofhandler import *
-from .assembly import *
-from .basis import *
-from .BCs_impose import *
-from .materials import *
-from .mesh import *
-from .postprocess import *
-from .solver import *
-from .utilities import *
-from .physic_assembler import *
-from .polynomial import *
+from . import (
+    precompute_matrices,
+    quadratures,
+    dofhandler,
+    assembly,
+    basis,
+    BCs_impose,
+    materials,
+    mesh,
+    postprocess,
+    solver,
+    utilities,
+    physic_assembler,
+    polynomial
+)
