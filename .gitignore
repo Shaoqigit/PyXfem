@@ -2,6 +2,11 @@
 # Ignore Python intermediate files
 */__pycache__/
 
+#ignore building files
+build/
+dist/
+*.egg-info/
+
 # Ignore compiled Python files
 *.pyc
 *.pyo
