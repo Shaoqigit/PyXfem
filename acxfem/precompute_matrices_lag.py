@@ -17,18 +17,51 @@
 # precompte and store the elementary matrices for 1D Lobatto elements
 
 import numpy as np
-from acxfem.quadratures import GaussLegendreQuadrature
-from acxfem.polynomial import Lobatto, Larange, Lagrange2DTri
+from acxfem.quadratures import GaussLegendre2DTri
+from acxfem.polynomial import  Lagrange2DTri
 # from numpy.polynomial.legendre import leggauss
 
+order = 1
+n_pts = 4
+lagrange_o1 = Lagrange2DTri(order)
+gl_intg_o1 = GaussLegendre2DTri(n_pts)
+gl_pts, gl_wts = gl_intg_o1.points(), gl_intg_o1.weights()
+N_o1 = lagrange_o1.get_shape_functions()
+B_o1 = lagrange_o1.get_der_shape_functions()
+
+import pdb; pdb.set_trace()
+
+N_p1_1 = np.array([N_o1[0](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
+N_p1_2 = np.array([N_o1[1](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
+N_p1_3 = np.array([N_o1[2](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
+N_p1 = np.array([N_p1_1, N_p1_2, N_p1_3]).T
+Ke_p1 = N_p1.T @ np.diag(gl_wts) @ N_p1
+
+B_p1_11 = np.array([B_o1[0][0](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
+B_p1_12 = np.array([B_o1[0][1](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
+B_p1_21 = np.array([B_o1[1][0](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
+B_p1_22 = np.array([B_o1[1][1](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
+B_p1_31 = np.array([B_o1[2][0](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
+B_p1_32 = np.array([B_o1[2][1](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
+B_p1 = np.array([[B_p1_11.T, B_p1_12.T], [B_p1_21.T, B_p1_22.T], [B_p1_31.T, B_p1_32.T]])
+Me_p1 = B_p1.T @ np.diag(gl_wts) @ B_p1
+
 def compute_matrix(Ke, Me, Ce, order):
-    n_pts = order*2
-    gl_q = GaussLegendreQuadrature(n_pts)
-    gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+    # n_pts > (p+1)/2
+    if order == 1:
+        n_pts = 3
+    elif order == 2:
+        n_pts = 4
+    else:
+        raise ValueError("order should be 1 or 2")
+
+    gl_integrate = GaussLegendre2DTri(n_pts)
+    gl_pts, gl_wts = gl_integrate.points(), gl_integrate.weights()
     # gl_pts, gl_wts = leggauss(n_pts)
     l = Lagrange2DTri(order)
     B = l.get_der_shape_functions()
     N = l.get_shape_functions()
+    import pdb; pdb.set_trace()
     len(Me[0])
     for i in range(len(Me[0])):
         for j in range(len(Me[0])):
@@ -44,28 +77,6 @@ def compute_matrix(Ke, Me, Ce, order):
             
 
 
-# 2D Triangular lagrange element matrix: p=1
-order = 1
-Ke1Do1 = np.zeros((3,3))
-Me1Do1 = np.zeros((3,3))
-Ce1Do1 = np.zeros((3,3))
-compute_matrix(Ke1Do1, Me1Do1, Ce1Do1, order)
-
-
-# 1D lobatto element matrix: p=2
-order = 2
-Ke1Do2 = np.zeros((3,3))
-Me1Do2 = np.zeros((3,3))
-Ce1Do2 = np.zeros((3,3))
-compute_matrix(Ke1Do2, Me1Do2, Ce1Do2, order)
-
-
-Ke1D = [Ke1Do1, Ke1Do2]
-Me1D = [Me1Do1, Me1Do2]
-Ce1D = [Ce1Do1, Ce1Do2]
-
-# print(Ke1Do1)
-# print(Me1Do1)
 # print(Ke1Do2)
 # print(Me1Do2)
 # print(Ke1Do3)

@@ -4,4 +4,11 @@ working_dir = os.path.join(current_dir , "..")
 
 import sys
 sys.path.append(working_dir)
-from . import fem, analytical, tmm
+
+from . import acxfem
+from . import analytical
+from . import tutorial
+from . import acxtmm
+from . import acxmor
+
+

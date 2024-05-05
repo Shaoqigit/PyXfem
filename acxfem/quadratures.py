@@ -22,6 +22,14 @@ import numpy as np
 class NumericalQuadrature(metaclass=ABCMeta):
     """base abstract numerical quadrature class
     """
+    def __init__(self, n):
+        """constructor
+
+        Args:
+            n (int): number of quadrature points
+        """
+        self.n = n
+        
     @abstractmethod
     def points(self):
         pass
