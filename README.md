@@ -1,19 +1,23 @@
 # **S**imple **A**coustic **S**imulator(SAcouS)
 [comment]: <> ( - AcoustiX based Sound simulation library)
-<p align="center"> 
+[comment]: <> ( - put following badges centre)
+<center>
+
 [![PyPi Version](https://img.shields.io/pypi/v/pyacoustix.svg?style=flat-square)](https://pypi.org/project/PyAcoustiX/)
 
-                   based on Finite Element Method
-                    contact: Shaoqiwu@outlook.com
+</center>
+
+                                 based on Finite Element Method
+                                 contact: Shaoqiwu@outlook.com
 
 **AcoustiX** is Finite Element (FEM) modular Library, mainly designed for Acoustic simulation but can be used (extended) to other physics. This labrary aims at providing the simplest, clearest and easily conprehensive tool to use FEM for purpose of research, education or industry prototype.
 
 ## Main special features/architecture of the library compared to other existing lib:
-* Apart from classical Linear/Quadratic Larange polynomial, **High order (lobatto)** shape functions are supported
-* The element type (interpolation order of shape functions) can be **varied** on each element (mesh)
-* **Extended elements** and double node techinique are used to deal with discontitnuity
-* Various common Acoustic materials are supported, including porous rigid, Limp and **Biot-up** models.
-* FEM-**TMM** coupling is supported to model multi-layered configuration in general geometry problems
+> * Apart from classical Linear/Quadratic Larange polynomial, **High order (lobatto)** shape functions are supported.
+> * The element type (interpolation order of shape functions) can be **varied** on each element (mesh).
+> * **Extended elements** and double node techinique are used to deal with discontitnuity.
+> * Various common Acoustic materials are supported, including porous rigid, Limp and **Biot-up** models.
+> * FEM-**TMM** coupling is supported to model multi-layered configuration in general geometry problems.
 
 
 ### Up to this moment:
