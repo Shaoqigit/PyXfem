@@ -1,6 +1,6 @@
 # **S**imple **A**coustic **S**imulator(SAcouS)
 [comment]: <> ( - AcoustiX based Sound simulation library)
-[![PyPi Version](https://img.shields.io/pypi/v/meshio.svg?style=flat-square)](https://pypi.org/project/meshio/)
+[![PyPi Version](https://img.shields.io/pypi/v/meshio.svg?style=flat-square)](https://pypi.org/project/PyAcoustiX/)
 
                    based on Finite Element Method
                     contact: Shaoqiwu@outlook.com
