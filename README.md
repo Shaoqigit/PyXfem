@@ -2,7 +2,9 @@
 [comment]: <> ( - AcoustiX based Sound simulation library)
 [comment]: <> ( - put following badges centre)
 <center>
+  
 [![PyPi Version](https://img.shields.io/pypi/v/pyacoustix.svg?style=flat-square)](https://pypi.org/project/PyAcoustiX/)
+
 </center>
 
                                  based on Finite Element Method
