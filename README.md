@@ -12,6 +12,12 @@
 
 **AcoustiX** is Finite Element (FEM) modular Library, mainly designed for Acoustic simulation but can be used (extended) to other physics. This labrary aims at providing the simplest, clearest and easily conprehensive tool to use FEM for purpose of research, education or industry prototype.
 
+## Installation
+```bash
+pip install pyacoustix
+```
+
+
 ## Main special features/architecture of the library compared to other existing lib:
 > * Apart from classical Linear/Quadratic Larange polynomial, **High order (lobatto)** shape functions are supported.
 > * The element type (interpolation order of shape functions) can be **varied** on each element (mesh).
