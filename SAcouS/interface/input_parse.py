@@ -1,5 +1,8 @@
 from collections import defaultdict
 import numpy as np
+
+from SAcouS.acxfem.materials import MaterialFactory
+
 class PyAcousiXSetupParser:
     def __init__(self, file_path):
         self.file_path = file_path
@@ -11,7 +14,7 @@ class PyAcousiXSetupParser:
         self.mesh_elements = None
         self.mesh_order = None
         self.domains = {}
-        self.materials = []
+        self.materials = {}
         self.physic_domains = []
         self.boundary_conditions = []
         self.solver_type = None
@@ -72,7 +75,6 @@ class PyAcousiXSetupParser:
 
             if current_block is not None:
                 current_block.append(line)
-        import pdb;pdb.set_trace()
         return levelp_blocks
 
 
@@ -102,23 +104,25 @@ class PyAcousiXSetupParser:
                 raise ValueError('The mesh nodes definition is not correct')
             
             # parse mesh elements
-            info_mesh_elements = mesh_block2['element'][0].split(',')
-            global_order = int(info_mesh_elements[0].split(' ')[1])
-            if info_mesh_elements[1] == 'RANGE':
+            info_mesh_elements = mesh_block2['element']
+            global_order = int(info_mesh_elements[0].split(',')[1])
+            mesh_type = info_mesh_elements[1].split(',')[0]
+            if mesh_type == 'RANGE':
                 start, end, num_nodes = map(float, info_mesh_elements[1].split(','))
                 step = (end - start) / (num_nodes - 1)
                 self.mesh_elements.append((info_mesh_elements[0].strip(), [start + i * step for i in range(int(num_nodes))]))
-            elif info_mesh_elements[1] == 'LIST':
+            elif mesh_type == 'LIST':
                 num_elements = len(info_mesh_elements[2:])
                 self.mesh_elements = np.zeros((num_elements, 2), dtype=int)
-                self.mesh_order = np.ones_like(num_elements)
+                self.mesh_order = np.ones((num_elements), dtype=int)
                 for i, element in enumerate(info_mesh_elements[2:]):
                     element_info = element.split(',')
-                    if element_info[1] == None:
+                    if element_info[1] == 'NONE':
                         self.mesh_order[i] = global_order
                     else:
                         self.mesh_order[i] = int(element_info[1])
-                    self.mesh_elements[i] = np.array(element_info[2:])
+                    self.mesh_elements[i] = np.array([int(node) for node in element_info[2:]])
+                import pdb;pdb.set_trace()
                 self.topo_props['mesh_elements'] = self.mesh_elements
                 self.topo_props['mesh_order'] = self.mesh_order
         except KeyError:
@@ -136,21 +140,19 @@ class PyAcousiXSetupParser:
 
 
     def parse_materials(self, material_blocks: list):
-        material_block = self.parse_level2plus(2, material_blocks)
-        for material_name, material_properties in material_block.items():
-            pass
-        # _, material_type, material_name = line.split(',')
-        # properties = {}
-        # for line in lines:
-        #     line = line.strip()
-        #     if line.startswith('# END MATERIAL'):
-        #         break
-        #     elif line.startswith('//') or line.startswith('##') or line.startswith('###'):
-        #         continue
-        #     else:
-        #         property_name, property_value = line.split(',')
-        #         properties[property_name.strip()] = property_value.strip()
-        # self.materials.append((material_type.strip(), material_name.strip(), properties))
+        import pdb;pdb.set_trace()
+        build_material = MaterialFactory()
+        for material in material_blocks:
+            material_info = material[0].split(',')
+            material_id = material_info[0]
+            material_type = material_info[1]
+            material_name = material_info[1]
+            material_properties = {}
+            for mat_properties in material[1:]:
+                property_name, property_value = mat_properties.split(',')
+                material_properties[property_name.strip()] = property_value.strip()
+            self.materials[material_id] = build_material.create_material(material_type, material_name, material_properties)
+
 
     def parse_physic_domains(self, physic_domain_blocks: list):
         for physic_domain in physic_domain_blocks:
@@ -177,6 +179,7 @@ def test_parser():
     blocks = parser.parse_level1()
     parser.parse_analysis(blocks['analysis'])
     parser.parse_topo(blocks['topology'])
+    parser.parse_materials(blocks['material'])
 
 test_parser()
 

@@ -293,3 +293,28 @@ class PoroElasticMaterial(LimpPorousMaterial):
 
 
 # TODO: correct Limp and BiotMaterial class
+
+# write a class to get differennt material class according to the material type
+class MaterialFactory:
+    """material factory class
+    """
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def get_material(name, material_type, *args):
+        if material_type == 'Fluid':
+            return Fluid(name, *args)
+        elif material_type == 'Air':
+            return Air(name, *args)
+        elif material_type == 'EquivalentFluid':
+            return EquivalentFluid(name, *args)
+        elif material_type == 'LimpPorousMaterial':
+            return LimpPorousMaterial(name, *args)
+        elif material_type == 'Elastic':
+            return ElasticMaterial(name, *args)
+        elif material_type == 'Poroelastic':
+            return PoroElasticMaterial(name, *args)
+        else:
+            raise ValueError('The material type is not defined')
+
