@@ -12,6 +12,11 @@ setup(
     author='Shaoqi WU',
     author_email='shaoqiwu@outlook.com',
     url='https://github.com/Shaoqigit/PyXfem',
+    entry_points={
+        'console_scripts': [
+            'sacous = SAcouS.main:main',
+        ],
+    },
     packages=find_packages(),
     install_requires=[
         'numpy',

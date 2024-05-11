@@ -77,7 +77,7 @@ Ke1D = [Ke1Do1, Ke1Do2, Ke1Do3, Ke1Do4]
 Me1D = [Me1Do1, Me1Do2, Me1Do3, Me1Do4]
 Ce1D = [Ce1Do1, Ce1Do2, Ce1Do3, Ce1Do4]
 
-print(Ke1Do1)
+# print(Ke1Do1)
 # print(Me1Do1)
 # print(Ke1Do2)
 # print(Me1Do2)

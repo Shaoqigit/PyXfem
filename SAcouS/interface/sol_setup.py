@@ -20,6 +20,10 @@ class PyAcousiXSetuper:
         self.sol_info = parser.parse()
         self.solution_pool = None
         
+    def welcome(self):
+        print(f'Welcome to PyAcousiX, the solver for acoustics problems')
+        print(f'Parsing the input file: {self.file_path}')
+
     def fem_run(self, mesh, mesh_order, omega):
         if self.sol_info['topology']['dim'] == 1:
             base_element = Lobbato1DElement
@@ -111,9 +115,9 @@ class PyAcousiXSetuper:
 
     
 # wirte the test code for above parser class
-def main():
-    two_fluid_setup = PyAcousiXSetuper('two_fluid.axi')
-    two_fluid_setup.setup()
+# def main():
+#     two_fluid_setup = PyAcousiXSetuper('two_fluid.axi')
+#     two_fluid_setup.setup()
     
-main()
+# main()
 
