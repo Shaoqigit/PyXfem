@@ -184,7 +184,7 @@ class Assembler:
         return the global vector contributed from nature boundary conditions
         """
         F = np.zeros(self.nb_dofs, dtype=self.dtype)
-        if nature_bc['type']=='velocity':
+        if nature_bc['type']=='fluid_velocity':
             F[nature_bc['position']] = 1j * self.omega * nature_bc['value']
         elif nature_bc['type']=='total_displacement':
             F[nature_bc['position']] += nature_bc['value']
@@ -379,7 +379,7 @@ class Assembler4Biot:
             right_hand_side = np.zeros(self.nb_dofs, dtype=self.dtype)
         else:
             right_hand_side = self.F
-        if nature_bc['type']=='velocity':
+        if nature_bc['type']=='fluid_velocity':
             right_hand_side[dof_index] += 1j * self.omega * nature_bc['value']
         elif nature_bc['type']=='total_displacement':
             right_hand_side[dof_index] += nature_bc['value']

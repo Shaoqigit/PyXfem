@@ -82,7 +82,7 @@ def discrete_in_frequency(freq):
     # adm_assembler = AdmAssembler(mesh, subdomains, omega, dtype=np.complex128)
     # left_hand_side = adm_assembler.assemble_global_adm(theta, k_0, 'continue')
 
-    nature_bcs = {'type': 'velocity', 'value': 1, 'position': 0}
+    nature_bcs = {'type': 'fluid_velocity', 'value': 1, 'position': 0}
     # right_hand_side = adm_assembler.assemble_nature_bc(nature_bcs)
 
     # adm_solver = AdmittanceSolver(left_hand_side, right_hand_side)
@@ -96,7 +96,7 @@ def discrete_in_frequency(freq):
     ana_p = np.zeros(num_nodes, dtype=np.complex128)  #initialize the analytical solution vector
     p_analy = kundlt_tube.sol_on_nodes(ana_p, sol_type='pressure')
     ana_v = np.zeros(num_nodes, dtype=np.complex128)  #initialize the analytical solution vector
-    v_analy = kundlt_tube.sol_on_nodes(ana_v, sol_type='velocity')
+    v_analy = kundlt_tube.sol_on_nodes(ana_v, sol_type='fluid_velocity')
     # import pdb; pdb.set_trace() 
     Z_s = p_analy[0]/v_analy[0]
     ref_analy = (Z_s - air.Z_f) / (Z_s + air.Z_f)

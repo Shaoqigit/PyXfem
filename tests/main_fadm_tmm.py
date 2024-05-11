@@ -84,7 +84,7 @@ def test_case_1():
     adm_assembler = AdmAssembler(mesh, subdomains, omega, dtype=np.complex128)
     left_hand_side = adm_assembler.assemble_global_adm(theta, k_0, 'continue')
 
-    nature_bcs = {'type': 'velocity', 'value': 1*np.exp(-1j*omega), 'position': 0}
+    nature_bcs = {'type': 'fluid_velocity', 'value': 1*np.exp(-1j*omega), 'position': 0}
     right_hand_side = adm_assembler.assemble_nature_bc(nature_bcs)
 
     adm_solver = AdmittanceSolver(left_hand_side, right_hand_side)

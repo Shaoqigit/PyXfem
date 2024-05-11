@@ -79,7 +79,7 @@ def discrete_in_frequency(freq):
     k_0 = omega/Air.c
     theta = 50  #indidence angle
     ky = k_0*np.sin(theta*np.pi/180)
-    nature_bcs = {'type': 'velocity', 'value': 1, 'position': 0}
+    nature_bcs = {'type': 'fluid_velocity', 'value': 1, 'position': 0}
     # right_hand_side = adm_assembler.assemble_nature_bc(nature_bcs)
 
     # ====================== Analytical Solution ======================
@@ -88,7 +88,7 @@ def discrete_in_frequency(freq):
     # ana_p = np.zeros(num_nodes, dtype=np.complex128)  #initialize the analytical solution vector
     # p_analy = kundlt_tube.sol_on_nodes(ana_p, sol_type='pressure')
     # ana_v = np.zeros(num_nodes, dtype=np.complex128)  #initialize the analytical solution vector
-    # v_analy = kundlt_tube.sol_on_nodes(ana_v, sol_type='velocity')
+    # v_analy = kundlt_tube.sol_on_nodes(ana_v, sol_type='fluid_velocity')
     # import pdb; pdb.set_trace() 
     # Z_s = p_analy[0]/v_analy[0]
     # ref_analy = (Z_s - air.Z_f) / (Z_s + air.Z_f)

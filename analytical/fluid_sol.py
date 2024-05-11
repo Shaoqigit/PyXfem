@@ -9,7 +9,7 @@ class ImpedenceKundltTube():
         self.mat = args[0]
         self.omega = args[1]
         self.nature_bc = args[2]
-        assert(self.nature_bc['type'] == 'velocity')
+        assert(self.nature_bc['type'] == 'fluid_velocity')
         self.impedence_bc = args[3]
         assert(self.impedence_bc['type'] == 'impedence')
         self.analytical_field()
@@ -40,7 +40,7 @@ class DoubleleLayerKundltTube():
         self.mat2 = args[1]
         self.omega = args[2]
         self.bc = args[3]
-        assert(self.bc['type'] == 'velocity')
+        assert(self.bc['type'] == 'fluid_velocity')
         self.analytical_field()
 
     def analytical_field(self):
@@ -81,12 +81,12 @@ class DoubleleLayerKundltTube():
             if x <= 0:
                 if sol_type == 'pressure':
                     sol = self.P_analy[0](x) 
-                elif sol_type=='velocity':
+                elif sol_type=='fluid_velocity':
                     sol = self.v_analy[0](x)
             elif x >= 0:
                 if sol_type == 'pressure':
                     sol = self.P_analy[1](x)
-                elif sol_type=='velocity':
+                elif sol_type=='fluid_velocity':
                     sol = self.v_analy[1](x)
 
             ana_sol[i] = sol

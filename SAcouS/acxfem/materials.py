@@ -302,18 +302,19 @@ class MaterialFactory:
         pass
 
     @staticmethod
-    def get_material(name, material_type, *args):
-        if material_type == 'Fluid':
+    def create_material(material_type, name, *args):
+        import pdb;pdb.set_trace()
+        if material_type == 'FLUID':
             return Fluid(name, *args)
-        elif material_type == 'Air':
+        elif material_type == 'AIR':
             return Air(name, *args)
-        elif material_type == 'EquivalentFluid':
+        elif material_type == 'RIGID_POROUS':
             return EquivalentFluid(name, *args)
-        elif material_type == 'LimpPorousMaterial':
+        elif material_type == 'LIMP_POROUS':
             return LimpPorousMaterial(name, *args)
-        elif material_type == 'Elastic':
+        elif material_type == 'ELASTIC':
             return ElasticMaterial(name, *args)
-        elif material_type == 'Poroelastic':
+        elif material_type == 'PORO_ELASTIC':
             return PoroElasticMaterial(name, *args)
         else:
             raise ValueError('The material type is not defined')

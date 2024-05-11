@@ -28,7 +28,6 @@ class PyAcousiXSetupParser:
         current_block = None
         with open(self.file_path, 'r') as file:
             for line in file:
-                # import pdb; pdb.set_trace()
                 line = line.strip()
                 # sklp comments and space lines
                 if line.startswith('//') or line == '':
@@ -122,7 +121,6 @@ class PyAcousiXSetupParser:
                     else:
                         self.mesh_order[i] = int(element_info[1])
                     self.mesh_elements[i] = np.array([int(node) for node in element_info[2:]])
-                import pdb;pdb.set_trace()
                 self.topo_props['mesh_elements'] = self.mesh_elements
                 self.topo_props['mesh_order'] = self.mesh_order
         except KeyError:
@@ -130,28 +128,30 @@ class PyAcousiXSetupParser:
         
         try:
             domain_block = level_2_block['domain']
+            self.topo_props[f'mesh_domain'] = list()
             for domain in domain_block:
                 domain_info = domain.split(',')
-                domain_name = domain_info[0]
-                domain_elements = np.array([int(element.strip()) for element in domain_info[1:]])
-                self.domains[domain_name] = domain_elements
+                domain_id = domain_info[0]
+                domain_name = domain_info[1]
+                domain_elements = np.array([int(element.strip()) for element in domain_info[2:]])
+                self.topo_props['mesh_domain'].append({'domain_id': domain_id, 'domain_,name': domain_name, 'domain_elements': domain_elements})
         except KeyError:
             print('No domain block is defined')
 
 
     def parse_materials(self, material_blocks: list):
-        import pdb;pdb.set_trace()
         build_material = MaterialFactory()
         for material in material_blocks:
-            material_info = material[0].split(',')
-            material_id = material_info[0]
+            material_info = material.split(',')
+            material_id = int(material_info[0])
             material_type = material_info[1]
-            material_name = material_info[1]
-            material_properties = {}
-            for mat_properties in material[1:]:
-                property_name, property_value = mat_properties.split(',')
-                material_properties[property_name.strip()] = property_value.strip()
-            self.materials[material_id] = build_material.create_material(material_type, material_name, material_properties)
+            material_name = material_info[2]
+            mat_properties = material_info[3:]
+            if material_type == 'AIR':
+                properties_values = []
+            else:
+                properties_values = [float(prop.strip()) for prop in mat_properties]
+            self.materials[material_id] = build_material.create_material(material_type, material_name, *properties_values)
 
 
     def parse_physic_domains(self, physic_domain_blocks: list):
@@ -160,9 +160,13 @@ class PyAcousiXSetupParser:
             self.physic_domains.append((physic_type.strip(), int(material_id.strip()), int(domain_id.strip())))
         
 
-    def parse_boundary_conditions(self, line):
-        _, boundary_type, value, domain_id = line.split(',')
-        self.boundary_conditions.append((boundary_type.strip(), float(value.strip()), int(domain_id.strip())))
+    def parse_boundary_conditions(self, bc_blocks: list):
+        for bc in bc_blocks:
+            bc_info = bc.split(',')
+            bc_type = bc_info[0]
+            bc_domain = bc_info[1]
+            bc_value = bc_info[2]
+            self.boundary_conditions.append((bc_type.strip(), int(bc_domain.strip()), float(bc_value.strip())))
 
     def parse_solver(self, line):
         _, solver_type = line.split(',')

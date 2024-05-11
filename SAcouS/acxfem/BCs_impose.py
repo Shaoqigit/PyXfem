@@ -67,7 +67,7 @@ class ApplyBoundaryConditions:
     def apply_nature_bc(self, nature_bc, var=None):
         dof_index = self.mesh2dof(nature_bc['position'], var)
 
-        if nature_bc['type']=='velocity':
+        if nature_bc['type']=='fluid_velocity':
             self.right_hand_side[dof_index] += -nature_bc['value']/(1j*self.omega)
         elif nature_bc['type']=='total_displacement':
             self.right_hand_side[dof_index] += nature_bc['value']

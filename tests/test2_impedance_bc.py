@@ -95,7 +95,7 @@ def test_case_2():
 
     # print(assembler.get_matrix_in_array(left_hand_matrix))
     #  natural boundary condition   
-    nature_bcs = {'type': 'velocity', 'value': 1, 'position': 0}
+    nature_bcs = {'type': 'fluid_velocity', 'value': 1, 'position': 0}
     impedence_bcs = {'type': 'impedence', 'value': 0.2, 'position': num_elem}
     right_hand_vector = assembler.assemble_nature_bc(nature_bcs)
     C_g = assembler.assemble_impedance_bc(impedence_bcs)

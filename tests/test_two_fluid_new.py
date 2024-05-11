@@ -93,7 +93,7 @@ def test_case_1():
 
     right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs, dtype=np.complex128)
     #  natural boundary condition   
-    nature_bcs = {'type': 'velocity', 'value': 1*np.exp(-1j*omega), 'position': -1}
+    nature_bcs = {'type': 'fluid_velocity', 'value': 1*np.exp(-1j*omega), 'position': -1}
     BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix, right_hand_vec, omega)
     BCs_applier.apply_nature_bc(nature_bcs, var='Pf')
 

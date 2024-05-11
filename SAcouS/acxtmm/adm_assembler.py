@@ -37,7 +37,7 @@ class AdmAssembler:
     
     def assemble_nature_bc(self, nature_bc):
         F = np.zeros(self.nb_dofs, dtype=self.dtype)
-        if nature_bc['type']=='velocity':
+        if nature_bc['type']=='fluid_velocity':
             F[nature_bc['position']] = -1*nature_bc['value']/(1j*self.omega)
         elif nature_bc['type'] == 'total_displacement':
             F[nature_bc['position']] = nature_bc['value']

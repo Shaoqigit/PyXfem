@@ -114,7 +114,7 @@ left_hand_matrix = K_g-M_g
 
 # print(display_matrix_in_array(left_hand_matrix))
 #  natural boundary condition   
-nature_bcs = {'type': 'velocity', 'value': 1*np.exp(-1j*omega), 'position': 0}
+nature_bcs = {'type': 'fluid_velocity', 'value': 1*np.exp(-1j*omega), 'position': 0}
 right_hand_vector = assembler.assemble_nature_bc(nature_bcs)
 # print(right_hand_vector)
 
