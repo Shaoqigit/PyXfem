@@ -10,13 +10,24 @@
                                  based on Finite Element Method
                                  contact: Shaoqiwu@outlook.com
 
-**AcoustiX** is Finite Element (FEM) modular Library, mainly designed for Acoustic simulation but can be used (extended) to other physics. This labrary aims at providing the simplest, clearest and easily conprehensive tool to use FEM for purpose of research, education or industry prototype.
+**SAcouS** is pure python software based on an Finite Element libraray 'PyacoustiX' (AcoustiX in cpp version found in my git repo), mainly designed for Acoustic simulation but can be used (extended) to other physics. This labrary aims at providing the simplest, clearest and easily conprehensive tool to use FEM for purpose of research, education or industry prototype.
 
-## Installation
+## Installation and Usage
 ```bash
 pip install pyacoustix
 ```
-
+You can use either as a standalone library or as a part of your project. The following is a simple example to use the library:
+```python
+from SAcouS import *
+```
+either used with executable with standard pyacoustix input file format .axi. To do so, you need first install the package as
+```bash
+pip install .
+```
+Then you can run the following command to execute the simulation:
+```bash
+sacous -i input_file.axi
+```
 
 ## Main special features/architecture of the library compared to other existing lib:
 > * Apart from classical Linear/Quadratic Larange polynomial, **High order (lobatto)** shape functions are supported.
