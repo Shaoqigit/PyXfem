@@ -53,6 +53,10 @@ class Mesh1D(BaseMesh):
             elems[i] = np.array([self.nodes[i], self.nodes[i+1]])
         return elems
     
+    def get_min_size(self):
+        """return minimum size of elements"""
+        return min(np.diff(self.nodes))
+    
     def node2elem(self, node):
         """return element number from node number"""
         for i in range(len(self.elem_connect)):

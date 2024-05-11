@@ -303,7 +303,6 @@ class MaterialFactory:
 
     @staticmethod
     def create_material(material_type, name, *args):
-        import pdb;pdb.set_trace()
         if material_type == 'FLUID':
             return Fluid(name, *args)
         elif material_type == 'AIR':

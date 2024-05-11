@@ -61,14 +61,23 @@ class PostProcessField(BasePostProcess):
     def __init__(self, x_nodes, title, quantity='Pressure', unit='Pa'):
         super().__init__(title)
         self.x_nodes = x_nodes
-        self.set_figure('Position(m)', quantity+'('+unit+')')
+        self.quantity = quantity
+        self.unit = unit
 
     
-    def plot_sol(self, *sols):
+    def plot_sol(self, *sols, file_name=None, save=False):
+        self.set_figure('Position(m)', self.quantity+'('+self.unit+')')
         for sol in sols:
             self.ax.plot(self.x_nodes, sol[0], label=sol[1], linestyle=sol[2])
         
         self.ax.legend()
+        if save:
+            plt.savefig(file_name)
+
+    def save_sol(self, *sols, file_name):
+        for sol in sols:
+            np.savetxt(file_name, sol[0])
+        
 
     def display_layers(self, *layers_pos):
         for pos in layers_pos:
@@ -84,10 +93,10 @@ class PostProcessFRF(BasePostProcess):
         super().__init__(title)
         self.freqs = freqs
         self.operator=acoustic_indicator
-        unit = ''
+        self.unit = ''
         if acoustic_indicator == 'SPL':
-            unit = 'dB'
-        self.set_figure('Frequency(Hz)', acoustic_indicator+f'({unit})')
+            self.unit = 'dB'
+        
 
     def get_operator(self):
         if self.operator == 'SPL(dB)':
@@ -96,9 +105,35 @@ class PostProcessFRF(BasePostProcess):
             print("Warning: SPL(dB) - 2 is not implemented yet!")
 
 
-    def plot_sol(self, *sols):
+    def plot_sol(self, *sols, save=False, file_name=None):
+        self.set_figure('Frequency(Hz)', self.operator+f'({self.unit})')
         for sol in sols:
             sol_r = self.get_operator()(sol[0])
             self.ax.plot(self.freqs, sol_r, label=sol[1], linestyle=sol[2])
         
         self.ax.legend()
+        if save:
+            plt.savefig(file_name)
+
+    def save_sol(self, *sols, file_name):
+        """
+        output result as a txt file, res.txt
+        {
+        // header, PyacoustiX FRF result file
+        // Frequency(Hz) SPL(dB)
+        100 20.1
+        200 30.7
+        300 40.4
+        400 50.1
+        500 48.7
+        }
+        """
+        with open(file_name, 'w') as file:
+            # write the header
+            file.write('// PyacoustiX FRF result file\n')
+            file.write(f'Frequency(Hz) {self.operator}({self.unit})\n')
+            for sol in sols:
+                file.write(f'\n{sol[1]}')
+                sol_r = self.get_operator()(sol[0])
+                for i in range(len(sol_r)):
+                    file.write(f'{self.freqs[i]} {sol_r[i]}\n')
