@@ -10,7 +10,7 @@
                                  based on Finite Element Method
                                  contact: Shaoqiwu@outlook.com
 
-**SAcouS** is pure python software based on an Finite Element libraray 'PyacoustiX' (AcoustiX in cpp version found in my git repo), mainly designed for Acoustic simulation but can be used (extended) to other physics. This labrary aims at providing the simplest, clearest and easily conprehensive tool to use FEM for purpose of research, education or industry prototype.
+**SAcouS** is pure python software based on an Finite Element libraray 'PyacoustiX' (AcoustiX in cpp version found in my git repo https://github.com/Shaoqigit/AcoustiX), mainly designed for Acoustic simulation but can be used (extended) to other physics. This labrary aims at providing the simplest, clearest and easily conprehensive tool to use FEM for purpose of research, education or industry prototype.
 
 ## Installation and Usage
 ```bash
@@ -35,7 +35,7 @@ sacous
 you get into PyacoustiX console, where you can use the library interactively. For example:
 ```bash
 Welcome to PyAcoustiX console!
-PyAcoustiX 0.9.9
+PyAcoustiX 0.9.10
 base on python 3.10.13 (main, Sep 11 2023, 13:44:35) [GCC 11.2.0] on linux
 Type "help", "copyright" or "license" for more information.
 Author: Shaoqiwu@outlook.com
