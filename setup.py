@@ -14,7 +14,7 @@ setup(
     url='https://github.com/Shaoqigit/PyXfem',
     entry_points={
         'console_scripts': [
-            'sacous = SAcouS.main:main',
+            'sacous = SAcouS.__main__:main',
         ],
     },
     packages=find_packages(),
@@ -25,6 +25,10 @@ setup(
         'numba',
         # Add any other dependencies here
     ],
+    install_optional=[
+        'pymls',
+    ],
+
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

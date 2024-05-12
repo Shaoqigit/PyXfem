@@ -12,17 +12,23 @@ from SAcouS.acxfem.solver import LinearSolver
 from SAcouS.acxfem.postprocess import PostProcessField, PostProcessFRF
 from SAcouS.acxfem.utilities import check_material_compability
 
-class PyAcousiXSetuper:
-    def __init__(self, file_path):
-        self.file_path = file_path
-
-        parser = ParserFactory.create_parser(self.file_path)
-        self.sol_info = parser.parse()
+class PyAcoustiXSetuper:
+    def __init__(self):
+        self.file_path = None
         self.solution_pool = None
         
     def welcome(self):
-        print(f'Welcome to PyAcousiX, the solver for acoustics problems')
+        print(f'Welcome to Simple Acoustic Simulator based on lib PyAcoustiX!\nAuthor: Shaoqiwu@outlook.com\n')
         print(f'Parsing the input file: {self.file_path}')
+
+    def parse_input(self, file_path):
+        self.file_path = file_path
+        parser = ParserFactory.create_parser(self.file_path)
+        self.sol_info = parser.parse()
+
+    def exit(self):
+        print('now exiting PyAcoustiX...')
+
 
     def fem_run(self, mesh, mesh_order, omega):
         if self.sol_info['topology']['dim'] == 1:

@@ -16,17 +16,31 @@
 ```bash
 pip install pyacoustix
 ```
-You can use either as a standalone library or as a part of your project. The following is a simple example to use the library:
+- You can use either as a standalone library or as a part of your project. The following is a simple example to use the library:
 ```python
 from SAcouS import *
 ```
-either used with executable with standard pyacoustix input file format .axi. To do so, you need first install the package as
+- either used with executable with standard pyacoustix input file format .axi. To do so, you need first install the package as
 ```bash
 pip install .
 ```
 Then you can run the following command to execute the simulation:
 ```bash
 sacous -i input_file.axi
+```
+- This software is also a wrap of python interpreter, so you can use it interactively with the comsole by entering:
+```bash
+sacous
+```
+you get into PyacoustiX console, where you can use the library interactively. For example:
+```bash
+Welcome to PyAcoustiX console!
+PyAcoustiX 0.9.9
+base on python 3.10.13 (main, Sep 11 2023, 13:44:35) [GCC 11.2.0] on linux
+Type "help", "copyright" or "license" for more information.
+Author: Shaoqiwu@outlook.com
+(PyAcoustiXInteractiveConsole)
+>>> import numpy as np
 ```
 
 ## Main special features/architecture of the library compared to other existing lib:
@@ -47,6 +61,7 @@ sacous -i input_file.axi
 * Modal domain reduction method
 
 ### To do list
+* update to python 3.11
 * MoR for damped systems (RB+EIM algorithme for porous materials)
 * Perfect Matched Layer (PML) for free field boundary condition
 * Infinite Element for free field boundary condition
