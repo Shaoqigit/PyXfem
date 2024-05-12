@@ -5,8 +5,8 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name='PyAcoustiX',
-    version='0.9.9',
-    description='A Python package for acoustic analysis',
+    version='0.9.10',
+    description='A pure Python package/software for acoustic analysis',
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Shaoqi WU',
@@ -34,9 +34,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
     python_requires='>=3.8'
 )
