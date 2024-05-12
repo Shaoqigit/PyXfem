@@ -3,7 +3,7 @@
 [comment]: <> ( - put following badges centre)
 <center>
   
-[![PyPi Version](https://img.shields.io/pypi/v/pyacoustix.svg?style=flat-square)](https://pypi.org/project/PyAcoustiX/)
+[![PyPi Version](https://img.shields.io/pypi/v/pyacoustix.svg?style=flat-square)](https://pypi.org/project/PyAcoustiX/0.9.11/)
 
 </center>
 
