@@ -161,54 +161,71 @@ class Larange(BasePolynomial):
         else:
             print("cubic larange not supported yet")
 
-        return B_larange
+        return 
     
-class Lagrange2DTri(BasePolynomial):
-    def polynomial(self):
-        lagrange = [
-        lambda u, v: 1-u-v,
-        lambda u, v: u,
-        lambda u, v: v,
-    
-        lambda u, v: (1 - 3*u - 3*v + 2*u**2 + 4*u*v + 2*v**2),
-        lambda u, v: 2*u**2 - u,
-        lambda u, v: 2*v**2 - v,
-        lambda u, v: 4*u*(1 - u - v),
-        lambda u, v: 4*u*v,
-        lambda u, v: 4*v*(1 - u - v)
-        ]
+
+# 2D triangular larange shape functions in reference coordiantates
+class Lagrange2DTri:
+    def __init__(self, order):
+        self.order = order
+
+    def polynomial(self, u, v):
+        if self.order == 1:
+            lagrange = np.array([
+                1-u-v,
+                u,
+                v,])
+        elif self.order == 2:
+            lagrange = np.array([
+                1 - 3*u - 3*v + 2*u**2 + 4*u*v + 2*v**2,
+                2*u**2 - u,
+                2*v**2 - v,
+                4*u*(1 - u - v),
+                4*u*v,
+                4*v*(1 - u - v)])
+        else:
+            print("cubic larange not supported yet")
+            
         return lagrange
     
-    def get_shape_functions(self):
-        N_lagrange = []
+    def get_shape_functions(self, u, v):
+        return self.polynomial(u, v)
+        
+    
+
+    def derivative(self, u, v):
         if self.order == 1:
-            N_lagrange.append(self.polynomial()[0])
-            N_lagrange.append(self.polynomial()[1])
-            N_lagrange.append(self.polynomial()[2])
+            d_lagrange = np.array([
+                [-1, -1],
+                [1, 0],
+                [0, 1]])
+        elif self.order == 2:
+            d_lagrange = np.array([
+                [-3 + 4*u + 4*v, -3 + 4*u + 4*v],
+                [4*u - 1, 0],
+                [0, 4*v - 1],
+                [-3 + 4*v + 4*u, -3 + 4*u],
+                [4*v, 4*u],
+                [-4*v, -4*u]])
         else:
-            print("quadratic larange not supported yet")
-        return N_lagrange
-
-    def derivative(self):
-        # d_lagrange_u, d_lagrange_v 
-        d_lagrange= [
-        [lambda u, v: -1, lambda u, v: -1],
-        [lambda u, v: 1,  lambda u, v: 0,],
-        [lambda u, v: 0,  lambda u, v: 1]
-        ]
-
+            print("cubic larange not supported yet")
+            
         return d_lagrange
 
-    def get_der_shape_functions(self):
-        B_lagrange = []
-        if self.order == 1:
-            for i in range(self.order+2):
-                B_lagrange.append(self.derivative()[i])
-            
-        else:
-            print("cubic lagrange not supported yet")
+    def get_der_shape_functions(self,u, v):
+        return self.derivative(u, v)
+    
+    def jacobi(self):
+        jacobi = np.array([[1, 0], [0, 1]])
+        return jacobi
+    
+    def inverse_jacobi(self):
+        inverse_jacobi = np.array([[1, 0], [0, 1]])
+        return inverse_jacobi
 
-        return B_lagrange
+    @property
+    def determinant_jacobi(self):
+        return 1
 
 class PolyBuilder:
     """build polynomial class"""

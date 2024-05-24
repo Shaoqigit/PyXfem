@@ -195,7 +195,7 @@ class GaussLegendre2DTri(NumericalQuadrature):
         if self.n == 1:
             return np.array([1])
         elif self.n == 3:
-            return np.array([1/3, 1/3, 1/3])
+            return np.array([0.16666666666666666, 0.16666666666666666, 0.16666666666666666])
         elif self.n == 4:
             return np.array([-0.5625, 0.520833333333333, 0.520833333333333, 0.520833333333333])
         elif self.n == 6:

@@ -19,67 +19,72 @@
 import numpy as np
 from SAcouS.acxfem.quadratures import GaussLegendre2DTri
 from SAcouS.acxfem.polynomial import  Lagrange2DTri
-# from numpy.polynomial.legendre import leggauss
 
+def compute_matrix(order):
+    n_quad_pts = order*2 + 1
+    lagrange = Lagrange2DTri(order)
+    points, weights = GaussLegendre2DTri(n_quad_pts).points(), GaussLegendre2DTri(n_quad_pts).weights()
+    N_w = np.array([weight*lagrange.get_shape_functions(*point) for point, weight in zip(points, weights)])
+    N = np.array([lagrange.get_shape_functions(*point) for point in points])
+    Me = N_w.T @ N
+
+    B_w = np.array([weight*lagrange.get_der_shape_functions(*point) for point, weight in zip(points, weights)])
+    B = np.array([lagrange.get_der_shape_functions(*point) for point in points])
+    Ke = B_w[:,:,0].T @ B[:,:,0] *lagrange.determinant_jacobi + B_w[:,:,1].T @ B[:,:,1] *lagrange.determinant_jacobi
+
+    return Ke, Me
+
+
+# 2D lobatto element matrix: p=1
 order = 1
-n_pts = 4
-lagrange_o1 = Lagrange2DTri(order)
-gl_intg_o1 = GaussLegendre2DTri(n_pts)
-gl_pts, gl_wts = gl_intg_o1.points(), gl_intg_o1.weights()
-N_o1 = lagrange_o1.get_shape_functions()
-B_o1 = lagrange_o1.get_der_shape_functions()
+Ke2Do1, Me2Do1 = compute_matrix(order)
+# import numpy as np
+import pdb;pdb.set_trace()
 
-import pdb; pdb.set_trace()
+# # Quadrature points and weights for the reference triangle
+# quad_points = np.array([
+#     [1/2, 1/2],
+#     [0, 1/2],
+#     [1/2, 0]
+# ])
+# quad_weights = np.array([1/6, 1/6, 1/6])
 
-N_p1_1 = np.array([N_o1[0](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
-N_p1_2 = np.array([N_o1[1](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
-N_p1_3 = np.array([N_o1[2](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
-N_p1 = np.array([N_p1_1, N_p1_2, N_p1_3]).T
-Ke_p1 = N_p1.T @ np.diag(gl_wts) @ N_p1
+# # Derivatives of shape functions in the reference coordinates
+# dN_dxi = np.array([
+#     [-1, 1, 0],
+#     [-1, 0, 1]
+# ])
 
-B_p1_11 = np.array([B_o1[0][0](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
-B_p1_12 = np.array([B_o1[0][1](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
-B_p1_21 = np.array([B_o1[1][0](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
-B_p1_22 = np.array([B_o1[1][1](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
-B_p1_31 = np.array([B_o1[2][0](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
-B_p1_32 = np.array([B_o1[2][1](gl_pts[i][0], gl_pts[i][1]) for i in range(n_pts)])
-B_p1 = np.array([[B_p1_11.T, B_p1_12.T], [B_p1_21.T, B_p1_22.T], [B_p1_31.T, B_p1_32.T]])
-Me_p1 = B_p1.T @ np.diag(gl_wts) @ B_p1
+# # Vertices of the reference triangle
+# vertices = np.array([
+#     [0, 0],
+#     [1, 0],
+#     [0, 1]
+# ])
 
-def compute_matrix(Ke, Me, Ce, order):
-    # n_pts > (p+1)/2
-    if order == 1:
-        n_pts = 3
-    elif order == 2:
-        n_pts = 4
-    else:
-        raise ValueError("order should be 1 or 2")
+# # Jacobian matrix and its determinant
+# J = np.dot(dN_dxi, vertices)
+# det_J = np.linalg.det(J)
 
-    gl_integrate = GaussLegendre2DTri(n_pts)
-    gl_pts, gl_wts = gl_integrate.points(), gl_integrate.weights()
-    # gl_pts, gl_wts = leggauss(n_pts)
-    l = Lagrange2DTri(order)
-    B = l.get_der_shape_functions()
-    N = l.get_shape_functions()
-    import pdb; pdb.set_trace()
-    len(Me[0])
-    for i in range(len(Me[0])):
-        for j in range(len(Me[0])):
-            Ke[i, j] = sum(gl_wt*B[i](gl_pt)*B[j](gl_pt) for gl_pt, gl_wt in zip(gl_pts, gl_wts))
-            Me[i, j] = sum(gl_wt*N[i](gl_pt)*N[j](gl_pt) for gl_pt, gl_wt in zip(gl_pts, gl_wts))
-            Ce[i, j] = sum(gl_wt*N[i](gl_pt)*B[j](gl_pt) for gl_pt, gl_wt in zip(gl_pts, gl_wts))  #Coupling matrix that to be used in Biot equation
-            if abs(Ke[i, j]) < 1e-10:
-                Ke[i, j] = 0
-            if abs(Me[i, j]) < 1e-10:
-                Me[i, j] = 0
-            if abs(Ce[i, j]) < 1e-10:
-                Ce[i, j] = 0
-            
+# # Compute the inverse of the Jacobian matrix
+# inv_J = np.linalg.inv(J)
 
+# # Derivatives of shape functions in the physical coordinates
+# dN_dx = np.dot(inv_J.T, dN_dxi)
 
-# print(Ke1Do2)
-# print(Me1Do2)
-# print(Ke1Do3)
-# print(Me1Do3)
-# print(Ke1Do4)
-# print(Me1Do4)
+# # Initialize the stiffness matrix
+# stiffness_matrix = np.zeros((3, 3))
+
+# # Perform numerical integration
+# for i in range(3):
+#     for j in range(3):
+#         integral = 0
+#         for k in range(len(quad_weights)):
+#             weight = quad_weights[k]
+#             # Evaluate B_i^T B_j
+#             B_i = dN_dx[:, i]
+#             B_j = dN_dx[:, j]
+#             integral += np.dot(B_i, B_j) * weight
+#         stiffness_matrix[i, j] = integral * det_J
+# import pdb;pdb.set_trace()
+# print("Stiffness matrix:\n", stiffness_matrix)
