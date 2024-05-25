@@ -26,20 +26,22 @@ def compute_matrix(order):
     points, weights = GaussLegendre2DTri(n_quad_pts).points(), GaussLegendre2DTri(n_quad_pts).weights()
     N_w = np.array([weight*lagrange.get_shape_functions(*point) for point, weight in zip(points, weights)])
     N = np.array([lagrange.get_shape_functions(*point) for point in points])
+    import pdb;pdb.set_trace()
     Me = N_w.T @ N
 
     B_w = np.array([weight*lagrange.get_der_shape_functions(*point) for point, weight in zip(points, weights)])
     B = np.array([lagrange.get_der_shape_functions(*point) for point in points])
     Ke = B_w[:,:,0].T @ B[:,:,0] *lagrange.determinant_jacobi + B_w[:,:,1].T @ B[:,:,1] *lagrange.determinant_jacobi
 
-    return Ke, Me
+    return Ke, Me, N, B
 
 
 # 2D lobatto element matrix: p=1
 order = 1
 Ke2Do1, Me2Do1 = compute_matrix(order)
+Ke2DTri = [Ke2Do1]
+Me2DTri = [Me2Do1]
 # import numpy as np
-import pdb;pdb.set_trace()
 
 # # Quadrature points and weights for the reference triangle
 # quad_points = np.array([

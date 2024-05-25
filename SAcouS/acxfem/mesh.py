@@ -38,6 +38,10 @@ class BaseMesh(metaclass=ABCMeta):
     def refine_mesh(self, times):
         pass
 
+    @abstractmethod
+    def plotmesh(self):
+        pass
+
 
 class Mesh1D(BaseMesh):
 
@@ -138,13 +142,79 @@ class Mesh1D(BaseMesh):
     def get_nodes_from_elem(self, elem):
         """return nodes of corresoinding element"""
         return self.get_mesh()[elem]
-    
-class Mesh2D(BaseMesh):
-    def __init__(self, nodes, elem_connect):
-        self.nodes = nodes
-        self.nb_nodes = len(nodes)
-        self.elem_connect = elem_connect
 
+import meshio
+class Mesh2D(BaseMesh):
+    def __init__(self):
+        self.nodes = []
+        self.elem_connect = []
+        self.nb_nodes = 0
+
+    def read_mesh(self, mesh_file):
+        mesh = meshio.read(mesh_file)
+        self.nodes = mesh.points[:,:2]
+        self.elem_connect = mesh.cells[2].data
+        self.nb_elmes = len(self.elem_connect)
+        self.nb_nodes = len(self.nodes)
+
+    def plotmesh(self, withnode=False, withnodeid=False):
+        """
+        plot the 2d mesh
+
+        Parameters
+        ----------
+        withnode : boolean
+            True to show the node
+        withnodeid : boolean
+            True to show the node id
+        """
+        plt.figure()
+        for elem in self.elem_connect:
+            x = self.nodes[elem][:, 0]
+            y = self.nodes[elem][:, 1]
+            plt.plot(np.append(x, x[0]), np.append(y, y[0]), 'k')
+        if withnode:
+            plt.plot(self.nodes[:, 0], self.nodes[:, 1], 'r*')
+        if withnodeid:
+            for i, node in enumerate(self.nodes):
+                x, y = self.nodes[i]
+                plt.text(x, y, '%d' % (i + 1))
+        plt.xlabel('X', fontsize=14)
+        plt.ylabel('Y', fontsize=14)
+        plt.show()
+
+
+    def get_mesh(self):
+        """dict of element number and nodes coordinates"""
+        elems = {}
+        for i in range(len(self.elem_connect)):
+            elems[i] = self.nodes[self.elem_connect[i]]
+        return elems
+
+    def refine_mesh(self, times):
+        # refine the 2D mesh
+        for _ in range(times):
+            new_nodes = []
+            new_elem_connect = []
+            for elem in self.elem_connect:
+                n1, n2, n3 = elem
+                n12 = 0.5 * (self.nodes[n1] + self.nodes[n2])
+                n23 = 0.5 * (self.nodes[n2] + self.nodes[n3])
+                n31 = 0.5 * (self.nodes[n3] + self.nodes[n1])
+                new_nodes.extend([self.nodes[n1], n12, n31, n12, self.nodes[n2], n23, n31, n23, self.nodes[n3]])
+                new_elem_connect.append([len(new_nodes)-9, len(new_nodes)-8, len(new_nodes)-7])
+                new_elem_connect.append([len(new_nodes)-6, len(new_nodes)-5, len(new_nodes)-4])
+                new_elem_connect.append([len(new_nodes)-3, len(new_nodes)-2, len(new_nodes)-1])
+                self.nodes = np.array(new_nodes)
+                self.elem_connect = np.array(new_elem_connect)
+                self.nb_nodes = len(self.nodes)
+        
+
+    
+if __name__ == "__main__":
+    mesh = Mesh2D()
+    mesh_square = mesh.read_mesh("../../tests/mesh/square_1.msh")
+    mesh.plotmesh(withnode=True, withnodeid=True)
     
     
 

@@ -22,6 +22,7 @@ from abc import ABCMeta, abstractmethod
 from functools import cached_property
 
 from SAcouS.acxfem.precompute_matrices import Ke1D, Me1D, Ce1D
+from SAcouS.acxfem.precompute_matrices_lag import Ke2DTri, Me2DTri
 
             
 
@@ -137,3 +138,128 @@ class Lobbato1DElement(Base1DElement):
     def local_dofs_index(self):
         return np.arange(self.order+1)
     
+class Base2DElement(metaclass=ABCMeta):
+    """base abstract FE elementary matrix class
+    precompute the shape function and its derivative on gauss points
+    parameters:
+    order: int
+        element order
+    nodes: ndarray
+        2d: [(x1, y1), (x2, y2), (x3, y3)] for triangle
+            [(x1, y1), (x2, y2), (x3, y3), (x4, y4)] for quad
+    """
+    def __init__(self, label, order, vertices):
+        self.label = label
+        self.order = order
+        self.vertices = vertices
+        self.is_discontinue = False
+
+    @cached_property
+    @abstractmethod
+    def Jacobian(self):
+        """
+        compute the Jacobian of the element
+        returns:
+        J: 
+        J=dx/dxi"""
+
+        pass
+
+    @cached_property
+    @abstractmethod
+    def inverse_Jacobian(self):
+        pass
+
+
+from SAcouS.acxfem.quadratures import GaussLegendre2DTri
+from SAcouS.acxfem.polynomial import  Lagrange2DTri
+
+class Lagrange2DTriElement(Base2DElement):
+    """FE lagrange 2D triangle basis class
+    parameters:
+    order: int
+        element order
+    vertices: ndarray
+        [(x1, y1), (x2, y2), (x3, y3)] for triangle
+    """
+    def __init__(self, label, order, vertices):
+        super().__init__(label, order, vertices)
+        n_quad_pts = order*2 + 1
+        lag_poly = Lagrange2DTri(order)
+
+        self.points, self.weights = GaussLegendre2DTri(n_quad_pts).points(), GaussLegendre2DTri(n_quad_pts).weights()
+        self.N = np.array([lag_poly.get_shape_functions(*point) for point in self.points])
+        self.B = np.array([lag_poly.get_der_shape_functions(*point) for point in self.points])
+
+        self.J = self.Jacobian
+        self.inv_J = self.inverse_Jacobian
+        self.det_J = self.determinant_Jacobian
+
+
+    @cached_property
+    def Jacobian(self):
+        """
+        compute the Jacobian of the element
+        returns:
+        J: 
+        J=dx/dxi"""
+        J = np.array([[self.vertices[1][0]-self.vertices[0][0], self.vertices[2][0]-self.vertices[0][0]],
+                      [self.vertices[1][1]-self.vertices[0][1], self.vertices[2][1]-self.vertices[0][1]]])
+        
+        return J
+    
+    @cached_property
+    def inverse_Jacobian(self):
+        return np.linalg.inv(self.J)
+        
+    
+    @cached_property
+    def determinant_Jacobian(self):
+        return np.linalg.det(self.Jacobian)
+
+    @cached_property
+    def ke(self):
+        """compute the elementary stiffness matrix
+        returns:
+        K: ndarray
+            elementary stiffness matrix
+        """
+
+        Ke = np.zeros((3,3))
+        if self.order == 1:
+            for i in range(3):
+                for j in range(3):
+                    Ke[i,j] = np.sum(self.N[i,:,:].T@self.inv_J.T@self.inv_J@self.N[j,:,:]self.weights) 
+        else:
+            print("quadrtic lagrange not implemented yet")
+
+        return Ke
+    
+    @cached_property
+    def me(self):
+        """compute the elementary stiffness matrix
+        returns:
+        m: ndarray
+            elementary stiffness matrix
+        """
+        Me =  self.Jacobian*Me2DTri[0]
+        return Me
+    
+    def get_order(self):
+        return self.order
+    
+    @property
+    def nb_internal_dofs(self):
+        return self.order-1
+    
+    @property
+    def local_dofs_index(self):
+        return np.arange(self.order+1)
+
+
+if __name__ == "__main__":
+    label = "fluid"
+    order = 1
+    nodes = np.array([[0, 0], [1, 0], [0, 1]])
+    lag_2d_tri = Lagrange2DTriElement(1, order, nodes)
+    import pdb; pdb.set_trace()

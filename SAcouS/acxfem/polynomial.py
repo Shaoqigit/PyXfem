@@ -190,7 +190,6 @@ class Lagrange2DTri:
     
     def get_shape_functions(self, u, v):
         return self.polynomial(u, v)
-        
     
 
     def derivative(self, u, v):
