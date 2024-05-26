@@ -42,6 +42,38 @@ class BaseMesh(metaclass=ABCMeta):
   def plotmesh(self):
     pass
 
+  @property
+  def connectivity(self):
+    """return connectivity"""
+    return self.elem_connect
+
+  def node2elem(self, node):
+    """return element number from node number"""
+    for i in range(len(self.elem_connect)):
+      if node in self.elem_connect[i]:
+        return i
+    raise ValueError("node not in mesh")
+
+  def get_nb_nodes(self):
+    """return number of nodes"""
+    return len(self.nodes)
+
+  def get_nb_elems(self):
+    """return number of elements"""
+    return len(self.elem_connect)
+
+  def get_nodes_from_elem(self, elem):
+    """return nodes of corresoinding element"""
+    return self.get_mesh()[elem]
+
+  @property
+  def num_node2coord(self):
+    num_node2coord2 = {}
+    """return node number from coordinate"""
+    for i, coord in enumerate(self.nodes):
+      num_node2coord2[i] = coord
+    return num_node2coord2
+
 
 class Mesh1D(BaseMesh):
 
@@ -61,21 +93,6 @@ class Mesh1D(BaseMesh):
     """return minimum size of elements"""
     return min(np.diff(self.nodes))
 
-  def node2elem(self, node):
-    """return element number from node number"""
-    for i in range(len(self.elem_connect)):
-      if node in self.elem_connect[i]:
-        return i
-    raise ValueError("node not in mesh")
-
-  @property
-  def num_node2coord(self):
-    num_node2coord2 = {}
-    """return node number from coordinate"""
-    for i, coord in enumerate(self.nodes):
-      num_node2coord2[i] = coord
-    return num_node2coord2
-
   @property
   def coord2node_num(self):
     """return element number from node number"""
@@ -83,11 +100,6 @@ class Mesh1D(BaseMesh):
     for i, coord in enumerate(self.nodes):
       coord2node_num[coord] = i
     return coord2node_num
-
-  @property
-  def connectivity(self):
-    """return connectivity"""
-    return self.elem_connect
 
   def refine_mesh(self, times):
     """refine mesh"""
@@ -127,18 +139,6 @@ class Mesh1D(BaseMesh):
     plt.xlabel('X', fontsize=14)
     plt.ylabel('Y', fontsize=14)
     plt.show()
-
-  def get_nb_nodes(self):
-    """return number of nodes"""
-    return len(self.nodes)
-
-  def get_nb_elems(self):
-    """return number of elements"""
-    return len(self.elem_connect)
-
-  def get_nodes_from_elem(self, elem):
-    """return nodes of corresoinding element"""
-    return self.get_mesh()[elem]
 
 
 import meshio

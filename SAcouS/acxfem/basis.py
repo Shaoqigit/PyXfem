@@ -202,12 +202,6 @@ class Lagrange2DTriElement(Base2DElement):
     self.J = self.Jacobian
     self.inv_J = self.inverse_Jacobian
     self.det_J = self.determinant_Jacobian
-    print("Jacobian matrix J:")
-    print(self.J)
-    print("Determinant of the Jacobian detJ:")
-    print(self.det_J)
-    print("Inverse of the Jacobian matrix invJ:")
-    print(self.inv_J)
 
   @cached_property
   def Jacobian(self):

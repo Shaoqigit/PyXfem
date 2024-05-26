@@ -44,11 +44,11 @@ Author: Shaoqiwu@outlook.com
 ```
 
 ## Main special features/architecture of the library compared to other existing lib:
-> * Apart from classical Linear/Quadratic Larange polynomial, **High order (lobatto)** shape functions are supported.
-> * The element type (interpolation order of shape functions) can be **varied** on each element (mesh).
-> * **Extended elements** and double node techinique are used to deal with discontitnuity.
-> * Various common Acoustic materials are supported, including porous rigid, Limp and **Biot-up** models.
-> * FEM-**TMM** coupling is supported to model multi-layered configuration in general geometry problems.
+* Apart from classical Linear/Quadratic Larange polynomial, **High order (lobatto)** shape functions are supported.
+* The element type (interpolation order of shape functions) can be **varied** on each element (mesh).
+* **Extended elements** and double node techinique are used to deal with discontitnuity.
+* Various common Acoustic materials are supported, including porous rigid, Limp and **Biot-up** models.
+* FEM-**TMM** coupling is supported to model multi-layered configuration in general geometry problems.
 
 
 ### Up to this moment:
@@ -62,6 +62,7 @@ Author: Shaoqiwu@outlook.com
 
 ### To do list
 * update to python 3.11
+* Parallel computing for frequancy scaning problem
 * MoR for damped systems (RB+EIM algorithme for porous materials)
 * Perfect Matched Layer (PML) for free field boundary condition
 * Infinite Element for free field boundary condition
