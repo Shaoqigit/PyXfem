@@ -202,6 +202,12 @@ class Lagrange2DTriElement(Base2DElement):
     self.J = self.Jacobian
     self.inv_J = self.inverse_Jacobian
     self.det_J = self.determinant_Jacobian
+    print("Jacobian matrix J:")
+    print(self.J)
+    print("Determinant of the Jacobian detJ:")
+    print(self.det_J)
+    print("Inverse of the Jacobian matrix invJ:")
+    print(self.inv_J)
 
   @cached_property
   def Jacobian(self):
@@ -212,10 +218,10 @@ class Lagrange2DTriElement(Base2DElement):
     J=dx/dxi"""
     J = np.array([[
         self.vertices[1][0] - self.vertices[0][0],
-        self.vertices[2][0] - self.vertices[0][0]
+        self.vertices[1][1] - self.vertices[0][1]
     ],
                   [
-                      self.vertices[1][1] - self.vertices[0][1],
+                      self.vertices[2][0] - self.vertices[0][0],
                       self.vertices[2][1] - self.vertices[0][1]
                   ]])
 
@@ -236,14 +242,11 @@ class Lagrange2DTriElement(Base2DElement):
     K: ndarray
         elementary stiffness matrix
     """
-
-    Ke = np.zeros((3, 3))
     if self.order == 1:
-      for i in range(3):
-        for j in range(3):
-          Ke[i, j] = np.sum(
-              self.N[i, :, :].T @ self.inv_J.T @ self.inv_J @ self.N[j, :, :] *
-              self.weights)
+      Ke = sum(
+          self.B[i, :, :] @ self.inv_J.T @ self.inv_J @ self.B[i, :, :].T *
+          weight for i, weight in enumerate(self.weights)) * self.det_J
+
     else:
       print("quadrtic lagrange not implemented yet")
 
@@ -256,7 +259,14 @@ class Lagrange2DTriElement(Base2DElement):
     m: ndarray
         elementary stiffness matrix
     """
-    Me = self.Jacobian * Me2DTri[0]
+    if self.order == 1:
+      #   import pdb
+      #   pdb.set_trace()
+      weight = np.diag(
+          np.array([self.weights[0], self.weights[1], self.weights[2]]))
+      Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
+    else:
+      print("quadrtic lagrange not implemented yet")
     return Me
 
   def get_order(self):
@@ -274,7 +284,12 @@ class Lagrange2DTriElement(Base2DElement):
 if __name__ == "__main__":
   label = "fluid"
   order = 1
-  nodes = np.array([[0, 0], [1, 0], [0, 1]])
+  nodes = np.array([[0, 0], [2, -1], [1, 0.5]])
+  # plot the nodes
+  import matplotlib.pyplot as plt
+  plt.figure()
+  plt.plot(nodes[:, 0], nodes[:, 1], 'o')
+  plt.show()
   lag_2d_tri = Lagrange2DTriElement(1, order, nodes)
-#   import pdb
-#   pdb.set_trace()
+  print(lag_2d_tri.ke)
+  print(lag_2d_tri.me)
