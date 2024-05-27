@@ -287,16 +287,16 @@ class FESpace:
             node = tuple(node)
           self.nodes2elem2var[node] = {elem: self.elem_mat[elem]}
 
-    # import pdb
-    # pdb.set_trace()
-    self.mat2dofs = defaultdict(dict)
+    self.mat2dofs = defaultdict(
+        dict)    # {mat: {coord: dofs}} for BC imposition
     for mat, elems in subdomains.items():
       start_index = subdoamin_start_index[mat]
       for elem in elems:
         local_dofs = self.mesh.connectivity[elem]
         local_coord = [self.mesh.num_node2coord[node] for node in local_dofs]
         if mat.TYPE in ['Air', 'Fluid']:
-          self.mat2dofs['Pf'].update(dict(zip(local_coord, local_dofs)))
+          self.mat2dofs['Pf'].update(dict(zip(local_coord,
+                                              local_dofs)))    # neat opeartor
         elif mat.TYPE in ['Poroelastic']:
           self.mat2dofs['Pb'].update(dict(zip(local_coord, local_dofs)))
           local_dofs_2 = local_dofs + self.mesh.get_nb_nodes() - start_index
@@ -311,6 +311,7 @@ class FESpace:
     return self.get_nb_dofs() - self.nb_external_dofs
 
   def get_nb_dofs(self):
+    # to be modified to adapet to 2D/3D
     nb_dofs = 0
     nb_nodes = self.mesh.get_nb_nodes()
     for basis in self.whole_bases:
@@ -330,11 +331,14 @@ class FESpace:
         [.....]]"""
     global_dof = []
     internal_dof_index_start = self.mesh.get_nb_nodes() * self.nb_var
-    elem_connec1 = np.arange(0, self.mesh.get_nb_elems())
-    elem_connec2 = np.arange(1, self.mesh.get_nb_nodes())
-    connect = np.vstack((elem_connec1, elem_connec2)).T
+    # elem_connec1 = np.arange(0, self.mesh.get_nb_elems())
+    # elem_connec2 = np.arange(1, self.mesh.get_nb_nodes())
+    # connect = np.vstack((elem_connec1, elem_connec2)).T
+    connect = self.mesh.connectivity
     new_connect = connect
     whole_connect = connect
+    # import pdb
+    # pdb.set_trace()
     for i in range(1, self.nb_var):
       index_1 = new_connect[:, 1] + connect.shape[0] * i
       index_2 = new_connect[:, 1] + 1 + connect.shape[0] * i
@@ -358,12 +362,13 @@ class FESpace:
     return global_dof
 
   def base4global_dofs(self):
+    """
+    return the global dofs for each base
+    """
     global_dofs = self.get_global_dofs()
-    base2dofs = {}
+    base2dofs = defaultdict(list)
     for i, bases in enumerate(self.whole_bases):
-      index = base2dofs.get(bases.label, [])
-      index.append(global_dofs[i])
-      base2dofs[bases.label] = index
+      base2dofs[bases.label].append(global_dofs[i])
     return base2dofs
 
   def get_global_dofs_by_base(self, label):

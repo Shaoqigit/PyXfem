@@ -185,6 +185,15 @@ class Lagrange2DTriElement(Base2DElement):
         element order
     vertices: ndarray
         [(x1, y1), (x2, y2), (x3, y3)] for triangle
+    reference element: [(0, 0), (1, 0), (0, 1)]
+    illustrated as below:
+    2
+    |\
+    | \
+    |  \
+    |   \
+    |    \
+    0-----1
     """
 
   def __init__(self, label, order, vertices):
@@ -268,7 +277,19 @@ class Lagrange2DTriElement(Base2DElement):
 
   @property
   def nb_internal_dofs(self):
-    return self.order - 1
+    if order == 1 or order == 2:
+      return 0
+    elif order == 3:
+      self.nb_internal_dofs = 1
+
+  @property
+  def nb_edge_dofs(self):
+    if order == 1:
+      return 0
+    elif order == 2:
+      return 3
+    elif order == 3:
+      return 6
 
   @property
   def local_dofs_index(self):

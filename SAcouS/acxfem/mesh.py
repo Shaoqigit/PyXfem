@@ -71,6 +71,8 @@ class BaseMesh(metaclass=ABCMeta):
     num_node2coord2 = {}
     """return node number from coordinate"""
     for i, coord in enumerate(self.nodes):
+      if isinstance(coord, np.ndarray):    # for 2/3D mesh
+        coord = tuple(coord)
       num_node2coord2[i] = coord
     return num_node2coord2
 
@@ -81,6 +83,8 @@ class Mesh1D(BaseMesh):
     self.nodes = nodes
     self.nb_nodes = len(nodes)
     self.elem_connect = elem_connect
+    self.dim = 1
+    self.node_index = np.arange(self.nb_nodes)
 
   def get_mesh(self):
     """dict of element number and nodes coordinates"""
@@ -150,6 +154,7 @@ class Mesh2D(BaseMesh):
     self.nodes = []
     self.elem_connect = []
     self.nb_nodes = 0
+    self.dim = 2
 
   def read_mesh(self, mesh_file):
     mesh = meshio.read(mesh_file)
@@ -157,6 +162,7 @@ class Mesh2D(BaseMesh):
     self.elem_connect = mesh.cells[2].data
     self.nb_elmes = len(self.elem_connect)
     self.nb_nodes = len(self.nodes)
+    self.node_index = np.arange(self.nb_nodes)
 
   def plotmesh(self, withnode=False, withnodeid=False):
     """
