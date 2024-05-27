@@ -38,4 +38,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run qa test cases
       run: |
-        python run_test.py
+        python run_test.
+    # check if there cases are failing, check the tests/failed_test_cases.txt file is empty or not
+    - name: Check for failed test cases
+      run: |
+        if [ -s tests/failed_test_cases.txt ]; then exit 1; fi  
