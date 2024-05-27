@@ -7,10 +7,10 @@ import concurrent.futures
 
 test_path = "tests/"
 test_cases = [
-    'test_material_pem.py', 'test_absorption_comp.py', 'test1_two_layer.py',
-    'test_two_fluid_new.py', 'test2_impedance_bc.py', 'test_biot_equation.py',
-    'test_biot_equation_new.py', 'test_modal_reduction_FRF.py', 'test_fadm.py',
-    'test_tmm_biot.py'
+    'test_2D_matrices.py', 'test_material_pem.py', 'test_absorption_comp.py',
+    'test1_two_layer.py', 'test_two_fluid_new.py', 'test2_impedance_bc.py',
+    'test_biot_equation.py', 'test_biot_equation_new.py',
+    'test_modal_reduction_FRF.py', 'test_fadm.py', 'test_tmm_biot.py'
 ]
 # search in the directory to see if failed_test_cases.txt exists
 # if it exists, reead it and run the failed test cases
@@ -46,8 +46,11 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
 faield_test_cases = [result for result in results if result is not None]
 
 if not faield_test_cases:
-  print("All test cases passed!")
-  os.remove(test_path + 'failed_test_cases.txt')
+  print(f"\033[1;32m {'All test cases passed!':>30}\033[0m")
+  try:
+    os.remove(test_path + 'failed_test_cases.txt')
+  except FileNotFoundError:
+    pass
 else:
   with open(test_path + 'failed_test_cases.txt', 'w') as f:
     for test_case in faield_test_cases:
