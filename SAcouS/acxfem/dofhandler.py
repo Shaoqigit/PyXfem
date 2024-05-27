@@ -312,16 +312,16 @@ class FESpace:
 
   def get_nb_dofs(self):
     # to be modified to adapet to 2D/3D
-    nb_dofs = 0
     nb_nodes = self.mesh.get_nb_nodes()
+    nb_dofs = nb_nodes * self.nb_var
     for basis in self.whole_bases:
       if basis.is_discontinue:
         num_discontiue = self.basis.interface
         return nb_nodes * self.basis.get_order() + 1 + num_discontiue * (
             self.basis.get_order() + 1)
       else:
-        nb_dofs += basis.get_order()
-    return (nb_dofs + self.nb_var)
+        nb_dofs += basis.nb_internal_dofs
+    return nb_dofs
 
   def get_global_dofs(self):
     """return local dof
