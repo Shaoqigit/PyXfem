@@ -6,10 +6,10 @@ name = "PyAcoustiX"
 version = "0.9.11"
 description = "A pure Python package/software for acoustic analysis"
 readme = "README.md"
+requires-python = ">=3.8"
 authors = [
     {name = "Shaoqi WU", email = "shaoqiwu@outlook.com"},
 ]
-homepage = "https://github.com/Shaoqigit/PyXfem"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -19,20 +19,22 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
 ]
-python = "^3.8"
 
 
 dependencies = [
-matplotlib==3.7.0
-numpy==1.23.5
-numba>=0.54.4
-scipy==1.10.0
-pymls==1.8.0
-meshio>=5.0.0
+"matplotlib==3.7.0",
+"numpy==1.23.5",
+"numba>=0.54.4",
+"scipy==1.10.0",
+"pymls==1.8.0",
+"meshio>=5.0.0",
 ]
 
 [project.optional-dependencies]
-all = [pymls = "*"]
+all = ["pymls"]
 
 [project.entry-points.console_scripts]
 sacous = "SAcouS.__main__:main"
+
+[project.urls]
+homepage = "https://github.com/Shaoqigit/PyXfem"
