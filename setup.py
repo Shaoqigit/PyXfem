@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 with open("README.md", "r", encoding="utf-8") as f:
-    long_description = f.read()
+  long_description = f.read()
 
 setup(
     name='PyAcoustiX',
@@ -23,12 +23,12 @@ setup(
         'scipy',
         'matplotlib',
         'numba',
-        # Add any other dependencies here
+        'meshio',
+    # Add any other dependencies here
     ],
     install_optional=[
         'pymls',
     ],
-
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -38,5 +38,4 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
-    python_requires='>=3.8'
-)
+    python_requires='>=3.8')
