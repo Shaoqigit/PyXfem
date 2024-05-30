@@ -50,8 +50,6 @@ def test_case_2D():
   air_elements = np.arange(0, mesh.nb_elmes)
   elements2node = mesh.get_mesh()
   subdomains = {air: air_elements}
-  import pdb
-  pdb.set_trace()
   Pf_bases = []
   order = 1
   for mat, elems in subdomains.items():
