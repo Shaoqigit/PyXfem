@@ -40,21 +40,13 @@ def test_case_2D():
   # ====================== Pysical Problem ======================
   # define the materials
   air = Air('classical air')
-
-  # given JCA porous material properties
-  phi = 0.98    # porosity
-  sigma = 3.75e3    # resistivity
-  alpha = 1.17    # Tortuosity
-  Lambda_prime = 742e-6    # Viscous characteristic length
-  Lambda = 110e-6    #
-  xfm = EquivalentFluid('xfm', phi, sigma, alpha, Lambda_prime, Lambda)
-
   # Harmonic Acoustic problem define the frequency
-  freq = 2000
+  freq = 1000
   omega = 2 * np.pi * freq    # angular frequency
 
   mesh = Mesh2D()
   mesh.read_mesh("mesh/square_1.msh")
+  # mesh.plotmesh()
   air_elements = np.arange(0, mesh.nb_elmes)
   elements2node = mesh.get_mesh()
   subdomains = {air: air_elements}
@@ -68,14 +60,17 @@ def test_case_2D():
           Lagrange2DTriElement('Pf', order, elements2node[elem])
           for elem in elems
       ]
-  import pdb
-  pdb.set_trace()
   # handler the dofs: map the basis to mesh
   fe_space = FESpace(mesh, subdomains, Pf_bases)
+  import pdb
+  pdb.set_trace()
   # initialize the assembler
   Helmholtz_assember = HelmholtzAssembler(fe_space,
                                           subdomains,
                                           dtype=np.complex128)
+
+  Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
+  left_hand_matrix = Helmholtz_assember.get_global_matrix()
 
 
 if __name__ == "__main__":
