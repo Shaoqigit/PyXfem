@@ -331,14 +331,9 @@ class FESpace:
         [.....]]"""
     global_dof = []
     internal_dof_index_start = self.mesh.get_nb_nodes() * self.nb_var
-    # elem_connec1 = np.arange(0, self.mesh.get_nb_elems())
-    # elem_connec2 = np.arange(1, self.mesh.get_nb_nodes())
-    # connect = np.vstack((elem_connec1, elem_connec2)).T
     connect = self.mesh.connectivity
     new_connect = connect
     whole_connect = connect
-    # import pdb
-    # pdb.set_trace()
     for i in range(1, self.nb_var):
       index_1 = new_connect[:, 1] + connect.shape[0] * i
       index_2 = new_connect[:, 1] + 1 + connect.shape[0] * i

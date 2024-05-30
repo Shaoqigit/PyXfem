@@ -277,18 +277,18 @@ class Lagrange2DTriElement(Base2DElement):
 
   @property
   def nb_internal_dofs(self):
-    if order == 1 or order == 2:
+    if self.order == 1 or self.order == 2:
       return 0
-    elif order == 3:
-      self.nb_internal_dofs = 1
+    elif self.order == 3:
+      return 1
 
   @property
   def nb_edge_dofs(self):
-    if order == 1:
+    if self.order == 1:
       return 0
-    elif order == 2:
+    elif self.order == 2:
       return 3
-    elif order == 3:
+    elif self.order == 3:
       return 6
 
   @property
