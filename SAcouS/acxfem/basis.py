@@ -208,11 +208,10 @@ class Lagrange2DTriElement(Base2DElement):
     self.B = np.array(
         [lag_poly.get_der_shape_functions(*point) for point in self.points])
 
-    self.J = self.Jacobian
-    self.inv_J = self.inverse_Jacobian
-    self.det_J = self.determinant_Jacobian
+    self.J = self.Jacobian()
+    self.inv_J = self.inverse_Jacobian()
+    self.det_J = self.determinant_Jacobian()
 
-  @cached_property
   def Jacobian(self):
     """
     compute the Jacobian of the element
@@ -230,15 +229,13 @@ class Lagrange2DTriElement(Base2DElement):
 
     return J
 
-  @cached_property
   def inverse_Jacobian(self):
     return np.linalg.inv(self.J)
 
-  @cached_property
   def determinant_Jacobian(self):
-    return np.linalg.det(self.Jacobian)
+    return np.linalg.det(self.Jacobian())
 
-  @cached_property
+  @property
   def ke(self):
     """compute the elementary stiffness matrix
     returns:
@@ -255,7 +252,7 @@ class Lagrange2DTriElement(Base2DElement):
 
     return Ke
 
-  @cached_property
+  @property
   def me(self):
     """compute the elementary stiffness matrix
     returns:
@@ -293,7 +290,7 @@ class Lagrange2DTriElement(Base2DElement):
 
   @property
   def local_dofs_index(self):
-    return np.arange(self.order + 1)
+    return np.arange(self.order * 2 + 1)
 
 
 if __name__ == "__main__":

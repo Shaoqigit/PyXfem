@@ -24,7 +24,7 @@ e = ElementTriP1()
 basis = Basis(m, e)
 facebasis = FacetBasis(m, e, facets=m.boundaries['left'])
 
-freq = 2000
+freq = 1000
 omega = 2 * np.pi * freq
 k = omega / 343
 
@@ -51,9 +51,13 @@ def numann_flux(v, w):
   return neumann_bc(x, y) * v
 
 
-A = asm(laplace, basis)
-M = asm(mass, basis)
+A = asm(laplace, basis) / (omega**2 * 1.213)
+K = asm(laplace, basis)
+M = asm(mass, basis) / 141855
 b = asm(numann_flux, facebasis) * omega * 1.213
+import pdb
+
+pdb.set_trace()
 # or:
 # A = laplace.assemble(basis)
 # b = rhs.assemble(basis)

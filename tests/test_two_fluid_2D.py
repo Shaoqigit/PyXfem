@@ -60,15 +60,24 @@ def test_case_2D():
       ]
   # handler the dofs: map the basis to mesh
   fe_space = FESpace(mesh, subdomains, Pf_bases)
-  import pdb
-  pdb.set_trace()
   # initialize the assembler
   Helmholtz_assember = HelmholtzAssembler(fe_space,
                                           subdomains,
                                           dtype=np.complex128)
-
+  import pdb
+  pdb.set_trace()
   Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
   left_hand_matrix = Helmholtz_assember.get_global_matrix()
+
+  right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
+                            dtype=np.complex128)
+
+  # ====================== Boundary Conditions ======================
+  nature_bcs = {
+      'type': 'fluid_velocity',
+      'value': 1 * np.exp(-1j * omega),
+      'position': -1
+  }    # position: number of facet number
 
 
 if __name__ == "__main__":
