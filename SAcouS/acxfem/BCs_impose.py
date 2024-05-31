@@ -96,10 +96,11 @@ class ApplyBoundaryConditions:
       for line_index in lines:
         node_1_coord = self.mesh.nodes[line_index[0]]
         node_2_coord = self.mesh.nodes[line_index[1]]
-        natural_value_1 = nature_bc['value'](node_1_coord[0], node_1_coord[1])
-        natural_value_2 = nature_bc['value'](node_2_coord[0], node_2_coord[1])
-        import pdb
-        pdb.set_trace()
+        norm = np.linalg.norm(node_1_coord - node_2_coord)
+        natural_value_1 = norm * nature_bc['value'](node_1_coord[0],
+                                                    node_1_coord[1]) / 2
+        natural_value_2 = norm * nature_bc['value'](node_2_coord[0],
+                                                    node_2_coord[1]) / 2
         if nature_bc['type'] == 'fluid_velocity':
           self.right_hand_side[
               line_index[0]] += -natural_value_1 / (1j * self.omega)

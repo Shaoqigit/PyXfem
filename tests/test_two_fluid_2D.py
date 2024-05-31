@@ -46,8 +46,8 @@ def test_case_2D():
   omega = 2 * np.pi * freq    # angular frequency
 
   mesh = Mesh2D()
-  mesh.read_mesh("mesh/square_2.msh")
-  mesh.plotmesh(withedgeid=True)
+  mesh.read_mesh("mesh/square_3.msh")
+  # mesh.plotmesh(withedgeid=True)
   air_elements = np.arange(0, mesh.nb_elmes)
   elements2node = mesh.get_mesh()
   subdomains = {air: air_elements}
@@ -69,7 +69,7 @@ def test_case_2D():
                             dtype=np.complex128)
 
   # ====================== Boundary Conditions ======================
-  natural_edge = np.arange(34, 45)
+  natural_edge = np.arange(64, 85)
   natural_bcs = {
       'type': 'fluid_velocity',
       'value': lambda x, y: 1 * np.exp(-1j * omega),
@@ -82,11 +82,13 @@ def test_case_2D():
                                         right_hand_vec, omega)
   BCs_applier.apply_nature_bc(natural_bcs, 'Pf')
   # solver the linear system
-  import pdb
-  pdb.set_trace()
+  # import pdb
+  # pdb.set_trace()
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec)
   sol = linear_solver.u
+  import pdb
+  pdb.set_trace()
   plot_field(mesh, sol.real, title="Pressure field")
 
 

@@ -50,7 +50,7 @@ def test_case_1():
   omega = 2 * np.pi * freq    # angular frequency
 
   # ====================== Mesh and basis definition ======================
-  num_elem = 1000    # number of elements
+  num_elem = 20    # number of elements
   num_nodes = num_elem + 1    # number of nodes
   nodes = np.linspace(-0.1, 0.1, num_nodes)
   elem_connec1 = np.arange(0, num_elem)
@@ -66,7 +66,7 @@ def test_case_1():
   elements2node = mesh.get_mesh(
   )    # dict: elements number with nodes coodinates
   # print(elements_set)
-  order = 2    # global order of the bases
+  order = 1    # global order of the bases
   # applied the basis on each element
   Pf_bases = []
   for mat, elems in subdomains.items():
@@ -103,8 +103,6 @@ def test_case_1():
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec)
   sol = linear_solver.u
-  import pdb
-  pdb.set_trace()
   # ====================== Analytical Solution ======================
   # analytical solution
   kundlt_tube = DoubleleLayerKundltTube(mesh, air, air, omega, nature_bcs)
