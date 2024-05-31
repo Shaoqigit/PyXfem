@@ -163,8 +163,9 @@ class Mesh2D(BaseMesh):
     self.nb_elmes = len(self.elem_connect)
     self.nb_nodes = len(self.nodes)
     self.node_index = np.arange(self.nb_nodes)
+    self.exterior_edges = mesh.cells[1].data    # [node1, node2]
 
-  def plotmesh(self, withnode=False, withnodeid=False):
+  def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
     """
     plot the 2d mesh
 
@@ -186,6 +187,11 @@ class Mesh2D(BaseMesh):
       for i, node in enumerate(self.nodes):
         x, y = self.nodes[i]
         plt.text(x, y, '%d' % (i + 1))
+    if withedgeid:
+      for i, edge in enumerate(self.exterior_edges):
+        x, y = self.nodes[edge[0]]
+        x1, y1 = self.nodes[edge[1]]
+        plt.text(0.5 * (x + x1), 0.5 * (y + y1), '%d' % (i + 1))
     plt.xlabel('X', fontsize=14)
     plt.ylabel('Y', fontsize=14)
     plt.show()

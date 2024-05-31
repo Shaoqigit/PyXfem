@@ -269,6 +269,30 @@ class Lagrange2DTriElement(Base2DElement):
       print("quadrtic lagrange not implemented yet")
     return Me
 
+  def egde_basis(self, edge):
+    """compute the edge basis function
+    returns:
+    N: ndarray
+        edge basis function
+    """
+    N = np.zeros((self.order + 1, 2))
+    if self.order == 1:
+      if edge == 0:
+        N[0, 0] = 1
+      elif edge == 1:
+        N[1, 0] = 1
+      elif edge == 2:
+        N[2, 0] = 1
+    else:
+      print("quadrtic lagrange not implemented yet")
+    return N
+
+  def edge_jacobian(self, edge):
+    J = np.array([[
+        self.vertices[edge[1]][0] - self.vertices[edge[0]][0],
+        self.vertices[edge[1]][1] - self.vertices[edge[0]][1]
+    ]])
+
   def get_order(self):
     return self.order
 

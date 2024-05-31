@@ -32,7 +32,8 @@ from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid
 from SAcouS.acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem.physic_assembler import HelmholtzAssembler
 from SAcouS.acxfem.solver import LinearSolver
-from SAcouS.acxfem.postprocess import PostProcessField
+from SAcouS.acxfem.postprocess import plot_field
+from SAcouS.acxfem.BCs_impose import ApplyBoundaryConditions
 from analytical.fluid_sol import ImpedenceKundltTube
 
 
@@ -45,8 +46,8 @@ def test_case_2D():
   omega = 2 * np.pi * freq    # angular frequency
 
   mesh = Mesh2D()
-  mesh.read_mesh("mesh/square_1.msh")
-  # mesh.plotmesh()
+  mesh.read_mesh("mesh/square_2.msh")
+  mesh.plotmesh(withedgeid=True)
   air_elements = np.arange(0, mesh.nb_elmes)
   elements2node = mesh.get_mesh()
   subdomains = {air: air_elements}
@@ -61,23 +62,32 @@ def test_case_2D():
   # handler the dofs: map the basis to mesh
   fe_space = FESpace(mesh, subdomains, Pf_bases)
   # initialize the assembler
-  Helmholtz_assember = HelmholtzAssembler(fe_space,
-                                          subdomains,
-                                          dtype=np.complex128)
-  import pdb
-  pdb.set_trace()
+  Helmholtz_assember = HelmholtzAssembler(fe_space, subdomains, dtype=float)
   Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
   left_hand_matrix = Helmholtz_assember.get_global_matrix()
-
   right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
                             dtype=np.complex128)
 
   # ====================== Boundary Conditions ======================
-  nature_bcs = {
+  natural_edge = np.arange(34, 45)
+  natural_bcs = {
       'type': 'fluid_velocity',
-      'value': 1 * np.exp(-1j * omega),
-      'position': -1
+      'value': lambda x, y: 1 * np.exp(-1j * omega),
+      'position': natural_edge
   }    # position: number of facet number
+
+  right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
+                            dtype=np.complex128)
+  BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
+                                        right_hand_vec, omega)
+  BCs_applier.apply_nature_bc(natural_bcs, 'Pf')
+  # solver the linear system
+  import pdb
+  pdb.set_trace()
+  linear_solver = LinearSolver(fe_space=fe_space)
+  linear_solver.solve(left_hand_matrix, right_hand_vec)
+  sol = linear_solver.u
+  plot_field(mesh, sol.real, title="Pressure field")
 
 
 if __name__ == "__main__":

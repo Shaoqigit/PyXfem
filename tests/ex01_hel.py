@@ -19,7 +19,7 @@ points = mesh.nodes
 cells = mesh.connectivity
 m = MeshTri(points.T, cells.T)
 # plot the mesh
-draw(m)
+# draw(m)
 e = ElementTriP1()
 basis = Basis(m, e)
 facebasis = FacetBasis(m, e, facets=m.boundaries['left'])
@@ -42,7 +42,7 @@ def mass(u, v, _):
 
 # this method could also be imported from skfem.models.unit_load
 def neumann_bc(x, y):
-  return 1 * np.exp(-1j * omega)
+  return 1
 
 
 @LinearForm
@@ -54,10 +54,8 @@ def numann_flux(v, w):
 A = asm(laplace, basis) / (omega**2 * 1.213)
 K = asm(laplace, basis)
 M = asm(mass, basis) / 141855
-b = asm(numann_flux, facebasis) * omega * 1.213
-import pdb
+b = asm(numann_flux, facebasis) / (omega * 1j) * np.exp(-1j * omega)
 
-pdb.set_trace()
 # or:
 # A = laplace.assemble(basis)
 # b = rhs.assemble(basis)
@@ -68,17 +66,21 @@ pdb.set_trace()
 # # pdb.set_trace()
 # print(A.toarray())
 # print(M.toarray())
-K = A - k**2 * M
+K = A - M
 from scipy.sparse.linalg import spsolve
 
 u = spsolve(K, b)
 # solve -- can be anything that takes a sparse matrix and a right-hand side
 x = solve(K, b)
 
+import pdb
+
+pdb.set_trace()
+
 
 def visualize():
   from skfem.visuals.matplotlib import plot
-  return plot(m, x, shading='gouraud', colorbar=True)
+  return plot(m, x.real, shading='gouraud', colorbar=True)
 
 
 if __name__ == "__main__":

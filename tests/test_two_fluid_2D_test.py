@@ -45,23 +45,14 @@ def test_case_1():
   # ====================== Pysical Problem ======================
   # define the materials
   air = Air('classical air')
-
-  # given JCA porous material properties
-  phi = 0.98    # porosity
-  sigma = 3.75e3    # resistivity
-  alpha = 1.17    # Tortuosity
-  Lambda_prime = 742e-6    # Viscous characteristic length
-  Lambda = 110e-6    #
-  xfm = EquivalentFluid('xfm', phi, sigma, alpha, Lambda_prime, Lambda)
-
   # Harmonic Acoustic problem define the frequency
-  freq = 2000
+  freq = 1000
   omega = 2 * np.pi * freq    # angular frequency
 
   # ====================== Mesh and basis definition ======================
   num_elem = 1000    # number of elements
   num_nodes = num_elem + 1    # number of nodes
-  nodes = np.linspace(-1, 1, num_nodes)
+  nodes = np.linspace(-0.1, 0.1, num_nodes)
   elem_connec1 = np.arange(0, num_elem)
   elem_connec2 = np.arange(1, num_nodes)
   connectivity = np.vstack((elem_connec1, elem_connec2)).T
@@ -69,9 +60,8 @@ def test_case_1():
   mesh = Mesh1D(nodes, connectivity)
   # mesh.plotmesh(withnode=True)
   # define the subdomains: domain name (material) and the elements in the domain
-  air_elements = np.arange(0, int(num_elem / 2))
-  xfm_elements = np.arange(int(num_elem / 2), num_elem)
-  subdomains = {air: air_elements, xfm: xfm_elements}
+  air_elements = np.arange(0, num_elem)
+  subdomains = {air: air_elements}
   check_material_compability(subdomains)
   elements2node = mesh.get_mesh(
   )    # dict: elements number with nodes coodinates
@@ -103,7 +93,7 @@ def test_case_1():
   nature_bcs = {
       'type': 'fluid_velocity',
       'value': 1 * np.exp(-1j * omega),
-      'position': -1.0
+      'position': -0.1
   }
   BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
                                         right_hand_vec, omega)
@@ -113,10 +103,11 @@ def test_case_1():
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec)
   sol = linear_solver.u
-
+  import pdb
+  pdb.set_trace()
   # ====================== Analytical Solution ======================
   # analytical solution
-  kundlt_tube = DoubleleLayerKundltTube(mesh, air, xfm, omega, nature_bcs)
+  kundlt_tube = DoubleleLayerKundltTube(mesh, air, air, omega, nature_bcs)
   ana_sol = np.zeros(
       num_nodes,
       dtype=np.complex128)    #initialize the analytical solution vector
@@ -126,10 +117,7 @@ def test_case_1():
   post_processer = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
   post_processer.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'),
                           (np.real(ana_sol), 'Analytical', 'dashed'))
-  plt.show(block=False)
-  plt.pause(1)
-  plt.close('all')
-
+  plt.show()
   error = post_processer.compute_error(sol, ana_sol)
   print("error:", error)
   if error < 1e-5:
