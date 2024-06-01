@@ -158,6 +158,7 @@ class Mesh2D(BaseMesh):
 
   def read_mesh(self, mesh_file):
     mesh = meshio.read(mesh_file)
+    self.io_mesh = mesh
     self.nodes = mesh.points[:, :2]
     self.elem_connect = mesh.cells[2].data
     self.nb_elmes = len(self.elem_connect)

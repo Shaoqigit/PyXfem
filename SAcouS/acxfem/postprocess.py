@@ -20,6 +20,8 @@ from typing import Any
 import numpy as np
 import matplotlib.pyplot as plt
 
+import meshio
+
 
 class BasePostProcess(object):
 
@@ -136,8 +138,6 @@ class PostProcessFRF(BasePostProcess):
 
 
 # write a function to plot the results on 2D/3D mesh
-
-
 def plot_field(mesh, sol, title, quantity='Pressure', unit='Pa'):
   # Check if the mesh is 2D or 3D
   if mesh.dim == 2:
@@ -171,3 +171,33 @@ def plot_field(mesh, sol, title, quantity='Pressure', unit='Pa'):
     plt.show()
   else:
     print("Unsupported mesh dimension.")
+
+
+def save_gmsh(mesh, sol, file_name, binary):
+  mesh = mesh.io_mesh
+  mesh.point_data = {'Pressure': sol}
+  meshio.gmsh.write(file_name, mesh, "2.2", binary)
+
+
+def save_plot(mesh, sol, file_name, engine=None, binary=True):
+  if engine == 'None':
+    engine = 'matplotlib'
+  if engine == 'gmsh':
+    # write the solution to a .msh file
+    save_gmsh(mesh, sol, file_name, binary)
+  else:
+    print("Unsupported plotting engine.")
+
+
+def read_solution(file_name, read_mesh=False, engine=None):
+  if engine == 'None':
+    engine = 'matplotlib'
+  if engine == 'gmsh':
+    # read the solution from a .msh file
+    mesh = meshio.read(file_name)
+    if read_mesh:
+      return mesh, mesh.point_data['Pressure']
+    else:
+      return mesh.point_data['Pressure']
+  else:
+    print("Unsupported plotting engine.")
