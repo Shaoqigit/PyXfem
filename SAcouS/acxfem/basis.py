@@ -22,7 +22,6 @@ from abc import ABCMeta, abstractmethod
 from functools import cached_property
 
 from SAcouS.acxfem.precompute_matrices import Ke1D, Me1D, Ce1D
-from SAcouS.acxfem.precompute_matrices_lag import Ke2DTri, Me2DTri
 
 
 class Base1DElement(metaclass=ABCMeta):
@@ -174,8 +173,7 @@ class Base2DElement(metaclass=ABCMeta):
     pass
 
 
-from SAcouS.acxfem.quadratures import GaussLegendre2DTri
-from SAcouS.acxfem.polynomial import Lagrange2DTri
+from SAcouS.acxfem.precompute_matrices_lag import points_o1, weights_o1, N_o1, B_o1
 
 
 class Lagrange2DTriElement(Base2DElement):
@@ -198,20 +196,17 @@ class Lagrange2DTriElement(Base2DElement):
 
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
-    n_quad_pts = order * 2 + 1
-    lag_poly = Lagrange2DTri(order)
+    if order == 1:
+      self.points, self.weights = points_o1, weights_o1
+      self.N = N_o1
+      self.B = B_o1
 
-    self.points, self.weights = GaussLegendre2DTri(
-        n_quad_pts).points(), GaussLegendre2DTri(n_quad_pts).weights()
-    self.N = np.array(
-        [lag_poly.get_shape_functions(*point) for point in self.points])
-    self.B = np.array(
-        [lag_poly.get_der_shape_functions(*point) for point in self.points])
+    self.J = self.Jacobian
+    self.inv_J = self.inverse_Jacobian
+    self.det_J = self.determinant_Jacobian
+    self.inv_J_product = self.inv_J.T @ self.inv_J
 
-    self.J = self.Jacobian()
-    self.inv_J = self.inverse_Jacobian()
-    self.det_J = self.determinant_Jacobian()
-
+  @cached_property
   def Jacobian(self):
     """
     compute the Jacobian of the element
@@ -229,11 +224,13 @@ class Lagrange2DTriElement(Base2DElement):
 
     return J
 
+  @cached_property
   def inverse_Jacobian(self):
     return np.linalg.inv(self.J)
 
+  @cached_property
   def determinant_Jacobian(self):
-    return np.linalg.det(self.Jacobian())
+    return np.linalg.det(self.Jacobian)
 
   @property
   def ke(self):
@@ -242,10 +239,11 @@ class Lagrange2DTriElement(Base2DElement):
     K: ndarray
         elementary stiffness matrix
     """
+
     if self.order == 1:
       Ke = sum(
-          self.B[i, :, :] @ self.inv_J.T @ self.inv_J @ self.B[i, :, :].T *
-          weight for i, weight in enumerate(self.weights)) * self.det_J
+          self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
+          for i, weight in enumerate(self.weights)) * self.det_J
 
     else:
       print("quadrtic lagrange not implemented yet")
@@ -260,8 +258,6 @@ class Lagrange2DTriElement(Base2DElement):
         elementary stiffness matrix
     """
     if self.order == 1:
-      #   import pdb
-      #   pdb.set_trace()
       weight = np.diag(
           np.array([self.weights[0], self.weights[1], self.weights[2]]))
       Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J

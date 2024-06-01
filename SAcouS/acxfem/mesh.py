@@ -199,10 +199,7 @@ class Mesh2D(BaseMesh):
 
   def get_mesh(self):
     """dict of element number and nodes coordinates"""
-    elems = {}
-    for i in range(len(self.elem_connect)):
-      elems[i] = self.nodes[self.elem_connect[i]]
-    return elems
+    return {i: self.nodes[conn] for i, conn in enumerate(self.elem_connect)}
 
   def refine_mesh(self, times):
     # refine the 2D mesh

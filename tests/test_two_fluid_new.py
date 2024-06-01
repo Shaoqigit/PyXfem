@@ -91,10 +91,8 @@ def test_case_1():
   fe_space = FESpace(mesh, subdomains, Pf_bases)
 
   # initialize the assembler
-  Helmholtz_assember = HelmholtzAssembler(fe_space,
-                                          subdomains,
-                                          dtype=np.complex128)
-  Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
+  Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=np.complex128)
+  Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
   left_hand_matrix = Helmholtz_assember.get_global_matrix()
 
   right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,

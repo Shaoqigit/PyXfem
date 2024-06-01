@@ -68,8 +68,8 @@ def test_case_2D():
     # handler the dofs: map the basis to mesh
     fe_space = FESpace(mesh, subdomains, Pf_bases)
     # initialize the assembler
-    Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=float)
-    Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
+    Helmholtz_assember = HelmholtzAssembler(fe_space, subdomains, dtype=float)
+    Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
     left_hand_matrix = Helmholtz_assember.get_global_matrix()
     right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
                               dtype=np.complex128)
@@ -124,7 +124,7 @@ def test_case_2D():
   post_processer.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'),
                           (np.real(ana_sol), 'Analytical', 'dashed'))
   # plt.show()
-  error = np.mean(np.real(sol) - np.real(ana_sol)) / np.mean(np.real(ana_sol))
+  error = np.mean(sol - np.real(ana_sol)) / np.mean(np.real(ana_sol))
   print("error:", error)
   if error < 0.0005:
     print("Test passed!")
@@ -135,7 +135,19 @@ def test_case_2D():
 
 
 if __name__ == "__main__":
-  import time
-  start = time.time()
-  result = test_case_2D()
-  print("Time taken:", time.time() - start)
+  # Python
+  import cProfile
+
+  # Profile the main function and save the results to 'profile_results.prof'
+  # cProfile.run('test_case_2D()', 'profile_results.prof')
+  # Python
+  import pstats
+
+  # Create a pstats.Stats object from the profiling results
+  stats = pstats.Stats('profile_results.prof')
+
+  # Sort the statistics by the cumulative time spent in the function
+  stats.sort_stats('cumulative')
+
+  # Print the statistics
+  stats.print_stats()

@@ -268,39 +268,22 @@ class FESpace:
     self.subdomains = subdomains
     self.nb_var = len(all_bases)
 
-    self.whole_bases = []
-    for bases in all_bases:
-      self.whole_bases += bases
+    self.whole_bases = [base for bases in all_bases for base in bases]
     self.var_names = [base.label for base in self.whole_bases]
 
     self.elem_mat = {}
-    subdoamin_start_index = {}
-    for mat, elems in subdomains.items():
-      subdoamin_start_index[mat] = elems[0]
+    self.subdoamin_start_index = {}
+    for mat, elems in self.subdomains.items():
+      self.subdoamin_start_index[mat] = elems[0]
       self.elem_mat.update({elem: mat for elem in elems})
-
-    self.nodes2elem2var = {}
-    for i, node in enumerate(mesh.nodes):
-      for elem, nodes in mesh.get_mesh().items():
-        if node in nodes:
-          if isinstance(node, np.ndarray):
-            node = tuple(node)
-          self.nodes2elem2var[node] = {elem: self.elem_mat[elem]}
-
-    self.mat2dofs = defaultdict(
-        dict)    # {mat: {coord: dofs}} for BC imposition
-    for mat, elems in subdomains.items():
-      start_index = subdoamin_start_index[mat]
-      for elem in elems:
-        local_dofs = self.mesh.connectivity[elem]
-        local_coord = [self.mesh.num_node2coord[node] for node in local_dofs]
-        if mat.TYPE in ['Air', 'Fluid']:
-          self.mat2dofs['Pf'].update(dict(zip(local_coord,
-                                              local_dofs)))    # neat opeartor
-        elif mat.TYPE in ['Poroelastic']:
-          self.mat2dofs['Pb'].update(dict(zip(local_coord, local_dofs)))
-          local_dofs_2 = local_dofs + self.mesh.get_nb_nodes() - start_index
-          self.mat2dofs['Ux'].update(dict(zip(local_coord, local_dofs_2)))
+    # self.nodes2elem2var = {}
+    # num2coord = mesh.get_mesh()
+    # for i, node in enumerate(mesh.nodes):
+    #   if isinstance(node, np.ndarray):
+    #     node = tuple(node)
+    #   for elem, nodes in num2coord.items():
+    #     if node in nodes:
+    #       self.nodes2elem2var[node] = {elem: self.elem_mat[elem]}
 
   @property
   def nb_external_dofs(self):
@@ -371,6 +354,20 @@ class FESpace:
     return base4dofs.get(label, None)
 
   def get_dofs_from_var_coord(self, coord, var):
+    self.mat2dofs = defaultdict(
+        dict)    # {mat: {coord: dofs}} for BC imposition
+    for mat, elems in self.subdomains.items():
+      start_index = self.subdoamin_start_index[mat]
+      for elem in elems:
+        local_dofs = self.mesh.connectivity[elem]
+        local_coord = [self.mesh.num_node2coord[node] for node in local_dofs]
+        if mat.TYPE in ['Air', 'Fluid']:
+          self.mat2dofs['Pf'].update(dict(zip(local_coord,
+                                              local_dofs)))    # neat opeartor
+        elif mat.TYPE in ['Poroelastic']:
+          self.mat2dofs['Pb'].update(dict(zip(local_coord, local_dofs)))
+          local_dofs_2 = local_dofs + self.mesh.get_nb_nodes() - start_index
+          self.mat2dofs['Ux'].update(dict(zip(local_coord, local_dofs_2)))
     return self.mat2dofs[var][coord]
 
   def mesh2dof(self, position, var):
