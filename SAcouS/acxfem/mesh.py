@@ -234,6 +234,7 @@ class MeshReader:
     self.mesh = meshio.read(mesh_file_name)
 
   def get_mesh(self):
+    edge_connect = None
     if self.extension == 'msh':
       nodes = self.mesh.points[:, :2]
       for elem in self.mesh.cells:
