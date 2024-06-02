@@ -3,10 +3,10 @@ requires = ["setuptools", "wheel"]
 
 [project]
 name = "PyAcoustiX"
-version = "0.9.11"
+version = "0.9.13"
 description = "A pure Python package/software for acoustic analysis"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [
     {name = "Shaoqi WU", email = "shaoqiwu@outlook.com"},
 ]
