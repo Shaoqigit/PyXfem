@@ -62,8 +62,14 @@ class BaseAssembler:
     cols = []
     data = []
     for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-      local_indices = get_indeces(basis.local_dofs_index)
-      global_indices = get_indeces(dofs)
+      local_indices = np.stack(
+          (np.repeat(basis.local_dofs_index, len(basis.local_dofs_index)),
+           np.tile(basis.local_dofs_index, len(basis.local_dofs_index))),
+          axis=1)
+      global_indices = np.stack(
+          (np.repeat(dofs, len(dofs)), np.tile(dofs, len(dofs))), axis=1)
+      # local_indices = get_indeces(basis.local_dofs_index)
+      # global_indices = get_indeces(dofs)
       row = global_indices[:, 0]
       col = global_indices[:, 1]
       mat = self.elem_mat[i]
@@ -127,8 +133,12 @@ class BaseAssembler:
     data_K = []
     data_M = []
     for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-      local_indices = get_indeces(basis.local_dofs_index)
-      global_indices = get_indeces(dofs)
+      local_indices = np.stack(
+          (np.repeat(basis.local_dofs_index, len(basis.local_dofs_index)),
+           np.tile(basis.local_dofs_index, len(basis.local_dofs_index))),
+          axis=1)
+      global_indices = np.stack(
+          (np.repeat(dofs, len(dofs)), np.tile(dofs, len(dofs))), axis=1)
       row = global_indices[:, 0]
       col = global_indices[:, 1]
       mat = self.elem_mat[i]

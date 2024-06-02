@@ -46,62 +46,58 @@ def test_case_2D():
   omega = 2 * np.pi * freq    # angular frequency
   slice_points_1 = np.insert(np.arange(402, 797)[::-1], 0, 3)
   slice_points = np.append(slice_points_1, 2)
-  if not os.path.exists("Pressure_field.pos"):
-    # Harmonic Acoustic problem define the frequency
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    mesh = Mesh2D()
-    mesh.read_mesh(current_dir + "/mesh/unit_tube_2.msh")
-    # mesh.plotmesh(withedgeid=True)
-    # import pdb
-    # pdb.set_trace()
-    air_elements = np.arange(0, mesh.nb_elmes)
-    elements2node = mesh.get_mesh()
-    subdomains = {air: air_elements}
-    Pf_bases = []
-    order = 1
-    for mat, elems in subdomains.items():
-      if mat.TYPE == 'Fluid':
-        Pf_bases += [
-            Lagrange2DTriElement('Pf', order, elements2node[elem])
-            for elem in elems
-        ]
-    # handler the dofs: map the basis to mesh
-    fe_space = FESpace(mesh, subdomains, Pf_bases)
-    # initialize the assembler
-    Helmholtz_assember = HelmholtzAssembler(fe_space, subdomains, dtype=float)
-    Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
-    left_hand_matrix = Helmholtz_assember.get_global_matrix()
-    right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
-                              dtype=np.complex128)
+  # Harmonic Acoustic problem define the frequency
+  mesh = Mesh2D()
+  mesh.read_mesh(current_dir + "/mesh/unit_tube_2.msh")
+  # mesh.plotmesh(withedgeid=True)
+  # import pdb
+  # pdb.set_trace()
+  air_elements = np.arange(0, mesh.nb_elmes)
+  elements2node = mesh.get_mesh()
+  subdomains = {air: air_elements}
+  Pf_bases = []
+  order = 1
+  for mat, elems in subdomains.items():
+    if mat.TYPE == 'Fluid':
+      Pf_bases += [
+          Lagrange2DTriElement('Pf', order, elements2node[elem])
+          for elem in elems
+      ]
+  # handler the dofs: map the basis to mesh
+  fe_space = FESpace(mesh, subdomains, Pf_bases)
+  # initialize the assembler
+  import time
+  start_time = time.time()
+  Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=float)
+  Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
+  left_hand_matrix = Helmholtz_assember.get_global_matrix()
+  print("assembly time--- %s seconds ---" % (time.time() - start_time))
+  right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
+                            dtype=np.complex128)
 
-    # ====================== Boundary Conditions ======================
-    # natural_edge = np.arange(64, 85)
-    natural_edge = np.arange(797, 801)
-    natural_bcs = {
-        'type': 'fluid_velocity',
-        'value': lambda x, y: 1 * np.exp(-1j * omega),
-        'position': natural_edge
-    }    # position: number of facet number
+  # ====================== Boundary Conditions ======================
+  # natural_edge = np.arange(64, 85)
+  natural_edge = np.arange(797, 801)
+  natural_bcs = {
+      'type': 'fluid_velocity',
+      'value': lambda x, y: 1 * np.exp(-1j * omega),
+      'position': natural_edge
+  }    # position: number of facet number
 
-    right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
-                              dtype=np.complex128)
-    BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
-                                          right_hand_vec, omega)
-    BCs_applier.apply_nature_bc(natural_bcs, 'Pf')
-    linear_solver = LinearSolver(fe_space=fe_space)
-    linear_solver.solve(left_hand_matrix, right_hand_vec)
-    sol = linear_solver.u
-    save_plot(mesh,
-              sol.real,
-              current_dir + "/Pressure_field.pos",
-              engine='gmsh',
-              binary=True)
-    nodes = mesh.nodes[slice_points][:, 0]
-  else:
-    mesh, sol = read_solution("Pressure_field.pos",
-                              read_mesh=True,
-                              engine='gmsh')
-    nodes = mesh.points[slice_points][:, 0]
+  right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
+                            dtype=np.complex128)
+  BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
+                                        right_hand_vec, omega)
+  BCs_applier.apply_nature_bc(natural_bcs, 'Pf')
+  linear_solver = LinearSolver(fe_space=fe_space)
+  linear_solver.solve(left_hand_matrix, right_hand_vec)
+  sol = linear_solver.u
+  save_plot(mesh,
+            sol.real,
+            current_dir + "/Pressure_field.pos",
+            engine='gmsh',
+            binary=True)
+  nodes = mesh.nodes[slice_points][:, 0]
 
   sol = sol[slice_points]
 
@@ -139,15 +135,15 @@ if __name__ == "__main__":
   import cProfile
 
   # Profile the main function and save the results to 'profile_results.prof'
-  # cProfile.run('test_case_2D()', 'profile_results.prof')
+  cProfile.run('test_case_2D()', 'profile_results.prof')
   # Python
   import pstats
 
   # Create a pstats.Stats object from the profiling results
-  stats = pstats.Stats('profile_results.prof')
+  # stats = pstats.Stats('profile_results.prof')
 
   # Sort the statistics by the cumulative time spent in the function
-  stats.sort_stats('cumulative')
+  # stats.sort_stats('cumulative')
 
   # Print the statistics
-  stats.print_stats()
+  # stats.print_stats()

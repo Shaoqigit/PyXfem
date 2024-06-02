@@ -68,9 +68,12 @@ def test_case_2D():
     # handler the dofs: map the basis to mesh
     fe_space = FESpace(mesh, subdomains, Pf_bases)
     # initialize the assembler
+    import time
+    start_time = time.time()
     Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=float)
     Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
     left_hand_matrix = Helmholtz_assember.get_global_matrix()
+    print("Time taken to assemble the matrix:", time.time() - start_time)
     right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
                               dtype=np.complex128)
 
