@@ -54,3 +54,9 @@ Physical Point   (9)  = {9} ;
 Physical Point   (10)  = {10} ;*/
 
 
+
+//+
+//+
+Extrude {1, 0, 0} {
+  Curve{10}; Layers {5}; Recombine;
+}

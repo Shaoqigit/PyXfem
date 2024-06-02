@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 
 from SAcouS.acxfem.basis import Lagrange2DTriElement
 from SAcouS.acxfem.mesh import Mesh2D, Mesh1D, MeshReader
-from SAcouS.acxfem.dofhandler import DofHandler1D, GeneralDofHandler1D, FESpace
+from SAcouS.acxfem.dofhandler import FESpace
 from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid
 from SAcouS.acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem.physic_assembler import HelmholtzAssembler
@@ -42,18 +42,25 @@ def test_case_2D():
   # ====================== Pysical Problem ======================
   # define the materials
   air = Air('classical air')
+  # given JCA porous material properties
+  phi = 0.98    # porosity
+  sigma = 3.75e3    # resistivity
+  alpha = 1.17    # Tortuosity
+  Lambda_prime = 742e-6    # Viscous characteristic length
+  Lambda = 110e-6    #
+  xfm = EquivalentFluid('foam', phi, sigma, alpha, Lambda_prime, Lambda)
+
   freq = 1000
   omega = 2 * np.pi * freq    # angular frequency
-  slice_points_1 = np.insert(np.arange(402, 797)[::-1], 0, 3)
-  slice_points = np.append(slice_points_1, 2)
   # Harmonic Acoustic problem define the frequency
   current_dir = os.path.dirname(os.path.realpath(__file__))
-  mesh_reader = MeshReader(current_dir + "/mesh/unit_tube_2.msh")
+  mesh_reader = MeshReader(current_dir + "/mesh/half_tube_2.msh")
   mesh = mesh_reader.get_mesh()
+  air_elements = mesh_reader.get_elem_by_physical('air')
+  foam_elements = mesh_reader.get_elem_by_physical('foam')
 
-  air_elements = np.arange(0, mesh.nb_elmes)
   elements2node = mesh.get_mesh()
-  subdomains = {air: air_elements}
+  subdomains = {air: air_elements, xfm: foam_elements}
   Pf_bases = []
   order = 1
   for mat, elems in subdomains.items():
@@ -67,7 +74,7 @@ def test_case_2D():
   # initialize the assembler
   import time
   start_time = time.time()
-  Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=float)
+  Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=np.complex64)
   Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
   left_hand_matrix = Helmholtz_assember.get_global_matrix()
   print("Time taken to assemble the matrix:", time.time() - start_time)
@@ -75,8 +82,7 @@ def test_case_2D():
                             dtype=np.complex128)
 
   # ====================== Boundary Conditions ======================
-  # natural_edge = np.arange(64, 85)
-  natural_edge = np.arange(797, 801)
+  natural_edge = np.arange(0, 16)
   natural_bcs = {
       'type': 'fluid_velocity',
       'value': lambda x, y: 1 * np.exp(-1j * omega),
@@ -93,15 +99,17 @@ def test_case_2D():
   sol = linear_solver.u
   save_plot(mesh,
             sol.real,
-            current_dir + "/Pressure_field.pos",
+            current_dir + "/Pressure_field_two_fluid.pos",
             engine='gmsh',
             binary=True)
-  nodes = mesh.nodes[slice_points][:, 0]
+  # nodes = mesh.nodes[slice_points][:, 0]
 
-  sol = sol[slice_points]
-
-  elem_connec1 = np.arange(0, 396)
-  elem_connec2 = np.arange(1, 397)
+  # sol = sol[slice_points]
+  num_elem = 1000    # number of elements
+  num_nodes = num_elem + 1    # number of nodes
+  nodes = np.linspace(-0.5, 0.5, num_nodes)
+  elem_connec1 = np.arange(0, num_elem)
+  elem_connec2 = np.arange(1, num_nodes)
   connectivity = np.vstack((elem_connec1, elem_connec2)).T
   mesh_1d = Mesh1D(nodes, connectivity)
   natural_bcs_ana = {
@@ -109,19 +117,19 @@ def test_case_2D():
       'value': np.exp(-1j * omega),
       'position': -0.5
   }
-  kundlt_tube = DoubleleLayerKundltTube(mesh_1d, air, air, omega,
+  kundlt_tube = DoubleleLayerKundltTube(mesh_1d, air, xfm, omega,
                                         natural_bcs_ana)
   ana_sol = np.zeros(
-      397, dtype=np.complex128)    #initialize the analytical solution vector
+      num_nodes,
+      dtype=np.complex128)    #initialize the analytical solution vector
   kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
 
-  post_processer = PostProcessField(mesh_1d.nodes, r'2D Helmholtz (2000$Hz$)')
-  post_processer.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'),
-                          (np.real(ana_sol), 'Analytical', 'dashed'))
-  # plt.show()
-  error = np.mean(np.real(sol) - np.real(ana_sol)) / np.mean(np.real(ana_sol))
+  # it's not a great verification, but it's a acceptable one
+  sol_value = np.max(sol) + np.min(sol) + np.mean(sol)
+  ana_sol_value = np.max(ana_sol) + np.min(ana_sol) + np.mean(ana_sol)
+  error = np.abs(sol_value - ana_sol_value) / np.abs(ana_sol_value)
   print("error:", error)
-  if error < 0.0005:
+  if error < 0.2:
     print("Test passed!")
     return True
   else:

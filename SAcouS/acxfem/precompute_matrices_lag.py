@@ -18,12 +18,14 @@
 
 import numpy as np
 from SAcouS.acxfem.quadratures import GaussLegendre2DTri
-from SAcouS.acxfem.polynomial import Lagrange2DTri
+from SAcouS.acxfem.polynomial import Lagrange2DTri, Lagrange3DTri
 
-lag_poly_o1 = Lagrange2DTri(1)
+lag2d_poly_o1 = Lagrange2DTri(1)
 points_o1, weights_o1 = GaussLegendre2DTri(3).points(), GaussLegendre2DTri(
     3).weights()
 N_o1 = np.array(
-    [lag_poly_o1.get_shape_functions(*point) for point in points_o1])
+    [lag2d_poly_o1.get_shape_functions(*point) for point in points_o1])
 B_o1 = np.array(
-    [lag_poly_o1.get_der_shape_functions(*point) for point in points_o1])
+    [lag2d_poly_o1.get_der_shape_functions(*point) for point in points_o1])
+
+lag3d_poly_o1 = Lagrange3DTri(1)

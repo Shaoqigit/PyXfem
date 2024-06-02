@@ -15,6 +15,7 @@
 # copies or substantial portions of the Software.
 
 # mesh.py: generate mesh data dictionsary and refine mesh function
+from typing import Union
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -150,21 +151,15 @@ import meshio
 
 class Mesh2D(BaseMesh):
 
-  def __init__(self):
-    self.nodes = []
-    self.elem_connect = []
-    self.nb_nodes = 0
-    self.dim = 2
-
-  def read_mesh(self, mesh_file):
-    mesh = meshio.read(mesh_file)
-    self.io_mesh = mesh
-    self.nodes = mesh.points[:, :2]
-    self.elem_connect = mesh.cells[2].data
+  def __init__(self, nodes, elem_connect, edge_connect=None, io_mesh=None):
+    self.nodes = nodes
+    self.elem_connect = elem_connect
     self.nb_elmes = len(self.elem_connect)
     self.nb_nodes = len(self.nodes)
     self.node_index = np.arange(self.nb_nodes)
-    self.exterior_edges = mesh.cells[1].data    # [node1, node2]
+    self.exterior_edges = edge_connect    # [node1, node2]
+    self.io_mesh = io_mesh
+    self.dim = 2
 
   def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
     """
@@ -230,6 +225,41 @@ class Mesh2D(BaseMesh):
         self.nodes = np.array(new_nodes)
         self.elem_connect = np.array(new_elem_connect)
         self.nb_nodes = len(self.nodes)
+
+
+class MeshReader:
+
+  def __init__(self, mesh_file_name, dim=2):
+    self.extension = mesh_file_name.split('.')[-1]
+    self.mesh = meshio.read(mesh_file_name)
+
+  def get_mesh(self):
+    if self.extension == 'msh':
+      nodes = self.mesh.points[:, :2]
+      for elem in self.mesh.cells:
+        if elem.type == 'triangle':
+          elem_connect = elem.data
+        elif elem.type == 'line':
+          edge_connect = elem.data
+      return Mesh2D(nodes, elem_connect, edge_connect, io_mesh=self.mesh)
+
+  def get_elem_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
+    if isinstance(physical_tag, str):
+      elem_tag = int(self.mesh.field_data[physical_tag][0])
+    else:
+      elem_tag = physical_tag
+    elem_index = np.where(
+        self.mesh.cell_data_dict['gmsh:physical']['triangle'] == elem_tag)
+    return elem_index[0]
+
+  def get_edge_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
+    if isinstance(physical_tag, str):
+      edge_tag = int(self.mesh.field_data[physical_tag][0])
+    else:
+      edge_tag = physical_tag
+    edge_index = np.where(
+        self.mesh.cell_data_dict['gmsh:physical']['line'] == edge_tag)
+    return edge_index[0]
 
 
 if __name__ == "__main__":
