@@ -36,3 +36,15 @@ Plane Surface(2) = {2};
 Physical Surface("mat1", 8) = {1};
 //+
 Physical Surface("mat2", 9) = {2};
+//+
+Physical Curve("left", 10) = {6};
+//+
+Physical Curve("left_bot", 11) = {1};
+//+
+Physical Curve("left_top", 12) = {5};
+//+
+Physical Curve("right_top", 13) = {4};
+//+
+Physical Curve("right_bot", 14) = {2};
+//+
+Physical Curve("right", 15) = {3};

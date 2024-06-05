@@ -76,10 +76,10 @@ def test_case_2D():
 
   # ====================== Boundary Conditions ======================
   # natural_edge = np.arange(64, 85)
-  natural_edge = np.arange(797, 801)
+  natural_edge = np.arange(796, 800)
   natural_bcs = {
       'type': 'fluid_velocity',
-      'value': lambda x, y: 1 * np.exp(-1j * omega),
+      'value': lambda x, y: np.array([1 * np.exp(-1j * omega), 0]),
       'position': natural_edge
   }    # position: number of facet number
 

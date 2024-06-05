@@ -1,6 +1,10 @@
 import numpy as np
 from numba import jit
+
 from scipy.sparse import csr_array, lil_array
+from SAcouS.acxfem.basis import Lobbato1DElement
+from SAcouS.acxfem.quadratures import GaussLegendreQuadrature
+from SAcouS.acxfem.polynomial import Lobatto
 
 
 class ApplyBoundaryConditions:
@@ -13,6 +17,7 @@ class ApplyBoundaryConditions:
     self.right_hand_side = right_hand_side
     self.nb_dofs = self.left_hand_side.shape[0]
     self.omega = omega
+    self.dtype = self.left_hand_side.dtype
 
   def mesh2dof(self, position, var=None):
     return self.FE_space.get_dofs_from_var_coord(position, var)
@@ -78,7 +83,7 @@ class ApplyBoundaryConditions:
     self.left_hand_side += C_damp
     return C_damp
 
-  def apply_nature_bc(self, nature_bc, var=None):
+  def apply_nature_bc(self, nature_bc, var=None, integr_order=1):
     if isinstance(nature_bc['position'], float):    #1D case
       dof_index = self.mesh2dof(nature_bc['position'], var)
       if nature_bc['type'] == 'fluid_velocity':
@@ -91,26 +96,38 @@ class ApplyBoundaryConditions:
       else:
         print("Nature BC type not supported")
     elif isinstance(nature_bc['position'], np.ndarray):
-      edges = nature_bc['position'] - 1
+      edges = nature_bc['position']
       lines = self.mesh.exterior_edges[edges]
       for line_index in lines:
-        node_1_coord = self.mesh.nodes[line_index[0]]
+        node_1_coord = self.mesh.nodes[line_index[0]]    # in physical space
         node_2_coord = self.mesh.nodes[line_index[1]]
-        norm = np.linalg.norm(node_1_coord - node_2_coord)
-        natural_value_1 = norm * nature_bc['value'](node_1_coord[0],
-                                                    node_1_coord[1]) / 2
-        natural_value_2 = norm * nature_bc['value'](node_2_coord[0],
-                                                    node_2_coord[1]) / 2
+        tangent = np.array([
+            node_2_coord[0] - node_1_coord[0],
+            node_2_coord[1] - node_1_coord[1]
+        ])
+        normal = np.array([tangent[1], -tangent[0]])
+        normal = normal / np.linalg.norm(normal)
+        # breakpoint()
+        gl_q = GaussLegendreQuadrature(10)
+        gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+        l = Lobatto(1)
+        N = l.get_shape_functions()
+        jac = np.linalg.norm(node_1_coord - node_2_coord) / 2
+        # breakpoint()
+        f = np.zeros((2), dtype=self.right_hand_side.dtype)
+        for i, gl_pt in enumerate(gl_pts):
+          x = N[0](gl_pt) * node_1_coord + N[1](gl_pt) * node_2_coord
+          f_n = nature_bc['value'](x[0], x[1]) @ normal
+          f += gl_wts[i] * f_n * np.array([N[0](gl_pt), N[1](gl_pt)])
+          # map coordiante into reference space
+        f *= jac    #
         if nature_bc['type'] == 'fluid_velocity':
-          self.right_hand_side[
-              line_index[0]] += -natural_value_1 / (1j * self.omega)
-          self.right_hand_side[
-              line_index[1]] += -natural_value_2 / (1j * self.omega)
+          self.right_hand_side[line_index] += f / (1j * self.omega)
+        elif nature_bc['type'] == 'analytical_gradient':
+          self.right_hand_side[line_index] += f / self.omega**2
         elif nature_bc['type'] == 'total_displacement':
-          self.right_hand_side[line_index[0]] += natural_value_1['value']
-          self.right_hand_side[line_index[1]] += natural_value_2['value']
+          self.right_hand_side[line_index] += f
         elif nature_bc['type'] == 'solid_stress':
-          self.right_hand_side[line_index[0]] += natural_value_1['value']
-          self.right_hand_side[line_index[0]] += natural_value_2['value']
+          self.right_hand_side[line_index] += f
         else:
           print("Nature BC type not supported")

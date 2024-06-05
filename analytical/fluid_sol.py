@@ -148,6 +148,27 @@ class ObliquePlaneWave():
     self.v.append(
         lambda x, y: -1j * k2_y * T * np.exp(-1j * k2_x * x - 1j * k2_y * y))
 
+    # x<0
+    self.velocity_1 = lambda x, y: np.array([
+        1 / rho_1 *
+        (-1j * k1_x * np.exp(-1j * k1_x * x - 1j * k1_y * y) + 1j * k1_x * R *
+         np.exp(1j * k1_x * x - 1j * k1_y * y)), 1 / rho_1 *
+        (-1j * k1_y * np.exp(-1j * k1_x * x - 1j * k1_y * y) - 1j * k1_y * R *
+         np.exp(1j * k1_x * x - 1j * k1_y * y))
+    ])
+    # self.velocity_1 = lambda x, y: np.array([
+    #     1 / rho_1 * (-1j * k1_x * np.exp(-1j * k1_x * x - 1j * k1_y * y) + 1j *
+    #                  k1_x * R * np.exp(1j * k1_x * x - 1j * k1_y * y)), 0.
+    # ])
+    # x>0
+    self.velocity_2 = lambda x, y: np.array([
+        1 / rho_2 * -1j * k2_x * T * np.exp(-1j * k2_x * x - 1j * k2_y * y), 1
+        / rho_2 * -1j * k2_y * T * np.exp(-1j * k2_x * x - 1j * k2_y * y)
+    ])
+    # self.velocity_2 = lambda x, y: np.array([
+    #     1 / rho_2 * -1j * k2_x * T * np.exp(-1j * k2_x * x - 1j * k2_y * y), 0.
+    # ])
+
   def sol_on_nodes(self, ana_sol, sol_type='pressure'):
     for i, x in enumerate(self.mesh.nodes):
       if x[0] <= 0:

@@ -193,11 +193,14 @@ class Lagrange2DTriElement(Base2DElement):
     |    \
     0-----1
     """
+  points = points_o1,
+  weights = weights_o1
+  N_o1 = N_o1
+  B_o1 = B_o1
 
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
     if order == 1:
-      self.points, self.weights = points_o1, weights_o1
       self.N = N_o1
       self.B = B_o1
 

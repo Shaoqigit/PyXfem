@@ -236,6 +236,7 @@ class MeshReader:
   def get_mesh(self):
     edge_connect = None
     if self.extension == 'msh':
+      # version 2.2 without saving all parameters
       nodes = self.mesh.points[:, :2]
       for elem in self.mesh.cells:
         if elem.type == 'triangle':

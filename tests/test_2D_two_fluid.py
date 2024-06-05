@@ -85,12 +85,10 @@ def test_case_2D():
   natural_edge = np.arange(0, 16)
   natural_bcs = {
       'type': 'fluid_velocity',
-      'value': lambda x, y: 1 * np.exp(-1j * omega),
+      'value': lambda x, y: np.array([1 * np.exp(-1j * omega), 0]),
       'position': natural_edge
   }    # position: number of facet number
 
-  right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
-                            dtype=np.complex128)
   BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
                                         right_hand_vec, omega)
   BCs_applier.apply_nature_bc(natural_bcs, 'Pf')

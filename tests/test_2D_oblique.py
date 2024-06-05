@@ -53,32 +53,130 @@ def test_case_2D():
 
   # Harmonic Acoustic problem define the frequency
   current_dir = os.path.dirname(os.path.realpath(__file__))
-  mesh_reader = MeshReader(current_dir + "/mesh/mat2_oblique_fine.msh")
+  mesh_reader = MeshReader(current_dir + "/mesh/mat2_oblique_fine_test.msh")
+  # mesh_reader = MeshReader(current_dir + "/mesh/half_tube_2.msh")
   mesh = mesh_reader.get_mesh()
-  # air_elements = mesh_reader.get_elem_by_physical('mat1')
-  # foam_elements = mesh_reader.get_elem_by_physical('mat2')
-  # elements2node = mesh.get_mesh()
-  # subdomains = {air: air_elements, xfm: foam_elements}
-  # Pf_bases = []
-  # order = 1
-  # for mat, elems in subdomains.items():
-  #   if mat.TYPE == 'Fluid':
-  #     Pf_bases += [
-  #         Lagrange2DTriElement('Pf', order, elements2node[elem])
-  #         for elem in elems
-  #     ]
-  # handler the dofs: map the basis to mesh
 
   # ====================== Analytical solution ======================
   analytical_solution = ObliquePlaneWave(mesh, air, xfm, omega, 45, 1.)
   nb_nodes = mesh.get_nb_nodes()
-  analytical_solution_vec = np.zeros(nb_nodes)
+  analytical_solution_vec = np.zeros((nb_nodes), dtype=np.complex128)
   analytical_solution.sol_on_nodes(analytical_solution_vec)
   save_plot(mesh,
             analytical_solution_vec.real,
-            current_dir + "/oblique_two_fluid.pos",
+            current_dir + "/Pressure_field_oblique_ana.pos",
             engine='gmsh',
             binary=True)
+
+  air_elements = mesh_reader.get_elem_by_physical('mat1')
+  foam_elements = mesh_reader.get_elem_by_physical('mat2')
+  # air_elements = mesh_reader.get_elem_by_physical('air')
+  # foam_elements = mesh_reader.get_elem_by_physical('foam')
+  left_boundary = mesh_reader.get_edge_by_physical('left')
+  right_boundary = mesh_reader.get_edge_by_physical('right')
+  left_top_boundary = mesh_reader.get_edge_by_physical('left_top')
+  right_top_boundary = mesh_reader.get_edge_by_physical('right_top')
+  left_bottom_boundary = mesh_reader.get_edge_by_physical('left_bot')
+  right_bottom_boundary = mesh_reader.get_edge_by_physical('right_bot')
+  elements2node = mesh.get_mesh()
+  all_elements = np.concatenate((air_elements, foam_elements))
+  # breakpoint()
+  # subdomains = {air: all_elements}
+  subdomains = {air: air_elements, xfm: foam_elements}
+  Pf_bases = []
+  order = 1
+  for mat, elems in subdomains.items():
+    if mat.TYPE == 'Fluid':
+      Pf_bases += [
+          Lagrange2DTriElement('Pf', order, elements2node[elem])
+          for elem in elems
+      ]
+  fe_space = FESpace(mesh, subdomains, Pf_bases)
+  # initialize the assembler
+  import time
+  start_time = time.time()
+  Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=np.complex64)
+  Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
+  left_hand_matrix = Helmholtz_assember.get_global_matrix()
+  print("Time taken to assemble the matrix:", time.time() - start_time)
+  right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
+                            dtype=np.complex128)
+
+  v1, v2 = analytical_solution.velocity_1, analytical_solution.velocity_2    #v_x(x<0), v_x
+  BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
+                                        right_hand_vec, omega)
+  # (x>0), v_y(x<0), v_y(x>0)
+  # natural_edge = np.arange(0, 16)
+  # natural_bcs1 = {
+  #     'type': 'fluid_velocity',
+  #     'value': lambda x, y: np.array([1 * np.exp(-1j * omega), 0]),
+  #     'position': natural_edge
+  # }    # position
+  natural_bcs1 = {
+      'type': 'analytical_gradient',
+      'value': v1,
+      'position': left_boundary
+  }    # position
+  # breakpoint()
+
+  BCs_applier.apply_nature_bc(natural_bcs1, 'Pf')
+
+  natural_bcs2 = {
+      'type': 'analytical_gradient',
+      'value': v1,
+      'position': left_top_boundary
+  }
+  # breakpoint()
+  BCs_applier.apply_nature_bc(natural_bcs2, 'Pf')
+
+  natural_bcs3 = {
+      'type': 'analytical_gradient',
+      'value': v1,
+      'position': left_bottom_boundary
+  }
+  # breakpoint()
+  BCs_applier.apply_nature_bc(natural_bcs3, 'Pf')
+
+  natural_bcs4 = {
+      'type': 'analytical_gradient',
+      'value': v2,
+      'position': right_boundary
+  }
+  BCs_applier.apply_nature_bc(natural_bcs4, 'Pf')
+
+  natural_bcs5 = {
+      'type': 'analytical_gradient',
+      'value': v2,
+      'position': right_top_boundary
+  }
+  BCs_applier.apply_nature_bc(natural_bcs5, 'Pf')
+
+  natural_bcs6 = {
+      'type': 'analytical_gradient',
+      'value': v2,
+      'position': right_bottom_boundary
+  }
+  # breakpoint()
+  BCs_applier.apply_nature_bc(natural_bcs6, 'Pf')
+
+  linear_solver = LinearSolver(fe_space=fe_space)
+  linear_solver.solve(left_hand_matrix, right_hand_vec)
+  sol = linear_solver.u
+  save_plot(mesh,
+            sol.real,
+            current_dir + "/Pressure_field_oblique_succes.pos",
+            engine='gmsh',
+            binary=True)
+
+  error = np.mean(np.abs(sol - analytical_solution_vec)) / np.mean(
+      np.abs(analytical_solution_vec))
+  print("error:", error)
+  if error < 0.01:
+    print("Test passed!")
+    return True
+  else:
+    print("Test failed!")
+    return False
 
 
 if __name__ == "__main__":
@@ -93,8 +191,8 @@ if __name__ == "__main__":
   # Create a pstats.Stats object from the profiling results
   # stats = pstats.Stats('profile_results.prof')
 
-  # Sort the statistics by the cumulative time spent in the function
+  # # Sort the statistics by the cumulative time spent in the function
   # stats.sort_stats('cumulative')
 
-  # Print the statistics
+  # # Print the statistics
   # stats.print_stats()
