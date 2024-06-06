@@ -27,7 +27,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from SAcouS.acxfem.basis import Lobbato1DElement
+from SAcouS.acxfem.basis import Helmholtz1DElement
 from SAcouS.acxfem.mesh import Mesh1D
 from SAcouS.acxfem.dofhandler import GeneralDofHandler1D, FESpace
 from SAcouS.acxfem.physic_assembler import HelmholtzAssembler, BiotAssembler, CouplingAssember
@@ -58,7 +58,7 @@ def test_case():
   # Harmonic Acoustic problem define the frequency
   freq = 2000
   omega = 2 * np.pi * freq    # angular frequency
-
+  xfm.set_frequency(omega)
   k_0 = omega / Air.c
   theta = 0    #indidence angle
   ky = k_0 * np.sin(theta * np.pi / 180)
@@ -90,19 +90,23 @@ def test_case():
   for mat, elems in subdomains.items():
     if mat.TYPE == 'Poroelastic':
       Pb_bases = [
-          Lobbato1DElement('Pb', order, elements2node[elem]) for elem in elems
+          Helmholtz1DElement('Pb', order, elements2node[elem],
+                             (1 / mat.rho_f, 1 / mat.K_f, mat.gamma_til))
+          for elem in elems
       ]    # basis for pressure in porous domain
       Ux_bases = [
-          Lobbato1DElement('Ux', order, elements2node[elem]) for elem in elems
+          Helmholtz1DElement('Ux', order, elements2node[elem],
+                             (mat.P_hat, mat.rho_til, mat.gamma_til))
+          for elem in elems
       ]    #
 
   # handler the dofs: map the basis to mesh
   fe_space = FESpace(mesh, subdomains, Pb_bases, Ux_bases)
 
   # initialize the assembler
-  Biot_assember = BiotAssembler(fe_space, omega, dtype=np.complex128)
+  Biot_assember = BiotAssembler(fe_space, dtype=np.complex128)
   Biot_assember.assembly_global_matrix([Pb_bases, Ux_bases], ['Pb', 'Ux'])
-  left_hand_matrix = Biot_assember.get_global_matrix()
+  left_hand_matrix = Biot_assember.get_global_matrix(omega)
 
   right_hand_vec = np.zeros(Biot_assember.nb_global_dofs, dtype=np.complex128)
   # import pdb;pdb.set_trace()

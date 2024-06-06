@@ -139,6 +139,71 @@ class Lobbato1DElement(Base1DElement):
     return np.arange(self.order + 1)
 
 
+class Helmholtz1DElement(Lobbato1DElement):
+
+  def __init__(self, label, order, nodes, mat_coeffs=[]):
+    super().__init__(label, order, nodes)
+    self.mat_coeffs = mat_coeffs
+
+  @cached_property
+  def ke(self):
+    """compute the elementary stiffness matrix
+    returns:
+    K: ndarray
+        elementary stiffness matrix
+    """
+    Ke = 0
+    if self.order == 1:
+      Ke = self.inverse_Jacobian * self.mat_coeffs[0] * Ke1D[0]
+    elif self.order == 2:
+      Ke = self.inverse_Jacobian * self.mat_coeffs[0] * Ke1D[1]
+    elif self.order == 3:
+      Ke = self.inverse_Jacobian * self.mat_coeffs[0] * Ke1D[2]
+    elif self.order == 4:
+      Ke = self.inverse_Jacobian * self.mat_coeffs[0] * Ke1D[3]
+    else:
+      print("quadrtic lobatto not supported yet")
+    return Ke
+
+  @cached_property
+  def me(self):
+    """compute the elementary stiffness matrix
+    returns:
+    m: ndarray
+        elementary stiffness matrix
+    """
+    if self.order == 1:
+      Me = self.Jacobian * self.mat_coeffs[1] * Me1D[0]
+    elif self.order == 2:
+      Me = self.Jacobian * self.mat_coeffs[1] * Me1D[1]
+    elif self.order == 3:
+      Me = self.Jacobian * self.mat_coeffs[1] * Me1D[2]
+    elif self.order == 4:
+      Me = self.Jacobian * self.mat_coeffs[1] * Me1D[3]
+    else:
+      print("quadrtic lobatto not supported yet")
+    return Me
+
+  @cached_property
+  def ce(self):
+    """compute the elementary coupling matrix, N(x)B(x)
+    returns:
+    c: ndarray
+        elementary coupling matrix
+    """
+    if self.order == 1:
+      Ce = self.mat_coeffs[2] * Ce1D[0]
+    elif self.order == 2:
+      Ce = self.mat_coeffs[2] * Ce1D[1]
+    elif self.order == 3:
+      Ce = self.mat_coeffs[2] * Ce1D[2]
+    elif self.order == 4:
+      Ce = self.mat_coeffs[2] * Ce1D[3]
+    else:
+      print("quadrtic lobatto not supported yet")
+    return Ce
+
+
 class Base2DElement(metaclass=ABCMeta):
   """base abstract FE elementary matrix class
     precompute the shape function and its derivative on gauss points
@@ -156,7 +221,6 @@ class Base2DElement(metaclass=ABCMeta):
     self.vertices = vertices
     self.is_discontinue = False
 
-  @cached_property
   @abstractmethod
   def Jacobian(self):
     """
@@ -167,7 +231,6 @@ class Base2DElement(metaclass=ABCMeta):
 
     pass
 
-  @cached_property
   @abstractmethod
   def inverse_Jacobian(self):
     pass
@@ -195,8 +258,6 @@ class Lagrange2DTriElement(Base2DElement):
     """
   points = points_o1,
   weights = weights_o1
-  N_o1 = N_o1
-  B_o1 = B_o1
 
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
@@ -204,45 +265,40 @@ class Lagrange2DTriElement(Base2DElement):
       self.N = N_o1
       self.B = B_o1
 
-    self.J = self.Jacobian
-    self.inv_J = self.inverse_Jacobian
-    self.det_J = self.determinant_Jacobian
+    self.Jacobian()
+    self.determinant_Jacobian()
+    self.inverse_Jacobian()
     self.inv_J_product = self.inv_J.T @ self.inv_J
 
-  @cached_property
   def Jacobian(self):
     """
     compute the Jacobian of the element
     returns:
     J: 
     J=dx/dxi"""
-    J = np.array([[
+    self.J = np.array([[
         self.vertices[1][0] - self.vertices[0][0],
         self.vertices[1][1] - self.vertices[0][1]
     ],
-                  [
-                      self.vertices[2][0] - self.vertices[0][0],
-                      self.vertices[2][1] - self.vertices[0][1]
-                  ]])
+                       [
+                           self.vertices[2][0] - self.vertices[0][0],
+                           self.vertices[2][1] - self.vertices[0][1]
+                       ]])
 
-    return J
-
-  @cached_property
   def inverse_Jacobian(self):
-    return np.linalg.inv(self.J)
+    self.inv_J = np.array([[self.J[1, 1], -self.J[0, 1]],
+                           [-self.J[1, 0], self.J[0, 0]]]) * 1 / self.det_J
+
+  def determinant_Jacobian(self):
+    self.det_J = self.J[0, 0] * self.J[1, 1] - self.J[0, 1] * self.J[1, 0]
 
   @cached_property
-  def determinant_Jacobian(self):
-    return np.linalg.det(self.Jacobian)
-
-  @property
   def ke(self):
     """compute the elementary stiffness matrix
     returns:
     K: ndarray
         elementary stiffness matrix
     """
-
     if self.order == 1:
       Ke = sum(
           self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
@@ -253,7 +309,7 @@ class Lagrange2DTriElement(Base2DElement):
 
     return Ke
 
-  @property
+  @cached_property
   def me(self):
     """compute the elementary stiffness matrix
     returns:
@@ -295,14 +351,14 @@ class Lagrange2DTriElement(Base2DElement):
   def get_order(self):
     return self.order
 
-  @property
+  @cached_property
   def nb_internal_dofs(self):
     if self.order == 1 or self.order == 2:
       return 0
     elif self.order == 3:
       return 1
 
-  @property
+  @cached_property
   def nb_edge_dofs(self):
     if self.order == 1:
       return 0
@@ -311,9 +367,50 @@ class Lagrange2DTriElement(Base2DElement):
     elif self.order == 3:
       return 6
 
-  @property
+  @cached_property
   def local_dofs_index(self):
     return np.arange(self.order * 2 + 1)
+
+
+# consider material properties: ease the matrix assembly
+class Helmholtz2DElement(Lagrange2DTriElement):
+
+  def __init__(self, label, order, vertices, mat_coeffs=[]):
+    super().__init__(label, order, vertices)
+    self.mat_coeffs = mat_coeffs
+
+  @cached_property
+  def ke(self):
+    """compute the elementary stiffness matrix
+    returns:
+    K: ndarray
+        elementary stiffness matrix
+    """
+    if self.order == 1:
+      Ke = self.mat_coeffs[0] * sum(
+          self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
+          for i, weight in enumerate(self.weights)) * self.det_J
+
+    else:
+      print("quadrtic lagrange not implemented yet")
+
+    return Ke
+
+  @cached_property
+  def me(self):
+    """compute the elementary stiffness matrix
+    returns:
+    m: ndarray
+        elementary stiffness matrix
+    """
+    if self.order == 1:
+      weight = np.diag(
+          np.array([self.weights[0], self.weights[1], self.weights[2]]))
+      Me = self.mat_coeffs[
+          1] * self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
+    else:
+      print("quadrtic lagrange not implemented yet")
+    return Me
 
 
 if __name__ == "__main__":

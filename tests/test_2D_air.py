@@ -26,9 +26,9 @@ sys.path.append(working_dir)
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SAcouS.acxfem.basis import Lagrange2DTriElement
+from SAcouS.acxfem.basis import Helmholtz2DElement
 from SAcouS.acxfem.mesh import Mesh2D, Mesh1D, MeshReader
-from SAcouS.acxfem.dofhandler import DofHandler1D, GeneralDofHandler1D, FESpace
+from SAcouS.acxfem.dofhandler import FESpace
 from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid
 from SAcouS.acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem.physic_assembler import HelmholtzAssembler
@@ -59,17 +59,17 @@ def test_case_2D():
   for mat, elems in subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [
-          Lagrange2DTriElement('Pf', order, elements2node[elem])
-          for elem in elems
+          Helmholtz2DElement('Pf', order, elements2node[elem],
+                             (1 / mat.rho_f, 1 / mat.K_f)) for elem in elems
       ]
   # handler the dofs: map the basis to mesh
   fe_space = FESpace(mesh, subdomains, Pf_bases)
   # initialize the assembler
   import time
   start_time = time.time()
-  Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=float)
+  Helmholtz_assember = HelmholtzAssembler(fe_space, dtype=float)
   Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
-  left_hand_matrix = Helmholtz_assember.get_global_matrix()
+  left_hand_matrix = Helmholtz_assember.get_global_matrix(omega)
   print("Time taken to assemble the matrix:", time.time() - start_time)
   right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
                             dtype=np.complex128)

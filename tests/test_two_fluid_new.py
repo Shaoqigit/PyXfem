@@ -29,7 +29,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from SAcouS.acxfem.basis import Lobbato1DElement
+from SAcouS.acxfem.basis import Helmholtz1DElement
 from SAcouS.acxfem.mesh import Mesh1D
 from SAcouS.acxfem.dofhandler import DofHandler1D, GeneralDofHandler1D, FESpace
 from SAcouS.acxfem.physic_assembler import HelmholtzAssembler, BiotAssembler, CouplingAssember
@@ -57,7 +57,7 @@ def test_case_1():
   # Harmonic Acoustic problem define the frequency
   freq = 2000
   omega = 2 * np.pi * freq    # angular frequency
-
+  xfm.set_frequency(omega)
   # ====================== Mesh and basis definition ======================
   num_elem = 1000    # number of elements
   num_nodes = num_elem + 1    # number of nodes
@@ -82,7 +82,8 @@ def test_case_1():
   for mat, elems in subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [
-          Lobbato1DElement('Pf', order, elements2node[elem]) for elem in elems
+          Helmholtz1DElement('Pf', order, elements2node[elem],
+                             (1 / mat.rho_f, 1 / mat.K_f)) for elem in elems
       ]
     # print(basis.ke)
     # print(basis.me)
@@ -91,9 +92,9 @@ def test_case_1():
   fe_space = FESpace(mesh, subdomains, Pf_bases)
 
   # initialize the assembler
-  Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=np.complex128)
+  Helmholtz_assember = HelmholtzAssembler(fe_space, dtype=np.complex128)
   Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
-  left_hand_matrix = Helmholtz_assember.get_global_matrix()
+  left_hand_matrix = Helmholtz_assember.get_global_matrix(omega)
 
   right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
                             dtype=np.complex128)

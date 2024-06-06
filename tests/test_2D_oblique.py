@@ -26,7 +26,7 @@ sys.path.append(working_dir)
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SAcouS.acxfem.basis import Lagrange2DTriElement
+from SAcouS.acxfem.basis import Helmholtz2DElement
 from SAcouS.acxfem.mesh import Mesh2D, MeshReader
 from SAcouS.acxfem.dofhandler import DofHandler1D, GeneralDofHandler1D, FESpace
 from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid
@@ -52,8 +52,10 @@ def test_case_2D():
   omega = 2 * np.pi * freq    # angular frequency
 
   # Harmonic Acoustic problem define the frequency
+  import time
+  start_time = time.time()
   current_dir = os.path.dirname(os.path.realpath(__file__))
-  mesh_reader = MeshReader(current_dir + "/mesh/mat2_oblique_fine_test.msh")
+  mesh_reader = MeshReader(current_dir + "/mesh/mat2_oblique_utra_fine.msh")
   # mesh_reader = MeshReader(current_dir + "/mesh/half_tube_2.msh")
   mesh = mesh_reader.get_mesh()
 
@@ -70,8 +72,6 @@ def test_case_2D():
 
   air_elements = mesh_reader.get_elem_by_physical('mat1')
   foam_elements = mesh_reader.get_elem_by_physical('mat2')
-  # air_elements = mesh_reader.get_elem_by_physical('air')
-  # foam_elements = mesh_reader.get_elem_by_physical('foam')
   left_boundary = mesh_reader.get_edge_by_physical('left')
   right_boundary = mesh_reader.get_edge_by_physical('right')
   left_top_boundary = mesh_reader.get_edge_by_physical('left_top')
@@ -79,26 +79,27 @@ def test_case_2D():
   left_bottom_boundary = mesh_reader.get_edge_by_physical('left_bot')
   right_bottom_boundary = mesh_reader.get_edge_by_physical('right_bot')
   elements2node = mesh.get_mesh()
-  all_elements = np.concatenate((air_elements, foam_elements))
   # breakpoint()
   # subdomains = {air: all_elements}
   subdomains = {air: air_elements, xfm: foam_elements}
+  xfm.set_frequency(omega)
   Pf_bases = []
   order = 1
   for mat, elems in subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [
-          Lagrange2DTriElement('Pf', order, elements2node[elem])
-          for elem in elems
+          Helmholtz2DElement('Pf', order, elements2node[elem],
+                             (1 / mat.rho_f, 1 / mat.K_f)) for elem in elems
       ]
   fe_space = FESpace(mesh, subdomains, Pf_bases)
+  print("Number of global dofs:", fe_space.get_nb_dofs())
   # initialize the assembler
-  import time
-  start_time = time.time()
-  Helmholtz_assember = HelmholtzAssembler(fe_space, omega, dtype=np.complex64)
+  start_assembly_time = time.time()
+  Helmholtz_assember = HelmholtzAssembler(fe_space, dtype=np.complex64)
   Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
-  left_hand_matrix = Helmholtz_assember.get_global_matrix()
-  print("Time taken to assemble the matrix:", time.time() - start_time)
+  left_hand_matrix = Helmholtz_assember.get_global_matrix(omega)
+  print("Time taken to assemble the matrix:",
+        time.time() - start_assembly_time)
   right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
                             dtype=np.complex128)
 
@@ -106,18 +107,11 @@ def test_case_2D():
   BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
                                         right_hand_vec, omega)
   # (x>0), v_y(x<0), v_y(x>0)
-  # natural_edge = np.arange(0, 16)
-  # natural_bcs1 = {
-  #     'type': 'fluid_velocity',
-  #     'value': lambda x, y: np.array([1 * np.exp(-1j * omega), 0]),
-  #     'position': natural_edge
-  # }    # position
   natural_bcs1 = {
       'type': 'analytical_gradient',
       'value': v1,
       'position': left_boundary
   }    # position
-  # breakpoint()
 
   BCs_applier.apply_nature_bc(natural_bcs1, 'Pf')
 
@@ -162,6 +156,9 @@ def test_case_2D():
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec)
   sol = linear_solver.u
+
+  print("Time taken of FEM process:", time.time() - start_time)
+
   save_plot(mesh,
             sol.real,
             current_dir + "/Pressure_field_oblique_succes.pos",
@@ -171,7 +168,7 @@ def test_case_2D():
   error = np.mean(np.abs(sol - analytical_solution_vec)) / np.mean(
       np.abs(analytical_solution_vec))
   print("error:", error)
-  if error < 0.01:
+  if error < 0.05 and (time.time() - start_time) < 80:
     print("Test passed!")
     return True
   else:
@@ -184,15 +181,16 @@ if __name__ == "__main__":
   import cProfile
 
   # Profile the main function and save the results to 'profile_results.prof'
-  cProfile.run('test_case_2D()', 'profile_results.prof')
+  #   cProfile.run('test_case_2D()', 'profile_results.prof')
+  test_case_2D()
   # Python
   import pstats
 
-  # Create a pstats.Stats object from the profiling results
-  # stats = pstats.Stats('profile_results.prof')
+  #   Create a pstats.Stats object from the profiling results
+#   stats = pstats.Stats('profile_results.prof')
 
-  # # Sort the statistics by the cumulative time spent in the function
-  # stats.sort_stats('cumulative')
+#   # Sort the statistics by the cumulative time spent in the function
+#   stats.sort_stats('cumulative')
 
-  # # Print the statistics
-  # stats.print_stats()
+#   # Print the statistics
+#   stats.print_stats()

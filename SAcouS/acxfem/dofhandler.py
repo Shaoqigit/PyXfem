@@ -276,14 +276,6 @@ class FESpace:
     for mat, elems in self.subdomains.items():
       self.subdoamin_start_index[mat] = elems[0]
       self.elem_mat.update({elem: mat for elem in elems})
-    # self.nodes2elem2var = {}
-    # num2coord = mesh.get_mesh()
-    # for i, node in enumerate(mesh.nodes):
-    #   if isinstance(node, np.ndarray):
-    #     node = tuple(node)
-    #   for elem, nodes in num2coord.items():
-    #     if node in nodes:
-    #       self.nodes2elem2var[node] = {elem: self.elem_mat[elem]}
 
   @property
   def nb_external_dofs(self):
