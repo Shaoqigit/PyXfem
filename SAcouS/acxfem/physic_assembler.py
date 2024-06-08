@@ -19,7 +19,6 @@ from SAcouS.acxfem.mesh import Mesh1D
 from SAcouS.acxfem.dofhandler import DofHandler1D
 
 import numpy as np
-from numba import jit
 from scipy.sparse import csr_array, coo_matrix, lil_array, lil_matrix
 from scipy.sparse import csr_matrix
 from multiprocessing import Pool
@@ -35,7 +34,6 @@ def get_indeces(*dofs):
     raise ValueError("wrong number of arguments")
 
 
-@jit(nopython=True)
 def assembly_matrix(elem_matrices, dofs_index):
   rows = []
   cols = []

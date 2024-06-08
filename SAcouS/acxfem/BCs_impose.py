@@ -1,10 +1,13 @@
 import numpy as np
-from numba import jit
 
-from scipy.sparse import csr_array, lil_array
+from scipy.sparse import csr_array, csr_matrix, coo_matrix
 from SAcouS.acxfem.basis import Lobbato1DElement
 from SAcouS.acxfem.quadratures import GaussLegendreQuadrature
 from SAcouS.acxfem.polynomial import Lobatto
+
+from SAcouS.acxfem.precompute_matrices_lag import points_o1, weights_o1, N_o1, B_o1
+from SAcouS.acxfem.polynomial import Lagrange2DTri
+from SAcouS.acxfem.quadratures import GaussLegendre2DTri
 
 
 class ApplyBoundaryConditions:
@@ -68,20 +71,104 @@ class ApplyBoundaryConditions:
     else:
       print("Weak imposing methods has not been implemented")
 
+  def apply_source(self, source, bases, var=None):
+    elements2node = self.mesh.get_mesh()
+    lag2d_poly_o1 = Lagrange2DTri(1)
+    points_o1, weights_o1 = GaussLegendre2DTri(3).points(), GaussLegendre2DTri(
+        3).weights()
+    if var is None:
+      dofs_index = self.FE_space.get_global_dofs()
+    else:
+      dofs_index = self.FE_space.get_global_dofs_by_base(var)
+    max_entries = len(dofs_index) * len(dofs_index[0]) * len(dofs_index[0])
+    rows = np.empty(max_entries, dtype=int)
+    data_M = np.empty(max_entries, dtype=self.dtype)
+
+    idx = 0
+    for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
+      local_indices = basis.local_dofs_index
+      global_indices = dofs
+      # breakpoint()
+
+      node_coords = elements2node[i]
+      for wt, pt in zip(weights_o1, points_o1):
+        x = np.dot(lag2d_poly_o1.get_shape_functions(*pt), node_coords)
+        f = source['value'](x[0], x[1])
+        integrand = lag2d_poly_o1.get_shape_functions(*pt) * f * wt
+
+      integrand *= basis.det_J
+      elem_data_M = integrand[local_indices]
+
+      size = len(global_indices)
+      rows[idx:idx + size] = global_indices[:]
+      data_M[idx:idx + size] = elem_data_M
+      idx += size
+
+    source_interp = csr_array((data_M[:idx], (rows[:idx], [0] * idx)),
+                              shape=(self.nb_dofs, 1),
+                              dtype=self.dtype)
+    breakpoint()
+    self.right_hand_side += source_interp
+    return self.right_hand_side
+
   def apply_impedance_bc(self, impedence_bcs, var=None):
-    dof_index = self.dof_handler.mesh2dof(impedence_bcs['position'], var)
-    row = np.array([dof_index])
-    col = np.array([dof_index])
-    mat = self.elem_mat[dof_index - 1]
-    mat.set_frequency(self.omega)
-    mat_coeff = 1j * 1 / mat.rho_f * (self.omega /
-                                      mat.c_f) * impedence_bcs['value']
-    data = np.array([mat_coeff * 1])
-    C_damp = csr_array((data, (row, col)),
-                       shape=(self.nb_dofs, self.nb_dofs),
-                       dtype=self.dtype)
-    self.left_hand_side += C_damp
-    return C_damp
+    if isinstance(impedence_bcs['position'], float):    #1D case
+      dof_index = self.mesh2dof(impedence_bcs['position'], var)
+      row = np.array([dof_index])
+      col = np.array([dof_index])
+      mat = self.elem_mat[dof_index - 1]
+      mat.set_frequency(self.omega)
+      mat_coeff = 1j * 1 / mat.rho_f * (self.omega /
+                                        mat.c_f) * impedence_bcs['value']
+      data = np.array([mat_coeff * 1])
+      C_damp = csr_array((data, (row, col)),
+                         shape=(self.nb_dofs, self.nb_dofs),
+                         dtype=self.dtype)
+      self.left_hand_side += C_damp
+      return C_damp
+    elif isinstance(impedence_bcs['position'], np.ndarray):
+      edges = impedence_bcs['position']
+      lines = self.mesh.exterior_edges[edges]
+      rows = []
+      cols = []
+      data_M = []
+      for line_index in lines:
+        node_1_coord = self.mesh.nodes[line_index[0]]
+        node_2_coord = self.mesh.nodes[line_index[1]]
+        gl_q = GaussLegendreQuadrature(3)
+        jac = np.linalg.norm(node_1_coord - node_2_coord) / 2
+        gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+        l = Lobatto(1)
+        N = l.get_shape_functions()
+        f = np.zeros((2, 2), dtype=self.left_hand_side.dtype)
+        for i, gl_pt in enumerate(gl_pts):
+          x = N[0](gl_pt) * node_1_coord + N[1](gl_pt) * node_2_coord
+          f_e = 1j / (self.omega * impedence_bcs['value'](x[0], x[1]))
+          f += gl_wts[i] * np.array([[
+              N[0](gl_pt) * N[0](gl_pt), N[0](gl_pt) * N[1](gl_pt)
+          ], [N[1](gl_pt) * N[0](gl_pt), N[1](gl_pt) * N[1](gl_pt)]]) * f_e
+        f *= jac    #
+        local_index = np.arange(len(N))
+        local_indices = np.stack(
+            (np.repeat(local_index, len(N)), np.tile(local_index, len(N))),
+            axis=1)
+        global_indices = np.stack(
+            (np.repeat(line_index,
+                       len(line_index)), np.tile(line_index, len(line_index))),
+            axis=1)
+        elem_data_M = f[local_indices[:, 0], local_indices[:, 1]]
+        row = global_indices[:, 0]
+        col = global_indices[:, 1]
+        rows.extend(row)
+        cols.extend(col)
+        data_M.extend(elem_data_M)
+
+      C_damp = coo_matrix((data_M, (rows, cols)),
+                          shape=(self.nb_dofs, self.nb_dofs),
+                          dtype=self.dtype).tocsr()
+
+      self.left_hand_side += C_damp
+    return self.left_hand_side
 
   def apply_nature_bc(self, nature_bc, var=None, integr_order=1):
     if isinstance(nature_bc['position'], float):    #1D case
