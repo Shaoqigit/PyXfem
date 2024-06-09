@@ -27,37 +27,13 @@ import concurrent.futures
 
 def get_indeces(*dofs):
   if len(dofs) == 1:
-    return np.transpose(np.meshgrid(dofs[0], dofs[0])).reshape(-1, 2)
+    return np.stack(
+        (np.repeat(dofs[0], len(dofs[0])), np.tile(dofs[0], len(dofs[0]))),
+        axis=1)
   elif len(dofs) == 2:
     return np.transpose(np.meshgrid(dofs[0], dofs[1])).reshape(-1, 2)
   else:
     raise ValueError("wrong number of arguments")
-
-
-def assembly_matrix(elem_matrices, dofs_index):
-  rows = []
-  cols = []
-  data_K = []
-  data_M = []
-  for i, (dofs, matrix) in enumerate(zip(dofs_index, elem_matrices)):
-    local_index = np.arange(len(matrix[0]))
-    local_indices = np.array([(row, col) for row in local_index
-                              for col in local_index])
-    global_indices = np.array([(row, col) for row in dofs for col in dofs])
-    row = global_indices[:, 0]
-    col = global_indices[:, 1]
-    elem_data_M = np.empty_like(local_indices, dtype=matrix[1].dtype)
-    elem_data_K = np.empty_like(local_indices, dtype=matrix[0].dtype)
-    for i, (index0, index1) in enumerate(local_indices):
-      elem_data_M[i] = matrix[1][index0, index1]
-      elem_data_K[i] = matrix[0][index0, index1]
-
-    # breakpoint()
-    rows.extend(row)
-    cols.extend(col)
-    data_K.extend(elem_data_K[:, 0])
-    data_M.extend(elem_data_M[:, 0])
-  return rows, cols, data_K, data_M
 
 
 class BaseAssembler:
@@ -86,22 +62,11 @@ class BaseAssembler:
     cols = []
     data = []
     for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-      local_indices = np.stack(
-          (np.repeat(basis.local_dofs_index, len(basis.local_dofs_index)),
-           np.tile(basis.local_dofs_index, len(basis.local_dofs_index))),
-          axis=1)
-      global_indices = np.stack(
-          (np.repeat(dofs, len(dofs)), np.tile(dofs, len(dofs))), axis=1)
+      local_indices = get_indeces(basis.local_dofs_index)
+      global_indices = get_indeces(dofs)
       row = global_indices[:, 0]
       col = global_indices[:, 1]
-      # mat = self.elem_mat[i]
-      # if mat.TYPE in ['Fluid'] or (mat.TYPE in ['Poroelastic'] and 'P' in var):
-      #   mat_coeff = 1 / (mat.rho_f)
-      # elif mat.TYPE in ['Poroelastic']:
-      #   if var in ['Ux', 'Uy', 'Uz']:
-      #     mat_coeff = mat.P_hat
-      # else:
-      #   print("Material type not supported")
+
       elem_data = basis.ke[local_indices[:, 0], local_indices[:, 1]]
       rows.extend(row)
       cols.extend(col)
@@ -126,14 +91,6 @@ class BaseAssembler:
       global_indices = get_indeces(dofs)
       row = global_indices[:, 0]
       col = global_indices[:, 1]
-      # mat = self.elem_mat[i]
-      # if mat.TYPE in ['Fluid'] or (mat.TYPE in ['Poroelastic'] and 'P' in var):
-      #   mat_coeff = 1 / mat.K_f
-      # elif mat.TYPE in ['Poroelastic']:
-      #   if var in ['Ux', 'Uy', 'Uz']:
-      #     mat_coeff = mat.rho_til
-      # else:
-      #   print("Material type not supported")
       elem_data = basis.me[local_indices[:, 0], local_indices[:, 1]]
       rows.extend(row)
       cols.extend(col)
@@ -154,12 +111,8 @@ class BaseAssembler:
     data_K = []
     data_M = []
     for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-      local_indices = np.stack(
-          (np.repeat(basis.local_dofs_index, len(basis.local_dofs_index)),
-           np.tile(basis.local_dofs_index, len(basis.local_dofs_index))),
-          axis=1)
-      global_indices = np.stack(
-          (np.repeat(dofs, len(dofs)), np.tile(dofs, len(dofs))), axis=1)
+      local_indices = get_indeces(basis.local_dofs_index)
+      global_indices = get_indeces(dofs)
       row = global_indices[:, 0]
       col = global_indices[:, 1]
 
@@ -169,7 +122,6 @@ class BaseAssembler:
       cols.extend(col)
       data_K.extend(elem_data_K)
       data_M.extend(elem_data_M)
-      breakpoint()
     self.M = coo_matrix((data_M, (rows, cols)),
                         shape=(self.nb_global_dofs, self.nb_global_dofs),
                         dtype=self.dtype).tocsr()
@@ -193,12 +145,8 @@ class BaseAssembler:
 
     idx = 0
     for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-      local_indices = np.stack(
-          (np.repeat(basis.local_dofs_index, len(basis.local_dofs_index)),
-           np.tile(basis.local_dofs_index, len(basis.local_dofs_index))),
-          axis=1)
-      global_indices = np.stack(
-          (np.repeat(dofs, len(dofs)), np.tile(dofs, len(dofs))), axis=1)
+      local_indices = get_indeces(basis.local_dofs_index)
+      global_indices = get_indeces(dofs)
 
       elem_data_M = basis.me[local_indices[:, 0], local_indices[:, 1]]
       elem_data_K = basis.ke[local_indices[:, 0], local_indices[:, 1]]
@@ -217,20 +165,6 @@ class BaseAssembler:
                         shape=(self.nb_global_dofs, self.nb_global_dofs),
                         dtype=self.dtype)
 
-  def spuer_fast_assembly_global_material_matrix(self, bases, var=None):
-    if var is None:
-      dofs_index = self.fe_space.get_global_dofs()
-    else:
-      dofs_index = self.fe_space.get_global_dofs_by_base(var)
-    elem_matrices = [[basis.ke, basis.me] for basis in bases]
-    rows, cols, data_K, data_M = assembly_matrix(elem_matrices, dofs_index)
-    self.M = coo_matrix((data_M, (rows, cols)),
-                        shape=(self.nb_global_dofs, self.nb_global_dofs),
-                        dtype=self.dtype).tocsr()
-    self.K = coo_matrix((data_K, (rows, cols)),
-                        shape=(self.nb_global_dofs, self.nb_global_dofs),
-                        dtype=self.dtype).tocsr()
-
 
 # ===================================== end parallel assembly ==========================
 class HelmholtzAssembler(BaseAssembler):
@@ -247,12 +181,10 @@ class HelmholtzAssembler(BaseAssembler):
     self.initial_matrix()
     # self.assemble_material_K(bases, var)
     # self.assemble_material_M(bases, var)
-    if self.nb_global_dofs < 100:
+    if self.nb_global_dofs < 10000:
       self.assemble_global_material_matrix(bases, var)
-    elif self.nb_global_dofs < 1000000:
-      self.fast_assemble_global_material_matrix(bases, var)
     else:
-      self.spuer_fast_assembly_global_material_matrix(bases, var)
+      self.fast_assemble_global_material_matrix(bases, var)
 
   def get_global_matrix(self, omega, var=None):
     return 1 / omega**2 * self.K - self.M
