@@ -1,10 +1,10 @@
-# import os
+import os
 
-# current_dir = os.path.dirname(os.path.realpath(__file__))
-# working_dir = os.path.join(current_dir, "..")
-# import sys
+current_dir = os.path.dirname(os.path.realpath(__file__))
+working_dir = os.path.join(current_dir, "..")
+import sys
 
-# sys.path.append(working_dir)
+sys.path.append(working_dir)
 
 from SAcouS.acxfem.basis import Lagrange2DTriElement
 import numpy as np

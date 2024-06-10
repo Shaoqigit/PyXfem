@@ -26,14 +26,9 @@ import concurrent.futures
 
 
 def get_indeces(*dofs):
-  if len(dofs) == 1:
-    return np.stack(
-        (np.repeat(dofs[0], len(dofs[0])), np.tile(dofs[0], len(dofs[0]))),
-        axis=1)
-  elif len(dofs) == 2:
-    return np.transpose(np.meshgrid(dofs[0], dofs[1])).reshape(-1, 2)
-  else:
-    raise ValueError("wrong number of arguments")
+  return np.stack(
+      (np.repeat(dofs[0], len(dofs[0])), np.tile(dofs[0], len(dofs[0]))),
+      axis=1)
 
 
 class BaseAssembler:

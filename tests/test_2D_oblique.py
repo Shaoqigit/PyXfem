@@ -101,7 +101,7 @@ def test_case_2D():
   print("Time taken to assemble the matrix:",
         time.time() - start_assembly_time)
   right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
-                            dtype=np.complex128)
+                            dtype=np.complex64)
 
   v1, v2 = analytical_solution.velocity_1, analytical_solution.velocity_2    #v_x(x<0), v_x
   BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
