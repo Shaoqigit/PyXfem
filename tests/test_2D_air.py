@@ -89,7 +89,7 @@ def test_case_2D():
                                         right_hand_vec, omega)
   BCs_applier.apply_nature_bc(natural_bcs, 'Pf')
   linear_solver = LinearSolver(fe_space=fe_space)
-  linear_solver.solve(left_hand_matrix, right_hand_vec)
+  linear_solver.solve(left_hand_matrix, right_hand_vec, 'petsc')
   sol = linear_solver.u
   save_plot(mesh,
             sol.real,

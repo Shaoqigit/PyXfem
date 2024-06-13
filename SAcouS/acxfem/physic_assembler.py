@@ -17,18 +17,31 @@
 # assembly the global/partial matrices according to the physic of the components
 from SAcouS.acxfem.mesh import Mesh1D
 from SAcouS.acxfem.dofhandler import DofHandler1D
+from SAcouS.acxfem.quadratures import GaussLegendreQuadrature
+from SAcouS.acxfem.polynomial import Lobatto
 
 import numpy as np
 from scipy.sparse import csr_array, coo_matrix, lil_array, lil_matrix
 from scipy.sparse import csr_matrix
-from multiprocessing import Pool
-import concurrent.futures
+try:
+  from petsc4py import PETSc
+  from petsc4py.PETSc import Mat, Vec
+  PETSC_on = True
+except ImportError:
+  pass
 
 
 def get_indeces(*dofs):
-  return np.stack(
-      (np.repeat(dofs[0], len(dofs[0])), np.tile(dofs[0], len(dofs[0]))),
-      axis=1)
+  if len(dofs) == 1:
+    return np.stack(
+        (np.repeat(dofs[0], len(dofs[0])), np.tile(dofs[0], len(dofs[0]))),
+        axis=1)
+  elif len(dofs) == 2:
+    return np.stack(
+        (np.repeat(dofs[0], len(dofs[1])), np.tile(dofs[1], len(dofs[0]))),
+        axis=1)
+  else:
+    raise ValueError("the number of dofs must be one or two")
 
 
 class BaseAssembler:
@@ -160,6 +173,26 @@ class BaseAssembler:
                         shape=(self.nb_global_dofs, self.nb_global_dofs),
                         dtype=self.dtype)
 
+  def super_fast_assemble_global_material_matrix(self, bases, omega, var=None):
+    if var is None:
+      dofs_index = self.fe_space.get_global_dofs()
+    else:
+      dofs_index = self.fe_space.get_global_dofs_by_base(var)
+
+    A = PETSc.Mat().createAIJ([self.nb_global_dofs, self.nb_global_dofs])
+    A.setUp()
+
+    # Assemble the global matrix directly in PETSc
+    A.assemblyBegin()
+    for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
+      # breakpoint()
+      # global_indices = get_indeces(dofs)
+      local_matrix = 1 / omega**2 * basis.ke - basis.me
+      A.setValues(dofs, dofs, local_matrix, addv=PETSc.InsertMode.ADD_VALUES)
+    A.assemblyEnd()
+    print('PETSc matrix assembled')
+    return A
+
 
 # ===================================== end parallel assembly ==========================
 class HelmholtzAssembler(BaseAssembler):
@@ -180,9 +213,13 @@ class HelmholtzAssembler(BaseAssembler):
       self.assemble_global_material_matrix(bases, var)
     else:
       self.fast_assemble_global_material_matrix(bases, var)
+      # self.super_fast_assemble_global_material_matrix(bases, omega, var)
 
   def get_global_matrix(self, omega, var=None):
     return 1 / omega**2 * self.K - self.M
+
+  def get_global_PETSC_matrix(self, bases, omega, var=None):
+    return self.super_fast_assemble_global_material_matrix(bases, omega, var)
 
 
 class BiotAssembler(BaseAssembler):
@@ -296,3 +333,19 @@ class CouplingAssember:
       index_internal_start = index_internal_end
 
     return self.global_matrix.tocsr()
+
+
+def assembly_on_edges(mesh, edges, func, integ_deg=3, type='linear'):
+  """
+    Assembly the linear form on the edges
+    """
+  gl_q = GaussLegendreQuadrature(integ_deg)
+  gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+  l = Lobatto(1)
+  N = l.get_shape_functions()
+
+  lines = mesh.exterior_edges[edges]
+  for line_index in lines:
+    node_1_coord = mesh.nodes[line_index[0]]
+    node_2_coord = mesh.nodes[line_index[1]]
+    jac = np.linalg.norm(node_1_coord - node_2_coord) / 2

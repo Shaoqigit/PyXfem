@@ -18,9 +18,9 @@ class ApplyBoundaryConditions:
     self.elem_mat = FE_space.elem_mat
     self.left_hand_side = left_hand_side
     self.right_hand_side = right_hand_side
-    self.nb_dofs = self.left_hand_side.shape[0]
+    self.nb_dofs = FE_space.get_nb_dofs()
     self.omega = omega
-    self.dtype = self.left_hand_side.dtype
+    self.dtype = self.right_hand_side.dtype
 
   def mesh2dof(self, position, var=None):
     return self.FE_space.get_dofs_from_var_coord(position, var)
@@ -88,17 +88,13 @@ class ApplyBoundaryConditions:
     for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
       local_indices = basis.local_dofs_index
       global_indices = dofs
-      # breakpoint()
 
       node_coords = elements2node[i]
-      for wt, pt in zip(weights_o1, points_o1):
-        x = np.dot(lag2d_poly_o1.get_shape_functions(*pt), node_coords)
-        f = source['value'](x[0], x[1])
-        integrand = lag2d_poly_o1.get_shape_functions(*pt) * f * wt
+      xx = np.dot(basis.N, node_coords)
+      f = np.array([weights_o1[i] * source['value'](x[0], x[1]) for i, x in enumerate(xx)])
+      integrand = basis.det_J * np.dot(basis.N.T, f)*1/(self.omega**2*1.213)
 
-      integrand *= basis.det_J
       elem_data_M = integrand[local_indices]
-
       size = len(global_indices)
       rows[idx:idx + size] = global_indices[:]
       data_M[idx:idx + size] = elem_data_M
@@ -107,7 +103,6 @@ class ApplyBoundaryConditions:
     source_interp = csr_array((data_M[:idx], (rows[:idx], [0] * idx)),
                               shape=(self.nb_dofs, 1),
                               dtype=self.dtype)
-    breakpoint()
     self.right_hand_side += source_interp
     return self.right_hand_side
 
@@ -206,8 +201,8 @@ class ApplyBoundaryConditions:
           x = N[0](gl_pt) * node_1_coord + N[1](gl_pt) * node_2_coord
           f_n = nature_bc['value'](x[0], x[1]) @ normal
           f += gl_wts[i] * f_n * np.array([N[0](gl_pt), N[1](gl_pt)])
-          # map coordiante into reference space
         f *= jac    #
+        # map coordiante into reference space
         if nature_bc['type'] == 'fluid_velocity':
           self.right_hand_side[line_index] += f / (1j * self.omega)
         elif nature_bc['type'] == 'analytical_gradient':

@@ -1,16 +1,18 @@
 import numpy as np
-from numba import jit
 from scipy.sparse import csr_array, lil_array
 
 
-@jit(nopython=True)
 def get_indeces(*dofs):
   if len(dofs) == 1:
-    return np.array([(row, col) for row in dofs[0] for col in dofs[0]])
+    return np.stack(
+        (np.repeat(dofs[0], len(dofs[0])), np.tile(dofs[0], len(dofs[0]))),
+        axis=1)
   elif len(dofs) == 2:
-    return np.array([(row, col) for row in dofs[0] for col in dofs[1]])
+    return np.stack(
+        (np.repeat(dofs[0], len(dofs[1])), np.tile(dofs[1], len(dofs[0]))),
+        axis=1)
   else:
-    raise ValueError("wrong number of arguments")
+    raise ValueError("the number of dofs must be one or two")
 
 
 class Assembler:

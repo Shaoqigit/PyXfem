@@ -22,6 +22,7 @@ from abc import ABCMeta, abstractmethod
 from functools import cached_property
 
 from SAcouS.acxfem.precompute_matrices import Ke1D, Me1D, Ce1D
+from SAcouS.acxfem.quadratures import GaussLegendre2DTri
 
 
 class Base1DElement(metaclass=ABCMeta):
@@ -49,12 +50,19 @@ class Base1DElement(metaclass=ABCMeta):
     returns:
     J: 
     J=dx/dxi"""
-
-    return np.abs(self.nodes[0] - self.nodes[1]) / 2
+    if len(self.nodes.shape) == 1:
+      return np.abs(self.nodes[0] - self.nodes[1]) / 2
+    elif len(self.nodes.shape) == 2:
+      return np.sqrt((self.nodes[0, 0] - self.nodes[1, 0])**2 +
+                     (self.nodes[0, 1] - self.nodes[1, 1])**2) / 2
 
   @cached_property
   def inverse_Jacobian(self):
-    return 2 / np.abs(self.nodes[0] - self.nodes[1])
+    if len(self.nodes.shape) == 1:
+      return 2 / np.abs(self.nodes[0] - self.nodes[1])
+    elif len(self.nodes.shape) == 2:
+      return 2 / np.sqrt((self.nodes[0, 0] - self.nodes[1, 0])**2 +
+                         (self.nodes[0, 1] - self.nodes[1, 1])**2)
 
 
 class Lobbato1DElement(Base1DElement):
@@ -323,6 +331,13 @@ class Lagrange2DTriElement(Base2DElement):
     else:
       print("quadrtic lagrange not implemented yet")
     return Me
+
+  def weights_and_points(self, integ_order=1):
+    if integ_order is None:
+      integ_order = 2 * self.order + 1
+    points, weights = GaussLegendre2DTri(
+        integ_order).points(), GaussLegendre2DTri(3).weights()
+    return points, weights
 
   def egde_basis(self, edge):
     """compute the edge basis function

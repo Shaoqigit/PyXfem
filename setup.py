@@ -22,7 +22,6 @@ setup(
         'numpy',
         'scipy',
         'matplotlib',
-        'numba',
         'meshio',
     # Add any other dependencies here
     ],

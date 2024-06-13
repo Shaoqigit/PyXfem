@@ -154,7 +154,7 @@ def test_case_2D():
   BCs_applier.apply_nature_bc(natural_bcs6, 'Pf')
 
   linear_solver = LinearSolver(fe_space=fe_space)
-  linear_solver.solve(left_hand_matrix, right_hand_vec)
+  linear_solver.solve(left_hand_matrix, right_hand_vec, solver='petsc')
   sol = linear_solver.u
 
   print("Time taken of FEM process:", time.time() - start_time)

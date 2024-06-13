@@ -28,6 +28,8 @@ from SAcouS.acxfem.quadratures import GaussLegendreQuadrature
 
 try:
   from petsc4py import PETSc
+  from petsc4py.PETSc import Mat, Vec
+  PETSC_on = True
 except ImportError:
   pass
 
@@ -58,6 +60,40 @@ class BaseSolver(metaclass=ABCMeta):
     pass
 
 
+def petsc_solver(left_hand_side, right_hand_side):
+  """petsc solver
+    parameters:
+    left_hand_side: CSR matrix
+        left hand side matrix
+    right_hand_side: ndarray
+        right hand side vector
+    """
+  if not isinstance(left_hand_side, PETSc.Mat):
+    left_hand_side = PETSc.Mat().createAIJ(size=left_hand_side.shape,
+                                           csr=(left_hand_side.indptr,
+                                                left_hand_side.indices,
+                                                left_hand_side.data))
+    left_hand_side.assemblyBegin()
+    left_hand_side.assemblyEnd()
+  else:
+    assert (isinstance(left_hand_side, PETSc.Mat))
+  b = PETSc.Vec().createWithArray(right_hand_side)
+  x = PETSc.Vec().createSeq(right_hand_side.shape[0])
+  ksp = PETSc.KSP().create()
+  ksp.setOperators(left_hand_side)
+  ksp.setType(
+      PETSc.KSP.Type.PREONLY)    # Use preconditioner only (direct solve)
+
+  pc = ksp.getPC()
+  pc.setType(PETSc.PC.Type.LU)    # Set the preconditioner to LU
+  pc.setFactorSolverType(PETSc.Mat.SolverType.MUMPS)
+
+  ksp.setFromOptions()
+  ksp.solve(b, x)
+  print('PETSc dirct solver used')
+  return x.getArray()
+
+
 class LinearSolver(BaseSolver):
   """linear solver class
     parameters:
@@ -67,10 +103,13 @@ class LinearSolver(BaseSolver):
         right hand side vector
     """
 
-  def solve(self, left_hand_side, right_hand_side):
+  def solve(self, left_hand_side, right_hand_side, solver='spsolve'):
     import time
     start = time.time()
-    u = spsolve(left_hand_side, right_hand_side)
+    if solver == 'petsc' and PETSC_on:
+      u = petsc_solver(left_hand_side, right_hand_side)
+    else:
+      u = spsolve(left_hand_side, right_hand_side)
     # u = np.linalg.solve(left_hand_side.toarray(), right_hand_side)
     self.u = u[:self.external_dofs]
     end = time.time()
