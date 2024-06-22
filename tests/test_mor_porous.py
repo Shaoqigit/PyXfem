@@ -25,17 +25,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
-from SAcouS.acxfem.basis import Lobbato1DElement
-from SAcouS.acxfem.mesh import Mesh1D
-from SAcouS.acxfem.dofhandler import FESpace
-from SAcouS.acxfem.assembly import Assembler
-from SAcouS.acxfem.materials import Air, EquivalentFluid
-from SAcouS.acxfem.physic_assembler import HelmholtzAssembler
-from SAcouS.acxfem.utilities import check_material_compability
-from SAcouS.acxfem.solver import LinearSolver
+from SAcouS.acxfem import Lobbato1DElement
+from SAcouS.acxfem.Mesh import Mesh1D
+from SAcouS.acxfem import FESpace
+from SAcouS.acxfem import Assembler
+from SAcouS.acxfem.Materials import Air, EquivalentFluid
+from SAcouS.acxfem import HelmholtzAssembler
+from SAcouS.acxfem import check_material_compability
+from SAcouS.acxfem import LinearSolver
 
 from SAcouS.acxmor.modal_reduction import EigenSolver, ModalReduction
-from SAcouS.acxfem.postprocess import PostProcessField, PostProcessFRF
+from SAcouS.acxfem import PostProcessField, PostProcessFRF
 from analytical.fluid_sol import ImpedenceKundltTube
 
 

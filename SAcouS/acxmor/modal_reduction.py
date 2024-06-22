@@ -1,5 +1,4 @@
-import numpy as np
-from SAcouS.acxfem.solver import BaseSolver
+from SAcouS.acxfem import BaseSolver
 from scipy import sparse
 from scipy.sparse.linalg import spsolve
 

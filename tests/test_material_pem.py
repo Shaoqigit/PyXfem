@@ -27,7 +27,7 @@ from pymls import *
 from mediapack import Air, PEM, EqFluidJCA
 
 from mediapack import Air, Fluid
-from SAcouS.acxfem.materials import EquivalentFluid, PoroElasticMaterial
+from SAcouS.acxfem.Materials import EquivalentFluid, PoroElasticMaterial
 
 
 def test_case():

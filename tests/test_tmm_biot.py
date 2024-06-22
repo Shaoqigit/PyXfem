@@ -30,11 +30,11 @@ from SAcouS.acxtmm.adm_basis import AdmFluid
 from SAcouS.acxtmm.tmm import TMMFluid, TMMPoroElastic1, TMMPoroElastic2, TMMPoroElastic3
 from SAcouS.acxtmm.BC_matrix import bcm_poro_fluid, bcm_fluid_poro2, bcm_poro_rigid_wall, bcm_rigid_wall, bcm_rigid_wall2
 from SAcouS.acxtmm.adm_assembler import AdmAssembler
-from SAcouS.acxfem.mesh import Mesh1D
-from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
-from SAcouS.acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from SAcouS.acxfem.solver import AdmittanceSolver
-from SAcouS.acxfem.postprocess import PostProcessField
+from SAcouS.acxfem import Mesh1D
+from SAcouS.acxfem import Air, Fluid, EquivalentFluid, PoroElasticMaterial
+from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from SAcouS.acxfem import AdmittanceSolver
+from SAcouS.acxfem import PostProcessField
 from analytical.fluid_sol import DoubleleLayerKundltTube
 
 # mesh.refine_mesh(1)

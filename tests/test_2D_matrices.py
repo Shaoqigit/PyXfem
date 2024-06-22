@@ -6,7 +6,7 @@ import sys
 
 sys.path.append(working_dir)
 
-from SAcouS.acxfem.basis import Lagrange2DTriElement
+from SAcouS.acxfem import Lagrange2DTriElement
 import numpy as np
 
 

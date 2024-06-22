@@ -26,15 +26,15 @@ sys.path.append(working_dir)
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SAcouS.acxfem.basis import Helmholtz2DElement
-from SAcouS.acxfem.mesh import Mesh2D, Mesh1D, MeshReader
-from SAcouS.acxfem.dofhandler import FESpace
-from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid
-from SAcouS.acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from SAcouS.acxfem.physic_assembler import HelmholtzAssembler
-from SAcouS.acxfem.solver import LinearSolver
-from SAcouS.acxfem.postprocess import plot_field, save_plot, PostProcessField, read_solution
-from SAcouS.acxfem.BCs_impose import ApplyBoundaryConditions
+from SAcouS.acxfem import Helmholtz2DElement
+from SAcouS.acxfem import Mesh2D, Mesh1D, MeshReader
+from SAcouS.acxfem import FESpace
+from SAcouS.acxfem import Air, Fluid, EquivalentFluid
+from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from SAcouS.acxfem import HelmholtzAssembler
+from SAcouS.acxfem import LinearSolver
+from SAcouS.acxfem import plot_field, save_plot, PostProcessField, read_solution
+from SAcouS.acxfem import ApplyBoundaryConditions
 from analytical.fluid_sol import DoubleleLayerKundltTube
 
 

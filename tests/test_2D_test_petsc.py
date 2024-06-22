@@ -26,15 +26,15 @@ sys.path.append(working_dir)
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SAcouS.acxfem.basis import Helmholtz2DElement
-from SAcouS.acxfem.mesh import Mesh2D, MeshReader
-from SAcouS.acxfem.dofhandler import DofHandler1D, GeneralDofHandler1D, FESpace
-from SAcouS.acxfem.materials import Air, Fluid, EquivalentFluid
-from SAcouS.acxfem.utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
-from SAcouS.acxfem.physic_assembler import HelmholtzAssembler
-from SAcouS.acxfem.solver import LinearSolver
-from SAcouS.acxfem.postprocess import plot_field, save_plot, PostProcessField, read_solution
-from SAcouS.acxfem.BCs_impose import ApplyBoundaryConditions
+from SAcouS.acxfem import Helmholtz2DElement
+from SAcouS.acxfem import Mesh2D, MeshReader
+from SAcouS.acxfem import DofHandler1D, GeneralDofHandler1D, FESpace
+from SAcouS.acxfem import Air, Fluid, EquivalentFluid
+from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from SAcouS.acxfem import HelmholtzAssembler
+from SAcouS.acxfem import LinearSolver
+from SAcouS.acxfem import plot_field, save_plot, PostProcessField, read_solution
+from SAcouS.acxfem import ApplyBoundaryConditions
 from analytical.fluid_sol import ObliquePlaneWave
 
 
@@ -87,10 +87,11 @@ def test_case_2D():
   order = 1
   for mat, elems in subdomains.items():
     if mat.TYPE == 'Fluid':
-      Pf_bases += [
+      inv_rho = 1 / mat.rho_f
+      inv_K = 1 / mat.K_f
+      Pf_bases.extend(
           Helmholtz2DElement('Pf', order, elements2node[elem],
-                             (1 / mat.rho_f, 1 / mat.K_f)) for elem in elems
-      ]
+                             (inv_rho, inv_K)) for elem in elems)
   fe_space = FESpace(mesh, subdomains, Pf_bases)
   print("Number of global dofs:", fe_space.get_nb_dofs())
   # initialize the assembler
@@ -154,7 +155,7 @@ def test_case_2D():
   BCs_applier.apply_nature_bc(natural_bcs6, 'Pf')
 
   linear_solver = LinearSolver(fe_space=fe_space)
-  linear_solver.solve(left_hand_matrix, right_hand_vec)
+  linear_solver.solve(left_hand_matrix, right_hand_vec, solver='petsc')
   sol = linear_solver.u
 
   print("Time taken of FEM process:", time.time() - start_time)
