@@ -1,9 +1,9 @@
 matplotlib==3.7.0
-numpy==1.23.5
+numpy>=1.26.4
 scipy==1.10.0
 pymls==1.8.0
 meshio>=5.0.0
 
 # Optional dependencies
 mpi4py==3.1.6
-petsc4py==3.21.1
+petsc4py>=3.15
