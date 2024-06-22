@@ -1,0 +1,6 @@
+name: pyacoustix
+channels:
+    - conda-forge
+dependencies:
+    - mpi4py  
+    - petsc4py=*=*complex*  # install complex version of petsc4py
