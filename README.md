@@ -4,6 +4,8 @@
 <center>
   
 [![PyPi Version](https://img.shields.io/pypi/v/pyacoustix.svg?style=flat-square)](https://pypi.org/project/PyAcoustiX/0.9.11/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/shaoqiwu/pyacoustix.svg?style=flat-square)](https://hub.docker.com/r/shaoqiwu/pyacoustix)
+
 
 </center>
 
@@ -61,7 +63,7 @@ Author: Shaoqiwu@outlook.com
 * Modal domain reduction method
 
 ### To do list
-* update to python 3.11
+* Shell element for thin plate in 3D
 * Parallel computing for frequancy scaning problem
 * MoR for damped systems (RB+EIM algorithme for porous materials)
 * Perfect Matched Layer (PML) for free field boundary condition

@@ -237,6 +237,64 @@ class Lagrange2DTri:
     return 1
 
 
+class Lagrange2DQuad:
+
+  def __init__(self, order):
+    self.order = order
+
+  def polynomial(self, u, v):
+    if self.order == 1:
+      lagrange = np.array([
+          1 / 4 * (1 - u) * (1 - v), 1 / 4 * (1 + u) * (1 - v),
+          1 / 4 * (1 + u) * (1 + v), 1 / 4 * (1 - u) * (1 + v)
+      ])
+    elif self.order == 2:
+      lagrange = np.array([
+          1 / 4 * (u - 1) * (v - 1) * (u + v + 1),
+          1 / 4 * (u + 1) * (v - 1) * (u - v - 1),
+          1 / 4 * (u + 1) * (v + 1) * (u + v - 1),
+          1 / 4 * (u - 1) * (v + 1) * (u - v + 1),
+          1 / 2 * (1 - u**2) * (v - 1), 1 / 2 * (u + 1) * (1 - v**2),
+          1 / 2 * (1 - u**2) * (v + 1), 1 / 2 * (u - 1) * (1 - v**2),
+          1 / 2 * (1 - v**2) * (1 - u), 1 / 2 * (1 - u**2) * (1 + v),
+          1 / 2 * (1 - v**2) * (1 + u), 1 / 2 * (1 + u) * (1 - v**2)
+      ])
+    else:
+      print("cubic larange not supported yet")
+
+    return lagrange
+
+  def get_shape_functions(self, u, v):
+    return self.polynomial(u, v)
+
+  def derivative(self, u, v):
+    if self.order == 1:
+      d_lagrange = np.array([[-1 / 4 * (1 - v), -1 / 4 * (1 - u)],
+                             [1 / 4 * (1 - v), -1 / 4 * (1 + u)],
+                             [1 / 4 * (1 + v), 1 / 4 * (1 + u)],
+                             [-1 / 4 * (1 + v), 1 / 4 * (1 - u)]])
+    elif self.order == 2:
+      d_lagrange = np.array([[1 / 4 * (2 * u + v), 1 / 4 * (u + 2 * v)],
+                             [1 / 4 * (2 * u - v), 1 / 4 * (-u + 2 * v)],
+                             [1 / 4 * (2 * u + v), 1 / 4 * (u + 2 * v)],
+                             [1 / 4 * (2 * u - v), 1 / 4 * (-u + 2 * v)],
+                             [-u * (v - 1), 1 / 2 * (u**2 - 1)],
+                             [1 / 2 * (v**2 - 1), -v * (u + 1)],
+                             [-u * (v + 1), 1 / 2 * (u**2 - 1)],
+                             [1 / 2 * (v**2 - 1), -v * (u - 1)],
+                             [-v * (1 - u), -1 / 2 * (v**2 - 1)],
+                             [-u * (1 + v), -1 / 2 * (u**2 - 1)],
+                             [-v * (1 + u), -1 / 2 * (v**2 - 1)],
+                             [-1 / 2 * (1 - v**2), -u * (1 + v)]])
+    else:
+      print("cubic larange not supported yet")
+
+    return d_lagrange
+
+  def get_der_shape_functions(self, u, v):
+    return self.derivative(u, v)
+
+
 class Lagrange3DTri:
 
   def __init__(self, order):

@@ -428,6 +428,79 @@ class Helmholtz2DElement(Lagrange2DTriElement):
     return Me
 
 
+class Lagrange2DQuadElement(Base2DElement):
+  """FE lagrange 2D quad basis class
+    parameters:
+    order: int
+        element order
+    vertices: ndarray
+        [(x1, y1), (x2, y2), (x3, y3), (x4, y4)] for quad
+    reference element: [(0, 0), (1, 0), (0, 1), (1, 1)]
+    illustrated as below:
+    3----2
+    |    |
+    |    |
+    0----1
+    """
+
+  def __init__(self, label, order, vertices):
+    super().__init__(label, order, vertices)
+
+  def Jacobian(self):
+    """
+    compute the Jacobian of the element
+    returns:
+    J: 
+    J=dx/dxi"""
+    self.J = np.array([[
+        self.vertices[1][0] - self.vertices[0][0],
+        self.vertices[1][1] - self.vertices[0][1]
+    ],
+                       [
+                           self.vertices[2][0] - self.vertices[0][0],
+                           self.vertices[2][1] - self.vertices[0][1]
+                       ]])
+
+  def inverse_Jacobian(self):
+    self.inv_J = np.array([[self.J[1, 1], -self.J[0, 1]],
+                           [-self.J[1, 0], self.J[0, 0]]]) * 1 / self.det_J
+
+  def determinant_Jacobian(self):
+    self.det_J = self.J[0, 0] * self.J[1, 1] - self.J[0, 1] * self.J[1, 0]
+
+  @cached_property
+  def ke(self):
+    """compute the elementary stiffness matrix
+    returns:
+    K: ndarray
+        elementary stiffness matrix
+    """
+    if self.order == 1:
+      Ke = sum(
+          self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
+          for i, weight in enumerate(self.weights)) * self.det_J
+
+    else:
+      print("quadrtic lagrange not implemented yet")
+
+    return Ke
+
+  @cached_property
+  def me(self):
+    """compute the elementary stiffness matrix
+    returns:
+    m: ndarray
+        elementary stiffness matrix
+    """
+    if self.order == 1:
+      weight = np.diag(
+          np.array([self.weights[0], self.weights[1], self.weights[2]]))
+      Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
+    else:
+      print("quadrtic lagrange not implemented yet")
+    return Me
+
+
 if __name__ == "__main__":
   label = "fluid"
   order = 1

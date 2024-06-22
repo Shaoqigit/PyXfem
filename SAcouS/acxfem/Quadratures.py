@@ -297,6 +297,17 @@ class GaussLegendre2DTri(NumericalQuadrature):
       ])
 
 
+class GaussLegendre2DQuad(NumericalQuadrature):
+
+  def points(self):
+    if self.n == 1:
+      return np.array([[-0.577735026, -0.577735026],
+                       [0.577735026, -0.577735026], [0.577735026, 0.577735026],
+                       [-0.577735026, 0.577735026]])
+    else:
+      raise NotImplementedError("Not implemented yet")
+
+
 class GaussLegendre3DTri(NumericalQuadrature):
 
   def points(self):
