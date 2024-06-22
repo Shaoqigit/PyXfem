@@ -27,14 +27,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
+from SAcouS.Mesh import Mesh1D
+from SAcouS.Materials import Air, Fluid, EquivalentFluid
+from SAcouS.PostProcess import PostProcessField
+
 from SAcouS.acxfem import Lobbato1DElement
-from SAcouS.acxfem import Mesh1D
 from SAcouS.acxfem import DofHandler1D
 from SAcouS.acxfem import Assembler
-from SAcouS.acxfem import Air, Fluid, EquivalentFluid
 from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem import LinearSolver
-from SAcouS.acxfem import PostProcessField
 from analytical.fluid_sol import DoubleleLayerKundltTube
 
 

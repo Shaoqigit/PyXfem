@@ -14,126 +14,134 @@
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
 
-# Main Test case 
+# Main Test case
 import os
+
 current_dir = os.path.dirname(os.path.realpath(__file__))
-working_dir = os.path.join(current_dir , "..")
+working_dir = os.path.join(current_dir, "..")
 import sys
+
 sys.path.append(working_dir)
 
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import spy
 
+from SAcouS.Mesh import Mesh1D
+from SAcouS.Materials import Air, Fluid, EquivalentFluid
+from SAcouS.PostProcess import PostProcessField
+
 from SAcouS.acxfem import Lobbato1DElement
-from SAcouS.acxfem import Mesh1D
 from SAcouS.acxfem import DofHandler1D
 from SAcouS.acxfem import Assembler
-from SAcouS.acxfem import Air, Fluid, EquivalentFluid
 from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem import LinearSolver
-from SAcouS.acxfem import PostProcessField
 from analytical.fluid_sol import ImpedenceKundltTube
 
 
 def test_case_2():
-    num_elem = 100  # number of elements
-    num_nodes = num_elem + 1  # number of nodes
+  num_elem = 100    # number of elements
+  num_nodes = num_elem + 1    # number of nodes
 
-    nodes = np.linspace(-1, 0, num_nodes)
+  nodes = np.linspace(-1, 0, num_nodes)
 
-    elem_connec1 = np.arange(0, num_elem)
-    elem_connec2 = np.arange(1, num_nodes)
-    connectivity = np.vstack((elem_connec1, elem_connec2)).T
-    # print(connectivity)
+  elem_connec1 = np.arange(0, num_elem)
+  elem_connec2 = np.arange(1, num_nodes)
+  connectivity = np.vstack((elem_connec1, elem_connec2)).T
+  # print(connectivity)
 
+  # read the mesh data structure
+  mesh = Mesh1D(nodes, connectivity)
+  # mesh.refine_mesh(1)
 
-    # read the mesh data structure
-    mesh = Mesh1D(nodes, connectivity)
-    # mesh.refine_mesh(1)
+  elements_set = mesh.get_mesh(
+  )    # dict: elements number with nodes coodinates
+  # print(elements_set)
 
-    elements_set = mesh.get_mesh()  # dict: elements number with nodes coodinates
-    # print(elements_set)
+  bases = [
+  ]    # basis applied on each element, could be different order and type
+  order = 4    # global order of the bases
+  # applied the basis on each element
+  for key, elem in elements_set.items():
+    basis = Lobbato1DElement('P', order, elem)
+    bases.append(basis)
+    # print(basis.ke)
+    # print(basis.me)
 
-    bases = []  # basis applied on each element, could be different order and type
-    order = 4  # global order of the bases
-    # applied the basis on each element
-    for key, elem in elements_set.items():
-        basis = Lobbato1DElement('P', order, elem)
-        bases.append(basis)
-        # print(basis.ke)
-        # print(basis.me)
+  # handler the dofs: map the basis to mesh
+  dof_handler = DofHandler1D(mesh, bases)
+  # print("global dofs index: ", dof_handler.get_global_dofs())
+  # print(dof_handler.get_num_dofs())
+  # print(dof_handler.num_internal_dofs)
+  # print(dof_handler.num_external_dofs)
 
-    # handler the dofs: map the basis to mesh
-    dof_handler = DofHandler1D(mesh, bases)
-    # print("global dofs index: ", dof_handler.get_global_dofs())
-    # print(dof_handler.get_num_dofs())
-    # print(dof_handler.num_internal_dofs)
-    # print(dof_handler.num_external_dofs)
+  # ====================== Pysical Problem ======================
+  # define the materials
+  air = Air('classical air')
 
-    # ====================== Pysical Problem ======================
-    # define the materials
-    air = Air('classical air')
+  # Harmonic Acoustic problem define the frequency
+  freq = 2000
+  omega = 2 * np.pi * freq    # angular frequency
 
-    # Harmonic Acoustic problem define the frequency
-    freq = 2000
-    omega = 2 * np.pi * freq  # angular frequency
+  # define the subdomains: domain name (material) and the elements in the domain
+  air_elements = np.arange(0, num_nodes)
+  subdomains = {air: air_elements}
+  check_material_compability(subdomains)
 
-    # define the subdomains: domain name (material) and the elements in the domain
-    air_elements = np.arange(0, num_nodes)
-    subdomains = {air: air_elements}
-    check_material_compability(subdomains)
+  # initialize the assembler
+  assembler = Assembler(dof_handler, bases, subdomains, dtype=np.complex128)
 
+  K_g = assembler.assemble_material_K(
+      omega)    # global stiffness matrix with material attribution
+  M_g = assembler.assemble_material_M(
+      omega)    # global mass matrix with material attribution
 
-    # initialize the assembler
-    assembler = Assembler(dof_handler, bases, subdomains, dtype=np.complex128)
+  # construct linear system
 
-    K_g= assembler.assemble_material_K(omega)  # global stiffness matrix with material attribution
-    M_g= assembler.assemble_material_M(omega)  # global mass matrix with material attribution
+  # print(assembler.get_matrix_in_array(left_hand_matrix))
+  #  natural boundary condition
+  nature_bcs = {'type': 'fluid_velocity', 'value': 1, 'position': 0}
+  impedence_bcs = {'type': 'impedence', 'value': 0.2, 'position': num_elem}
+  right_hand_vector = assembler.assemble_nature_bc(nature_bcs)
+  C_g = assembler.assemble_impedance_bc(impedence_bcs)
+  # print(display_matrix_in_array(C_g))
 
-    # construct linear system
+  left_hand_matrix = K_g - M_g + C_g
 
-    # print(assembler.get_matrix_in_array(left_hand_matrix))
-    #  natural boundary condition   
-    nature_bcs = {'type': 'fluid_velocity', 'value': 1, 'position': 0}
-    impedence_bcs = {'type': 'impedence', 'value': 0.2, 'position': num_elem}
-    right_hand_vector = assembler.assemble_nature_bc(nature_bcs)
-    C_g = assembler.assemble_impedance_bc(impedence_bcs)
-    # print(display_matrix_in_array(C_g))
+  # solver the linear system
+  linear_solver = LinearSolver(dof_handler)
+  # plot_matrix_partten(left_hand_matrix)
+  linear_solver.solve(left_hand_matrix, right_hand_vector)
+  sol = linear_solver.u
+  # print("solution:", abs(sol))
 
-    left_hand_matrix = K_g-M_g+C_g
+  # ====================== Analytical Solution ======================
+  # analytical solution
+  kundlt_tube = ImpedenceKundltTube(mesh, air, omega, nature_bcs,
+                                    impedence_bcs)
+  ana_sol = np.zeros(
+      num_nodes,
+      dtype=np.complex128)    #initialize the analytical solution vector
+  kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
 
+  # # plot the solution
+  post_process = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
+  post_process.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'),
+                        (np.real(ana_sol), 'Analytical', 'dashed'))
+  plt.show(block=False)
+  plt.pause(1)
+  plt.close('all')
 
-    # solver the linear system
-    linear_solver = LinearSolver(dof_handler)
-    # plot_matrix_partten(left_hand_matrix)
-    linear_solver.solve(left_hand_matrix, right_hand_vector)
-    sol = linear_solver.u
-    # print("solution:", abs(sol))
+  # compute the error
+  error = post_process.compute_error(sol, ana_sol)
+  # print("error: ", error)
+  if error < 1e-5:
+    print("Test passed!")
+    return True
+  else:
+    print("Test failed!")
+    return False
 
-
-    # ====================== Analytical Solution ======================
-    # analytical solution
-    kundlt_tube = ImpedenceKundltTube(mesh, air, omega, nature_bcs, impedence_bcs)
-    ana_sol = np.zeros(num_nodes, dtype=np.complex128)  #initialize the analytical solution vector
-    kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
-
-    # # plot the solution
-    post_process = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
-    post_process.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'), (np.real(ana_sol), 'Analytical', 'dashed'))
-    plt.show(block=False)
-    plt.pause(1)
-    plt.close('all')
-
-    # compute the error
-    error = post_process.compute_error(sol, ana_sol)
-    # print("error: ", error)
-    if error < 1e-5:
-        print("Test passed!")
-        return True
-    else:
-        print("Test failed!")
-        return False
 
 if __name__ == "__main__":
-    result = test_case_2()
+  result = test_case_2()

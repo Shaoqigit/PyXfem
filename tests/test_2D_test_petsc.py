@@ -26,14 +26,15 @@ sys.path.append(working_dir)
 import numpy as np
 import matplotlib.pyplot as plt
 
+from SAcouS.Mesh import MeshReader
+from SAcouS.Materials import Air, Fluid, EquivalentFluid
+from SAcouS.PostProcess import plot_field, save_plot, PostProcessField, read_solution
+
 from SAcouS.acxfem import Helmholtz2DElement
-from SAcouS.acxfem import Mesh2D, MeshReader
 from SAcouS.acxfem import DofHandler1D, GeneralDofHandler1D, FESpace
-from SAcouS.acxfem import Air, Fluid, EquivalentFluid
 from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem import HelmholtzAssembler
 from SAcouS.acxfem import LinearSolver
-from SAcouS.acxfem import plot_field, save_plot, PostProcessField, read_solution
 from SAcouS.acxfem import ApplyBoundaryConditions
 from analytical.fluid_sol import ObliquePlaneWave
 
@@ -90,8 +91,9 @@ def test_case_2D():
       inv_rho = 1 / mat.rho_f
       inv_K = 1 / mat.K_f
       Pf_bases.extend(
-          Helmholtz2DElement('Pf', order, elements2node[elem],
-                             (inv_rho, inv_K)) for elem in elems)
+          Helmholtz2DElement('Pf', order, elements2node[elem], (inv_rho,
+                                                                inv_K))
+          for elem in elems)
   fe_space = FESpace(mesh, subdomains, Pf_bases)
   print("Number of global dofs:", fe_space.get_nb_dofs())
   # initialize the assembler

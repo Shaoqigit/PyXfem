@@ -26,14 +26,11 @@ sys.path.append(working_dir)
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SAcouS.acxtmm.adm_basis import AdmFluid
-from SAcouS.acxtmm.tmm import TMMFluid, TMMPoroElastic1, TMMPoroElastic2
-from SAcouS.acxtmm.adm_assembler import AdmAssembler
-from SAcouS.acxfem.Mesh import Mesh1D
-from SAcouS.acxfem.Materials import Air, Fluid, EquivalentFluid
-from SAcouS.acxfem.Utilities import check_material_compability, display_matrix_in_array, plot_matrix_partten
+from SAcouS.acxtmm import TMMFluid, TMMPoroElastic1, TMMPoroElastic2
+from SAcouS.acxtmm import AdmAssembler
+from SAcouS.Mesh import Mesh1D
+from SAcouS.Materials import Air, Fluid, EquivalentFluid
 from SAcouS.acxfem.Solver import AdmittanceSolver
-from SAcouS.acxfem.Postprocess import PostProcessField
 from analytical.fluid_sol import DoubleleLayerKundltTube
 
 # mesh.refine_mesh(1)

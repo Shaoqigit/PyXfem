@@ -20,7 +20,7 @@
 import numpy as np
 from collections import defaultdict
 
-from .Mesh import Mesh1D
+from ..Mesh import Mesh1D
 
 
 class DofHandler1D:

@@ -26,15 +26,16 @@ sys.path.append(working_dir)
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SAcouS.acxtmm.adm_basis import AdmFluid
-from SAcouS.acxtmm.tmm import TMMFluid, TMMPoroElastic1, TMMPoroElastic2, TMMPoroElastic3
-from SAcouS.acxtmm.BC_matrix import bcm_poro_fluid, bcm_fluid_poro2, bcm_poro_rigid_wall, bcm_rigid_wall, bcm_rigid_wall2
-from SAcouS.acxtmm.adm_assembler import AdmAssembler
-from SAcouS.acxfem import Mesh1D
-from SAcouS.acxfem import Air, Fluid, EquivalentFluid, PoroElasticMaterial
+from SAcouS.Mesh import Mesh1D
+from SAcouS.Materials import Air, Fluid, EquivalentFluid, PoroElasticMaterial
+from SAcouS.PostProcess import PostProcessField
+
+from SAcouS.acxtmm import AdmFluid
+from SAcouS.acxtmm import TMMFluid, TMMPoroElastic1, TMMPoroElastic2, TMMPoroElastic3
+from SAcouS.acxtmm import bcm_poro_fluid, bcm_fluid_poro2, bcm_poro_rigid_wall, bcm_rigid_wall, bcm_rigid_wall2
+from SAcouS.acxtmm import AdmAssembler
 from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem import AdmittanceSolver
-from SAcouS.acxfem import PostProcessField
 from analytical.fluid_sol import DoubleleLayerKundltTube
 
 # mesh.refine_mesh(1)
