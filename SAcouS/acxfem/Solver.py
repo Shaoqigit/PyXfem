@@ -31,6 +31,7 @@ try:
   from petsc4py.PETSc import Mat, Vec
   PETSC_on = True
 except ImportError:
+  PETSC_on = False
   pass
 
 
