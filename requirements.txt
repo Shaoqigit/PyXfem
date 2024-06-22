@@ -2,8 +2,7 @@ matplotlib>=3.7.0
 numpy>=1.23.4
 scipy>=1.10.0
 meshio>=5.0.0
-git+https://github.com:Shaoqigit/pymls.git@new_numpy#egg=pymls
-
+git+https://github.com/Shaoqigit/pymls.git@new_numpy#egg=pymls
 # Optional dependencies
 #mpi4py==3.1.6
 # petsc4py complex version
