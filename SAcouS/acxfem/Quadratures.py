@@ -308,21 +308,21 @@ class GaussLegendre2DQuad(NumericalQuadrature):
       raise NotImplementedError("Not implemented yet")
 
 
-class GaussLegendre3DTri(NumericalQuadrature):
+class GaussLegendre3DTetra(NumericalQuadrature):
 
   def points(self):
     if self.n == 1:
-      return np.array([[1 / 3, 1 / 3, 1 / 3]])
+      return np.array([[0.25, 0.25, 0.25]])
     elif self.n == 4:
       return np.array(
-          [[0.5854101966249685, 0.2073433826145143, 0.2073433826145143],
+          [[0.5854101966249685, 0.1381966011250105, 0.1381966011250105],
            [0.1381966011250105, 0.1381966011250105, 0.1381966011250105],
            [0.1381966011250105, 0.1381966011250105, 0.5854101966249685],
            [0.1381966011250105, 0.5854101966249685, 0.1381966011250105]])
     elif self.n == 5:
       return np.array([[0.25, 0.25, 0.25], [0.5, 1 / 6, 1 / 6],
-                       [1 / 6, 0.5, 1 / 6], [1 / 6, 1 / 6, 0.5],
-                       [1 / 6, 1 / 6, 1 / 6]])
+                       [1 / 6, 1 / 6, 1 / 6], [1 / 6, 1 / 6, 0.5],
+                       [1 / 6, 0.5, 1 / 6]])
     else:
       raise NotImplementedError("Not implemented yet")
 
@@ -330,8 +330,30 @@ class GaussLegendre3DTri(NumericalQuadrature):
     if self.n == 1:
       return np.array([1])
     elif self.n == 4:
-      return np.array([-0.8, 0.45, 0.45, 0.45])
+      return np.array([0.0416667, 0.0416667, 0.0416667, 0.0416667])
     elif self.n == 5:
-      return np.array([1 / 24, 9 / 24, 9 / 24, 9 / 24, 9 / 24])
+      return np.array([-0.1333333, 0.075, 0.075, 0.075, 0.075])
+    else:
+      raise NotImplementedError("Not implemented yet")
+
+
+class GaussLegendre3DHex(NumericalQuadrature):
+
+  def points(self):
+    if self.n == 1:
+      return np.array([[0.25, 0.25, 0.25]])
+    elif self.n == 2:
+      return np.array(
+          [[0.5773502691896257, 0.5773502691896257, 0.5773502691896257],
+           [-0.5773502691896257, 0.5773502691896257, 0.5773502691896257],
+           [0.5773502691896257, -0.5773502691896257, 0.5773502691896257],
+           [0.5773502691896257, 0.5773502691896257, -0.5773502691896257]])
+    elif self.n == 3:
+      return np.array(
+          [[0.7745966692414834, 0.7745966692414834, 0.7745966692414834],
+           [-0.7745966692414834, 0.7745966692414834, 0.7745966692414834],
+           [0.7745966692414834, -0.7745966692414834, 0.7745966692414834],
+           [0.7745966692414834, 0.7745966692414834, -0.7745966692414834],
+           [0.7745966692414834, 0.7745966692414834, 0]])
     else:
       raise NotImplementedError("Not implemented yet")
