@@ -244,7 +244,7 @@ class Base2DElement(metaclass=ABCMeta):
     pass
 
 
-from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1, N_o1, B_o1
+from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1, N_tri_o1, B_tri_o1
 
 
 class Lagrange2DTriElement(Base2DElement):
@@ -270,8 +270,8 @@ class Lagrange2DTriElement(Base2DElement):
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
     if order == 1:
-      self.N = N_o1
-      self.B = B_o1
+      self.N = N_tri_o1
+      self.B = B_tri_o1
 
     self.Jacobian()
     self.determinant_Jacobian()
@@ -499,6 +499,48 @@ class Lagrange2DQuadElement(Base2DElement):
     else:
       print("quadrtic lagrange not implemented yet")
     return Me
+
+
+class Lagrange3DTetraElement(Base2DElement):
+  """FE lagrange 3D tetra basis class
+    parameters:
+    order: int
+        element order
+    vertices: ndarray
+        [(x1, y1, z1), (x2, y2, z2), (x3, y3, z3), (x4, y4, z4)] for tetra
+    reference element: [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
+    illustrated as below:
+         3
+        /|\
+       / | \
+      /  |  \
+     2---|---1
+      \  |  /
+       \ | /
+        \|/
+         0
+    
+    """
+
+  def __init__(self, label, order, vertices):
+    super().__init__(label, order, vertices)
+
+  def Jacobian(self):
+    """
+    compute the Jacobian of the element
+    returns:
+    J: 
+    J=dx/dxi"""
+    self.J = np.array([
+        self.vertices[1][0] - self.vertices[0][0], self.vertices[1][1] -
+        self.vertices[0][1], self.vertices[1][2] - self.vertices[0][2]
+    ], [
+        self.vertices[2][0] - self.vertices[0][0], self.vertices[2][1] -
+        self.vertices[0][1], self.vertices[2][2] - self.vertices[0][2]
+    ], [
+        self.vertices[3][0] - self.vertices[0][0], self.vertices[3][1] -
+        self.vertices[0][1], self.vertices[3][2] - self.vertices[0][2]
+    ])
 
 
 if __name__ == "__main__":

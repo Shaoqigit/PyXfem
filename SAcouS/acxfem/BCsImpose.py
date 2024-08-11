@@ -5,7 +5,6 @@ from .Basis import Lobbato1DElement
 from .Quadratures import GaussLegendreQuadrature
 from .Polynomial import Lobatto
 
-from .PrecomputeMatricesLag import points_o1, weights_o1, N_o1, B_o1
 from .Polynomial import Lagrange2DTri
 from .Quadratures import GaussLegendre2DTri
 
@@ -91,8 +90,11 @@ class ApplyBoundaryConditions:
 
       node_coords = elements2node[i]
       xx = np.dot(basis.N, node_coords)
-      f = np.array([weights_o1[i] * source['value'](x[0], x[1]) for i, x in enumerate(xx)])
-      integrand = basis.det_J * np.dot(basis.N.T, f)*1/(self.omega**2*1.213)
+      f = np.array([
+          weights_o1[i] * source['value'](x[0], x[1]) for i, x in enumerate(xx)
+      ])
+      integrand = basis.det_J * np.dot(basis.N.T,
+                                       f) * 1 / (self.omega**2 * 1.213)
 
       elem_data_M = integrand[local_indices]
       size = len(global_indices)

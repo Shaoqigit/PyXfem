@@ -330,9 +330,9 @@ class GaussLegendre3DTetra(NumericalQuadrature):
     if self.n == 1:
       return np.array([1])
     elif self.n == 4:
-      return np.array([0.0416667, 0.0416667, 0.0416667, 0.0416667])
+      return np.array([0.25, 0.25, 0.25, 0.25])
     elif self.n == 5:
-      return np.array([-0.1333333, 0.075, 0.075, 0.075, 0.075])
+      return np.array([-0.8, 0.45, 0.45, 0.45, 0.45])
     else:
       raise NotImplementedError("Not implemented yet")
 
