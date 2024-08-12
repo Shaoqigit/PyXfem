@@ -212,7 +212,11 @@ class Helmholtz1DElement(Lobbato1DElement):
     return Ce
 
 
-class Base2DElement(metaclass=ABCMeta):
+from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1, N_tri_o1, B_tri_o1
+from SAcouS.acxfem.PrecomputeMatricesLag import get_N_B_p1
+
+
+class BaseNDElement(metaclass=ABCMeta):
   """base abstract FE elementary matrix class
     precompute the shape function and its derivative on gauss points
     parameters:
@@ -229,6 +233,11 @@ class Base2DElement(metaclass=ABCMeta):
     self.vertices = vertices
     self.is_discontinue = False
 
+    self.Jacobian()
+    self.determinant_Jacobian()
+    self.inverse_Jacobian()
+    self.inv_J_product = self.inv_J.T @ self.inv_J
+
   @abstractmethod
   def Jacobian(self):
     """
@@ -243,11 +252,12 @@ class Base2DElement(metaclass=ABCMeta):
   def inverse_Jacobian(self):
     pass
 
+  @abstractmethod
+  def determinant_Jacobian(self):
+    pass
 
-from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1, N_tri_o1, B_tri_o1
 
-
-class Lagrange2DTriElement(Base2DElement):
+class Lagrange2DTriElement(BaseNDElement):
   """FE lagrange 2D triangle basis class
     parameters:
     order: int
@@ -270,13 +280,9 @@ class Lagrange2DTriElement(Base2DElement):
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
     if order == 1:
-      self.N = N_tri_o1
-      self.B = B_tri_o1
-
-    self.Jacobian()
-    self.determinant_Jacobian()
-    self.inverse_Jacobian()
-    self.inv_J_product = self.inv_J.T @ self.inv_J
+      self.N, self.B = get_N_B_p1(2)
+    else:
+      print("quadrtic lagrange not supported yet")
 
   def Jacobian(self):
     """
@@ -428,7 +434,7 @@ class Helmholtz2DElement(Lagrange2DTriElement):
     return Me
 
 
-class Lagrange2DQuadElement(Base2DElement):
+class Lagrange2DQuadElement(BaseNDElement):
   """FE lagrange 2D quad basis class
     parameters:
     order: int
@@ -501,7 +507,10 @@ class Lagrange2DQuadElement(Base2DElement):
     return Me
 
 
-class Lagrange3DTetraElement(Base2DElement):
+from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1, N_tetra_o1, B_tetra_o1
+
+
+class Lagrange3DTetraElement(BaseNDElement):
   """FE lagrange 3D tetra basis class
     parameters:
     order: int
@@ -524,6 +533,10 @@ class Lagrange3DTetraElement(Base2DElement):
 
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
+    if order == 1:
+      self.N, self.B = get_N_B_p1(3)
+    else:
+      print("quadrtic lagrange not supported yet")
 
   def Jacobian(self):
     """
@@ -541,6 +554,12 @@ class Lagrange3DTetraElement(Base2DElement):
         self.vertices[3][0] - self.vertices[0][0], self.vertices[3][1] -
         self.vertices[0][1], self.vertices[3][2] - self.vertices[0][2]
     ])
+
+  def inverse_Jacobian(self):
+    self.inv_J = np.linalg.inv(self.J)
+
+  def determinant_Jacobian(self):
+    self.det_J = np.linalg.det(self.J)
 
 
 if __name__ == "__main__":

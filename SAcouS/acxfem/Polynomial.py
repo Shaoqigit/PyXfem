@@ -295,7 +295,7 @@ class Lagrange2DQuad:
     return self.derivative(u, v)
 
 
-class Lagrange3DTri:
+class Lagrange3DTetra:
 
   def __init__(self, order):
     self.order = order

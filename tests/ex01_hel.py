@@ -1,7 +1,7 @@
 from skfem import *
 from skfem.helpers import dot, grad
 from skfem.visuals.matplotlib import draw
-from SAcouS.acxfem.mesh import Mesh2D
+from SAcouS.Mesh import Mesh2D
 import numpy as np
 
 mesh = Mesh2D()
