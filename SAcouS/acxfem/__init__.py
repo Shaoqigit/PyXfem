@@ -1,4 +1,4 @@
-from .Basis import Helmholtz2DElement, Helmholtz1DElement, Lobbato1DElement, Lagrange2DTriElement
+from .Basis import Helmholtz2DElement, Helmholtz1DElement, Lobbato1DElement, Lagrange2DTriElement, Lagrange3DTetraElement
 
 from .Polynomial import Lobatto, Lagrange2DTri
 

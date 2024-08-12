@@ -212,7 +212,7 @@ class Helmholtz1DElement(Lobbato1DElement):
     return Ce
 
 
-from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1, N_tri_o1, B_tri_o1
+from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1
 from SAcouS.acxfem.PrecomputeMatricesLag import get_N_B_p1
 
 
@@ -507,7 +507,7 @@ class Lagrange2DQuadElement(BaseNDElement):
     return Me
 
 
-from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1, N_tetra_o1, B_tetra_o1
+from SAcouS.acxfem.PrecomputeMatricesLag import points_tetra_o1, weights_tetra_o1
 
 
 class Lagrange3DTetraElement(BaseNDElement):
@@ -531,6 +531,9 @@ class Lagrange3DTetraElement(BaseNDElement):
     
     """
 
+  points = points_tetra_o1,
+  weights = weights_tetra_o1
+
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
     if order == 1:
@@ -544,16 +547,21 @@ class Lagrange3DTetraElement(BaseNDElement):
     returns:
     J: 
     J=dx/dxi"""
-    self.J = np.array([
-        self.vertices[1][0] - self.vertices[0][0], self.vertices[1][1] -
-        self.vertices[0][1], self.vertices[1][2] - self.vertices[0][2]
-    ], [
-        self.vertices[2][0] - self.vertices[0][0], self.vertices[2][1] -
-        self.vertices[0][1], self.vertices[2][2] - self.vertices[0][2]
-    ], [
-        self.vertices[3][0] - self.vertices[0][0], self.vertices[3][1] -
-        self.vertices[0][1], self.vertices[3][2] - self.vertices[0][2]
-    ])
+    self.J = np.array([[
+        self.vertices[1][0] - self.vertices[0][0],
+        self.vertices[1][1] - self.vertices[0][1],
+        self.vertices[1][2] - self.vertices[0][2]
+    ],
+                       [
+                           self.vertices[2][0] - self.vertices[0][0],
+                           self.vertices[2][1] - self.vertices[0][1],
+                           self.vertices[2][2] - self.vertices[0][2]
+                       ],
+                       [
+                           self.vertices[3][0] - self.vertices[0][0],
+                           self.vertices[3][1] - self.vertices[0][1],
+                           self.vertices[3][2] - self.vertices[0][2]
+                       ]])
 
   def inverse_Jacobian(self):
     self.inv_J = np.linalg.inv(self.J)
@@ -561,16 +569,58 @@ class Lagrange3DTetraElement(BaseNDElement):
   def determinant_Jacobian(self):
     self.det_J = np.linalg.det(self.J)
 
+  @cached_property
+  def ke(self):
+    """compute the elementary stiffness matrix
+    returns:
+    K: ndarray
+        elementary stiffness matrix
+    """
+    if self.order == 1:
+      Ke = sum(
+          self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
+          for i, weight in enumerate(self.weights)) * self.det_J
+
+    else:
+      print("quadrtic lagrange not implemented yet")
+
+    return Ke
+
+  @cached_property
+  def me(self):
+    """compute the elementary stiffness matrix
+    returns:
+    m: ndarray
+        elementary stiffness matrix
+    """
+    if self.order == 1:
+      weight = np.diag(
+          np.array([
+              self.weights[0], self.weights[1], self.weights[2],
+              self.weights[3]
+          ]))
+      Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
+    else:
+      print("quadrtic lagrange not implemented yet")
+    return Me
+
 
 if __name__ == "__main__":
   label = "fluid"
   order = 1
-  nodes = np.array([[0, 0], [2, -1], [1, 0.5]])
+  # nodes = np.array([[0, 0], [2, -1], [1, 0.5]])
+  nodes = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]])
   # plot the nodes
   import matplotlib.pyplot as plt
-  plt.figure()
-  plt.plot(nodes[:, 0], nodes[:, 1], 'o')
+  # plt.figure()
+  # plt.plot(nodes[:, 0], nodes[:, 1], 'o')
+  # plot the nodes in 3d
+  fig = plt.figure()
+  ax = fig.add_subplot(111, projection='3d')
+  ax.scatter(nodes[:, 0], nodes[:, 1], nodes[:, 2])
   plt.show()
-  lag_2d_tri = Lagrange2DTriElement(1, order, nodes)
-  print(lag_2d_tri.ke)
-  print(lag_2d_tri.me)
+  lag_3d_tetra = Lagrange3DTetraElement(1, order, nodes)
+  print(lag_3d_tetra.ke)
+  # lag_2d_tri = Lagrange2DTriElement(1, order, nodes)
+  # print(lag_2d_tri.ke)
+  # print(lag_2d_tri.me)

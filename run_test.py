@@ -7,7 +7,7 @@ import concurrent.futures
 
 test_path = "tests/"
 test_cases = [
-    'test_2D_matrices.py', 'test_2D_air.py', 'test_2D_two_fluid.py',
+    'test_elem_matrices.py', 'test_2D_air.py', 'test_2D_two_fluid.py',
     'test_2D_oblique.py', 'test_material_pem.py', 'test_absorption_comp.py',
     'test1_two_layer.py', 'test_two_fluid_new.py', 'test2_impedance_bc.py',
     'test_biot_equation.py', 'test_biot_equation_new.py',

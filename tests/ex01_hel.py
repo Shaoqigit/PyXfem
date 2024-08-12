@@ -1,11 +1,12 @@
 from skfem import *
 from skfem.helpers import dot, grad
 from skfem.visuals.matplotlib import draw
-from SAcouS.Mesh import Mesh2D
+from SAcouS.Mesh import Mesh2D, MeshReader
 import numpy as np
 
-mesh = Mesh2D()
-mesh.read_mesh("mesh/square_1.msh")
+# mesh.read_mesh("mesh/square_1.msh")
+mesh_reader = MeshReader("mesh/square_1.msh")
+mesh = mesh_reader.get_mesh()
 # # enable additional mesh validity checks, sacrificing performance
 # import logging
 # logging.basicConfig(format='%(levelname)s %(asctime)s %(name)s %(message)s')
@@ -17,10 +18,14 @@ mesh.read_mesh("mesh/square_1.msh")
 # or, with your own points and cells:
 points = mesh.nodes
 cells = mesh.connectivity
-m = MeshTri(points.T, cells.T)
+points = np.array([[0, 0, 0], [1 * 2, 0, 0], [0, 1 * 3, 0], [0, 0, 1 / 2]])
+cells = np.array([[0, 1, 2, 3]])
+# point
+m = MeshTet(points.T, cells.T)
 # plot the mesh
 # draw(m)
-e = ElementTriP1()
+# e = ElementTriP1()
+e = ElementTetP1()
 basis = Basis(m, e)
 facebasis = FacetBasis(m, e, facets=m.boundaries['left'])
 
@@ -45,17 +50,19 @@ def neumann_bc(x, y):
   return 1
 
 
-@LinearForm
-def numann_flux(v, w):
-  x, y = w.x
-  return neumann_bc(x, y) * v
-
+# @LinearForm
+# def numann_flux(v, w):
+#   x, y = w.x
+#   return neumann_bc(x, y) * v
 
 A = asm(laplace, basis) / (omega**2 * 1.213)
 K = asm(laplace, basis)
-M = asm(mass, basis) / 141855
-b = asm(numann_flux, facebasis) / (omega * 1j) * np.exp(-1j * omega)
+M = asm(mass, basis)
+print(K.toarray())
+print(M.toarray())
+# b = asm(numann_flux, facebasis) / (omega * 1j) * np.exp(-1j * omega)
 
+# breakpoint()
 # or:
 # A = laplace.assemble(basis)
 # b = rhs.assemble(basis)
