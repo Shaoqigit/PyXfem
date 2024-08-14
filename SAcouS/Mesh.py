@@ -227,23 +227,53 @@ class Mesh2D(BaseMesh):
         self.nb_nodes = len(self.nodes)
 
 
+class Mesh3D(Mesh2D):
+
+  def __init__(self, nodes, elem_connect, surface_connect, io_mesh=None):
+    super().__init__(nodes, elem_connect, surface_connect, io_mesh)
+    self.dim = 3
+    self.exterior_edges = None
+    self.surface_connect = surface_connect
+
+  def get_mesh(self):
+    return super().get_mesh()
+
+  def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
+    raise NotImplementedError("3D mesh plot not implemented yet")
+
+
 class MeshReader:
+
+  dim2elem_type = {2: 'triangle', 3: 'tetra'}
+  dim2edge_type = {2: 'line', 3: 'triangle'}
 
   def __init__(self, mesh_file_name, dim=2):
     self.extension = mesh_file_name.split('.')[-1]
+    self.dim = dim
     self.mesh = meshio.read(mesh_file_name)
+    breakpoint()
 
-  def get_mesh(self):
+  def get_mesh(self) -> BaseMesh:
     edge_connect = None
     if self.extension == 'msh':
       # version 2.2 without saving all parameters
-      nodes = self.mesh.points[:, :2]
+      nodes = self.mesh.points[:, :self.dim]
       for elem in self.mesh.cells:
-        if elem.type == 'triangle':
-          elem_connect = elem.data
-        elif elem.type == 'line':
-          edge_connect = elem.data
-      return Mesh2D(nodes, elem_connect, edge_connect, io_mesh=self.mesh)
+        if self.dim == 2:
+          if elem.type == 'triangle':
+            elem_connect = elem.data
+          elif elem.type == 'line':
+            edge_connect = elem.data
+          return Mesh2D(nodes, elem_connect, edge_connect, io_mesh=self.mesh)
+        elif self.dim == 3:
+          if elem.type == 'tetra':
+            elem_connect = elem.data
+          elif elem.type == 'triangle':
+            surface_connect = elem.data
+          return Mesh3D(nodes,
+                        elem_connect,
+                        surface_connect,
+                        io_mesh=self.mesh)
 
   def get_elem_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
     if isinstance(physical_tag, str):
