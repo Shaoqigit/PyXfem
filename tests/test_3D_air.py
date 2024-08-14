@@ -47,6 +47,8 @@ def test_case_2D():
   omega = 2 * np.pi * freq    # angular frequency
   # Harmonic Acoustic problem define the frequency
   current_dir = os.path.dirname(os.path.realpath(__file__))
+  slice_points_1 = np.insert(np.arange(402, 797)[::-1], 0, 3)
+  slice_points = np.append(slice_points_1, 2)
   mesh_reader = MeshReader(current_dir + "/mesh/unit_tube_3D.msh")
   mesh = mesh_reader.get_mesh()
 

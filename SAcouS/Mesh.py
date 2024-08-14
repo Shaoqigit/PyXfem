@@ -251,7 +251,6 @@ class MeshReader:
     self.extension = mesh_file_name.split('.')[-1]
     self.dim = dim
     self.mesh = meshio.read(mesh_file_name)
-    breakpoint()
 
   def get_mesh(self) -> BaseMesh:
     edge_connect = None

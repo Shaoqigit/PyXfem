@@ -1,4 +1,4 @@
-<h1 align="left"><img src="logo_sacous.png" alt="SAcouS Logo" style="vertical-align:middle"> <b>S</b>imple <b>A</b>coustic <b>S</b>imulator(SAcouS)</h1>
+<h1 align="left"><img src="images/logo_sacous.png" alt="SAcouS Logo" style="vertical-align:middle"> <b>S</b>imple <b>A</b>coustic <b>S</b>imulator(SAcouS)</h1>
 
 <center>
 
@@ -23,7 +23,7 @@
 
 ## Architecture illustration
 <p align="center">
-  <img src="architect_sacous.png" alt="SAcouS Arch"/>
+  <img src="images/architect_sacous.png" alt="SAcouS Arch"/>
 </p>
 
 
