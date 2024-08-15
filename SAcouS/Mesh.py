@@ -242,10 +242,25 @@ class Mesh3D(Mesh2D):
     raise NotImplementedError("3D mesh plot not implemented yet")
 
 
+def mesh_constructor(dim,
+                     nodes,
+                     elem_connect,
+                     edge_connect=None,
+                     io_mesh=None):
+  if dim == 1:
+    return Mesh1D(nodes, elem_connect)
+  elif dim == 2:
+    return Mesh2D(nodes, elem_connect, edge_connect, io_mesh)
+  elif dim == 3:
+    return Mesh3D(nodes, elem_connect, edge_connect, io_mesh)
+  else:
+    raise ValueError("dimension not supported")
+
+
 class MeshReader:
 
   dim2elem_type = {2: 'triangle', 3: 'tetra'}
-  dim2edge_type = {2: 'line', 3: 'triangle'}
+  dim2surface_type = {2: 'line', 3: 'triangle'}
 
   def __init__(self, mesh_file_name, dim=2):
     self.extension = mesh_file_name.split('.')[-1]
@@ -258,21 +273,15 @@ class MeshReader:
       # version 2.2 without saving all parameters
       nodes = self.mesh.points[:, :self.dim]
       for elem in self.mesh.cells:
-        if self.dim == 2:
-          if elem.type == 'triangle':
-            elem_connect = elem.data
-          elif elem.type == 'line':
-            edge_connect = elem.data
-          return Mesh2D(nodes, elem_connect, edge_connect, io_mesh=self.mesh)
-        elif self.dim == 3:
-          if elem.type == 'tetra':
-            elem_connect = elem.data
-          elif elem.type == 'triangle':
-            surface_connect = elem.data
-          return Mesh3D(nodes,
-                        elem_connect,
-                        surface_connect,
-                        io_mesh=self.mesh)
+        if elem.type == self.dim2elem_type[self.dim]:
+          elem_connect = elem.data
+        elif elem.type == self.dim2surface_type[self.dim]:
+          surface_connect = elem.data
+      return mesh_constructor(self.dim,
+                              nodes,
+                              elem_connect,
+                              surface_connect,
+                              io_mesh=self.mesh)
 
   def get_elem_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
     if isinstance(physical_tag, str):
