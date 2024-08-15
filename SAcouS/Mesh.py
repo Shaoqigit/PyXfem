@@ -260,7 +260,7 @@ def mesh_constructor(dim,
 class MeshReader:
 
   dim2elem_type = {2: 'triangle', 3: 'tetra'}
-  dim2surface_type = {2: 'line', 3: 'triangle'}
+  dim2facet_type = {2: 'line', 3: 'triangle'}
 
   def __init__(self, mesh_file_name, dim=2):
     self.extension = mesh_file_name.split('.')[-1]
@@ -268,19 +268,18 @@ class MeshReader:
     self.mesh = meshio.read(mesh_file_name)
 
   def get_mesh(self) -> BaseMesh:
-    edge_connect = None
     if self.extension == 'msh':
       # version 2.2 without saving all parameters
       nodes = self.mesh.points[:, :self.dim]
       for elem in self.mesh.cells:
-        if elem.type == self.dim2elem_type[self.dim]:
+        if elem.type == MeshReader.dim2elem_type[self.dim]:
           elem_connect = elem.data
-        elif elem.type == self.dim2surface_type[self.dim]:
-          surface_connect = elem.data
+        elif elem.type == MeshReader.dim2facet_type[self.dim]:
+          facet_connect = elem.data
       return mesh_constructor(self.dim,
                               nodes,
                               elem_connect,
-                              surface_connect,
+                              facet_connect,
                               io_mesh=self.mesh)
 
   def get_elem_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
@@ -288,17 +287,17 @@ class MeshReader:
       elem_tag = int(self.mesh.field_data[physical_tag][0])
     else:
       elem_tag = physical_tag
-    elem_index = np.where(
-        self.mesh.cell_data_dict['gmsh:physical']['triangle'] == elem_tag)
+    elem_index = np.where(self.mesh.cell_data_dict['gmsh:physical'][
+        MeshReader.dim2elem_type[self.dim]] == elem_tag)
     return elem_index[0]
 
-  def get_edge_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
+  def get_facet_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
     if isinstance(physical_tag, str):
       edge_tag = int(self.mesh.field_data[physical_tag][0])
     else:
       edge_tag = physical_tag
-    edge_index = np.where(
-        self.mesh.cell_data_dict['gmsh:physical']['line'] == edge_tag)
+    edge_index = np.where(self.mesh.cell_data_dict['gmsh:physical'][
+        MeshReader.dim2facet_type[self.dim]] == edge_tag)
     return edge_index[0]
 
 

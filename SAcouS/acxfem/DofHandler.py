@@ -267,7 +267,6 @@ class FESpace:
     self.mesh = mesh
     self.subdomains = subdomains
     self.nb_var = len(all_bases)
-
     self.whole_bases = [base for bases in all_bases for base in bases]
     self.var_names = [base.label for base in self.whole_bases]
 

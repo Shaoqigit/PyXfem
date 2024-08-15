@@ -73,12 +73,12 @@ def test_case_2D():
 
   air_elements = mesh_reader.get_elem_by_physical('mat1')
   foam_elements = mesh_reader.get_elem_by_physical('mat2')
-  left_boundary = mesh_reader.get_edge_by_physical('left')
-  right_boundary = mesh_reader.get_edge_by_physical('right')
-  left_top_boundary = mesh_reader.get_edge_by_physical('left_top')
-  right_top_boundary = mesh_reader.get_edge_by_physical('right_top')
-  left_bottom_boundary = mesh_reader.get_edge_by_physical('left_bot')
-  right_bottom_boundary = mesh_reader.get_edge_by_physical('right_bot')
+  left_boundary = mesh_reader.get_facet_by_physical('left')
+  right_boundary = mesh_reader.get_facet_by_physical('right')
+  left_top_boundary = mesh_reader.get_facet_by_physical('left_top')
+  right_top_boundary = mesh_reader.get_facet_by_physical('right_top')
+  left_bottom_boundary = mesh_reader.get_facet_by_physical('left_bot')
+  right_bottom_boundary = mesh_reader.get_facet_by_physical('right_bot')
   elements2node = mesh.get_mesh()
   # breakpoint()
   # subdomains = {air: all_elements}

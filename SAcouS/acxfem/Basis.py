@@ -604,6 +604,51 @@ class Lagrange3DTetraElement(BaseNDElement):
       print("quadrtic lagrange not implemented yet")
     return Me
 
+  @cached_property
+  def nb_internal_dofs(self):
+    if self.order == 1 or self.order == 2:
+      return 0
+    elif self.order == 3:
+      return 1
+
+  @cached_property
+  def nb_edge_dofs(self):
+    if self.order == 1:
+      return 0
+    elif self.order == 2:
+      return 3
+    elif self.order == 3:
+      return 6
+
+  @cached_property
+  def local_dofs_index(self):
+    return np.arange(self.order * 3 + 1)
+
+
+class Helmholtz3DElement(Lagrange3DTetraElement):
+
+  def __init__(self, label, order, vertices, mat_coeffs=[]):
+    super().__init__(label, order, vertices)
+    self.mat_coeffs = mat_coeffs
+
+  @cached_property
+  def ke(self):
+    """compute the elementary stiffness matrix
+    returns:
+    K: ndarray
+        elementary stiffness matrix
+    """
+    return self.mat_coeffs[0] * super().ke
+
+  @cached_property
+  def me(self):
+    """compute the elementary stiffness matrix
+    returns:
+    m: ndarray
+        elementary stiffness matrix
+    """
+    return self.mat_coeffs[1] * super().me
+
 
 if __name__ == "__main__":
   label = "fluid"

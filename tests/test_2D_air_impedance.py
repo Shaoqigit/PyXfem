@@ -51,7 +51,7 @@ def test_case_2D():
 
   elements2node = mesh.get_mesh()
   air_elements = mesh_reader.get_elem_by_physical('air')
-  imp_boundary = mesh_reader.get_edge_by_physical('impedance')
+  imp_boundary = mesh_reader.get_facet_by_physical('impedance')
   subdomains = {air: air_elements}
   Pf_bases = []
   order = 1
