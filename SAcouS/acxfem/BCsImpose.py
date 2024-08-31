@@ -125,7 +125,7 @@ class ApplyBoundaryConditions:
       return C_damp
     elif isinstance(impedence_bcs['position'], np.ndarray):
       edges = impedence_bcs['position']
-      lines = self.mesh.exterior_edges[edges]
+      lines = self.mesh.exterior_facets[edges]
       rows = []
       cols = []
       data_M = []
@@ -180,30 +180,19 @@ class ApplyBoundaryConditions:
       else:
         print("Nature BC type not supported")
     elif isinstance(nature_bc['position'], np.ndarray):
+      breakpoint()
       edges = nature_bc['position']
-      lines = self.mesh.exterior_edges[edges]
+      lines = self.mesh.exterior_facets[edges]
       for line_index in lines:
-        node_1_coord = self.mesh.nodes[line_index[0]]    # in physical space
-        node_2_coord = self.mesh.nodes[line_index[1]]
-        tangent = np.array([
-            node_2_coord[0] - node_1_coord[0],
-            node_2_coord[1] - node_1_coord[1]
-        ])
-        normal = np.array([tangent[1], -tangent[0]])
-        normal = normal / np.linalg.norm(normal)
+        compute_normal_vector(self.mesh, line_index)
         # breakpoint()
         gl_q = GaussLegendreQuadrature(10)
         gl_pts, gl_wts = gl_q.points(), gl_q.weights()
         l = Lobatto(1)
         N = l.get_shape_functions()
-        jac = np.linalg.norm(node_1_coord - node_2_coord) / 2
-        # breakpoint()
-        f = np.zeros((2), dtype=self.right_hand_side.dtype)
-        for i, gl_pt in enumerate(gl_pts):
-          x = N[0](gl_pt) * node_1_coord + N[1](gl_pt) * node_2_coord
-          f_n = nature_bc['value'](x[0], x[1]) @ normal
-          f += gl_wts[i] * f_n * np.array([N[0](gl_pt), N[1](gl_pt)])
-        f *= jac    #
+        basis = Lobbato1DElement(var, order=1, nodes=line_index)
+        f = basis.integrate(lambda x: nature_bc['value'](x[0], x[1]), gl_pts,
+                            gl_wts)
         # map coordiante into reference space
         if nature_bc['type'] == 'fluid_velocity':
           self.right_hand_side[line_index] += f / (1j * self.omega)
@@ -215,3 +204,26 @@ class ApplyBoundaryConditions:
           self.right_hand_side[line_index] += f
         else:
           print("Nature BC type not supported")
+
+
+def compute_normal_vector(mesh, edge_or_facet):
+  if len(edge_or_facet) == 2:
+    edge = edge_or_facet
+    node_1_coord = mesh.nodes[edge[0]]    # in physical space
+    node_2_coord = mesh.nodes[edge[1]]
+    tangent = np.array(
+        [node_2_coord[0] - node_1_coord[0], node_2_coord[1] - node_1_coord[1]])
+    normal = np.array([tangent[1], -tangent[0]])
+    normal = normal / np.linalg.norm(normal)
+  elif len(edge_or_facet) == 3:
+    facet = edge_or_facet
+    node_1_coord = mesh.nodes[facet[0]]    # in physical space
+    node_2_coord = mesh.nodes[facet[1]]
+    node_3_coord = mesh.nodes[facet[2]]
+    vect_1 = node_2_coord - node_1_coord
+    vect_2 = node_3_coord - node_1_coord
+
+    # compute the normal vector with cross product
+    normal = np.cross(vect_1, vect_2)
+    normal = normal / np.linalg.norm(normal)
+  return normal

@@ -342,7 +342,7 @@ def assembly_on_edges(mesh, edges, func, integ_deg=3, type='linear'):
   l = Lobatto(1)
   N = l.get_shape_functions()
 
-  lines = mesh.exterior_edges[edges]
+  lines = mesh.exterior_facets[edges]
   for line_index in lines:
     node_1_coord = mesh.nodes[line_index[0]]
     node_2_coord = mesh.nodes[line_index[1]]

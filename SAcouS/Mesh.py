@@ -157,7 +157,7 @@ class Mesh2D(BaseMesh):
     self.nb_elmes = len(self.elem_connect)
     self.nb_nodes = len(self.nodes)
     self.node_index = np.arange(self.nb_nodes)
-    self.exterior_edges = edge_connect    # [node1, node2]
+    self.exterior_facets = edge_connect    # [node1, node2]
     self.io_mesh = io_mesh
     self.dim = 2
 
@@ -184,7 +184,7 @@ class Mesh2D(BaseMesh):
         x, y = self.nodes[i]
         plt.text(x, y, '%d' % (i + 1))
     if withedgeid:
-      for i, edge in enumerate(self.exterior_edges):
+      for i, edge in enumerate(self.exterior_facets):
         x, y = self.nodes[edge[0]]
         x1, y1 = self.nodes[edge[1]]
         plt.text(0.5 * (x + x1), 0.5 * (y + y1), '%d' % (i + 1))
@@ -232,7 +232,6 @@ class Mesh3D(Mesh2D):
   def __init__(self, nodes, elem_connect, surface_connect, io_mesh=None):
     super().__init__(nodes, elem_connect, surface_connect, io_mesh)
     self.dim = 3
-    self.exterior_edges = None
     self.surface_connect = surface_connect
 
   def get_mesh(self):

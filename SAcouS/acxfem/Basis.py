@@ -21,8 +21,8 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 from functools import cached_property
 
-from .PrecomputeMatrices import Ke1D, Me1D, Ce1D
-from .Quadratures import GaussLegendre2DTri
+from .PrecomputeMatrices import Ke1D, Me1D, Ce1D, add_shape_functions2element
+from .Quadratures import GaussLegendre2DTri, GaussLegendreQuadrature
 
 
 class Base1DElement(metaclass=ABCMeta):
@@ -63,6 +63,23 @@ class Base1DElement(metaclass=ABCMeta):
     elif len(self.nodes.shape) == 2:
       return 2 / np.sqrt((self.nodes[0, 0] - self.nodes[1, 0])**2 +
                          (self.nodes[0, 1] - self.nodes[1, 1])**2)
+
+  def interpolate(self, x):
+    """interpolate the function value at x
+    returns:
+    f: float
+        function value at x
+    """
+    if self.order == 1:
+      f = self.N[0] * x[0] + self.N[1] * x[1]
+    elif self.order == 2:
+      f = self.N[0] * x[0] + self.N[1] * x[1] + self.N[2] * x[2]
+    elif self.order == 3:
+      f = self.N[0] * x[0] + self.N[1] * x[1] + self.N[2] * x[2] + self.N[
+          3] * x[3]
+    else:
+      print("quadrtic lagrange not supported yet")
+    return f
 
 
 class Lobbato1DElement(Base1DElement):
@@ -134,6 +151,36 @@ class Lobbato1DElement(Base1DElement):
     else:
       print("quadrtic lobatto not supported yet")
     return Ce
+
+  def add_shape_functions2element(self):
+    add_shape_functions2element(self, self.order)
+
+  @cached_property
+  def shape_function(self):
+    add_shape_functions2element(self, self.order)
+    return self._shape_functions
+
+  @cached_property
+  def der_shape_function(self):
+    add_shape_functions2element(self, self.order)
+    return self._der_shape_functions
+
+  def integrate(self, f, nodes, integ_order=1):
+    """integrate the function f over the element
+    returns:
+    integral: float
+        integral value
+    """
+    self.add_shape_functions2element()
+    N = self._shape_functions
+    gl_q = GaussLegendreQuadrature(integ_order)
+    gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+    for i, gl_pt in enumerate(gl_pts):
+      x = N[0](gl_pt) * self.nodes[0] + N[-1](gl_pt) * self.nodes[1]
+      integral += gl_wts[i] * f(x) * np.array([N[0](gl_pt), N[-1](gl_pt)])
+    integral *= self.Jacobian
+
+    return integral
 
   def get_order(self):
     return self.order
