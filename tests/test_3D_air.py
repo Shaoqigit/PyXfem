@@ -77,11 +77,11 @@ def test_case_2D():
 
   # ====================== Boundary Conditions ======================
   # natural_edge = np.arange(64, 85)
-  natural_edge = mesh_reader.get_facet_by_physical('inlet')
+  natural_facet = mesh_reader.get_facet_by_physical('inlet')
   natural_bcs = {
       'type': 'fluid_velocity',
       'value': lambda x, y: np.array([1 * np.exp(-1j * omega), 0]),
-      'position': natural_edge
+      'position': natural_facet
   }    # position: number of facet number
 
   right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,

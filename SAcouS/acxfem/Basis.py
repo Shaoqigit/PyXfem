@@ -22,7 +22,9 @@ from abc import ABCMeta, abstractmethod
 from functools import cached_property
 
 from .PrecomputeMatrices import Ke1D, Me1D, Ce1D, add_shape_functions2element
-from .Quadratures import GaussLegendre2DTri, GaussLegendreQuadrature
+
+# from .PrecomputeMatricesLag import add_shape_functions2element
+from .Quadratures import GaussLegendre2DTri, GaussLegendreQuadrature, GaussLegendre3DTetra
 
 
 class Base1DElement(metaclass=ABCMeta):
@@ -448,6 +450,32 @@ class Lagrange2DTriElement(BaseNDElement):
   @cached_property
   def local_dofs_index(self):
     return np.arange(self.order * 2 + 1)
+
+  def integrate(self,
+                f,
+                mesh,
+                edge_or_facet=None,
+                integ_order=1,
+                vtype=np.float64):
+    """integrate the function f over the element
+    returns:
+    integral: float
+        integral value
+    """
+    if edge_or_facet is None:
+      edge_or_facet = self.vertices
+    normal = mesh.compute_normal(edge_or_facet)
+    N = self.N
+    gl_q = GaussLegendre3DTetra(integ_order)
+    gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+    integral = np.zeros((self.order + 1), dtype=vtype)
+    for i, gl_pt in enumerate(gl_pts):
+      x = N[0](gl_pt) * self.vertices[0] + N[-1](gl_pt) * self.vertices[1]
+      f_n = f(x[0], x[1], x[2]) @ normal
+      integral += gl_wts[i] * f_n * np.array([N[0](gl_pt), N[-1](gl_pt)])
+    integral *= self.Jacobian
+
+    return integral
 
 
 # consider material properties: ease the matrix assembly

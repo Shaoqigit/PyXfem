@@ -1,11 +1,10 @@
 import numpy as np
 
 from scipy.sparse import csr_array, csr_matrix, coo_matrix
-from .Basis import Lobbato1DElement
-from .Quadratures import GaussLegendreQuadrature
-from .Polynomial import Lobatto
 
-from .Polynomial import Lagrange2DTri
+from .Basis import Lobbato1DElement, Lagrange2DTriElement
+from .Quadratures import GaussLegendreQuadrature
+from .Polynomial import Lobatto, Lagrange2DTri
 from .Quadratures import GaussLegendre2DTri
 
 
@@ -180,30 +179,28 @@ class ApplyBoundaryConditions:
       else:
         print("Nature BC type not supported")
     elif isinstance(nature_bc['position'], np.ndarray):
-      edges = nature_bc['position']
-      lines = self.mesh.exterior_facets[edges]
-      for line_index in lines:
-        # gl_q = GaussLegendreQuadrature(10)
-        # gl_pts, gl_wts = gl_q.points(), gl_q.weights()
-        # l = Lobatto(1)
-        # N = l.get_shape_functions()
+      facet_basis = {2: Lobbato1DElement, 3: Lagrange2DTriElement}
+      facets = nature_bc['position']    # 2D edge ir 3D facet
+      facets_connect = self.mesh.exterior_facets[
+          facets]    # connectity of the facets
+      for node_indices in facets_connect:
         nodes_coord = np.array(
-            [self.mesh.nodes[i_node] for i_node in line_index])
-        basis = Lobbato1DElement(var, order=1, nodes=nodes_coord)
+            [self.mesh.nodes[i_node] for i_node in node_indices])
+        basis = facet_basis[len(node_indices)](var, order=1, nodes=nodes_coord)
         f = basis.integrate(nature_bc['value'],
                             self.mesh,
-                            line_index,
-                            integ_order=10,
+                            node_indices,
+                            integ_order=integr_order,
                             vtype=self.dtype)
         # map coordiante into reference space
         if nature_bc['type'] == 'fluid_velocity':
-          self.right_hand_side[line_index] += f / (1j * self.omega)
+          self.right_hand_side[node_indices] += f / (1j * self.omega)
         elif nature_bc['type'] == 'analytical_gradient':
-          self.right_hand_side[line_index] += f / self.omega**2
+          self.right_hand_side[node_indices] += f / self.omega**2
         elif nature_bc['type'] == 'total_displacement':
-          self.right_hand_side[line_index] += f
+          self.right_hand_side[node_indices] += f
         elif nature_bc['type'] == 'solid_stress':
-          self.right_hand_side[line_index] += f
+          self.right_hand_side[node_indices] += f
         else:
           print("Nature BC type not supported")
 

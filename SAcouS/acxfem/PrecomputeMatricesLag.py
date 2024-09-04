@@ -46,6 +46,21 @@ B_tetra_o1 = np.array([
 ])
 
 
+def add_shape_functions2element(element, order):
+  if element.dim == 2:
+    poly = Lagrange2DTri(order)
+    B = poly.get_der_shape_functions
+    N = poly.get_shape_functions
+  elif element.dim == 3:
+    poly = Lagrange3DTetra(order)
+    B = poly.get_der_shape_functions
+    N = poly.get_shape_functions
+  else:
+    raise ValueError("Only support 2D and 3D")
+  element._shape_functions = N
+  element._der_shape_functions = B
+
+
 def get_N_B_p1(dim: int) -> np.ndarray:
   if dim == 2:
     return N_tri_o1, B_tri_o1
