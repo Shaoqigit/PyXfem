@@ -180,19 +180,19 @@ class ApplyBoundaryConditions:
       else:
         print("Nature BC type not supported")
     elif isinstance(nature_bc['position'], np.ndarray):
-      breakpoint()
       edges = nature_bc['position']
       lines = self.mesh.exterior_facets[edges]
       for line_index in lines:
-        compute_normal_vector(self.mesh, line_index)
-        # breakpoint()
-        gl_q = GaussLegendreQuadrature(10)
-        gl_pts, gl_wts = gl_q.points(), gl_q.weights()
-        l = Lobatto(1)
-        N = l.get_shape_functions()
+        # gl_q = GaussLegendreQuadrature(10)
+        # gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+        # l = Lobatto(1)
+        # N = l.get_shape_functions()
         basis = Lobbato1DElement(var, order=1, nodes=line_index)
-        f = basis.integrate(lambda x: nature_bc['value'](x[0], x[1]), gl_pts,
-                            gl_wts)
+        f = basis.integrate(nature_bc['value'],
+                            self.mesh,
+                            line_index,
+                            integ_order=10,
+                            vtype=self.dtype)
         # map coordiante into reference space
         if nature_bc['type'] == 'fluid_velocity':
           self.right_hand_side[line_index] += f / (1j * self.omega)

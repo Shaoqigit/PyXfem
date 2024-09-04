@@ -93,6 +93,7 @@ class Lobbato1DElement(Base1DElement):
 
   def __init__(self, label, order, nodes):
     super().__init__(label, order, nodes)
+    add_shape_functions2element(self, self.order)
 
   @cached_property
   def ke(self):
@@ -165,19 +166,29 @@ class Lobbato1DElement(Base1DElement):
     add_shape_functions2element(self, self.order)
     return self._der_shape_functions
 
-  def integrate(self, f, nodes, integ_order=1):
+  def integrate(self,
+                f,
+                mesh,
+                edge_or_facet=None,
+                integ_order=1,
+                vtype=np.float64):
     """integrate the function f over the element
     returns:
     integral: float
         integral value
     """
-    self.add_shape_functions2element()
+    if edge_or_facet is None:
+      edge_or_facet = self.nodes
+    nodes_coord = [mesh.nodes[i_node] for i_node in edge_or_facet]
+    normal = mesh.compute_normal(edge_or_facet)
     N = self._shape_functions
     gl_q = GaussLegendreQuadrature(integ_order)
     gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+    integral = np.zeros((self.order + 1), dtype=vtype)
     for i, gl_pt in enumerate(gl_pts):
-      x = N[0](gl_pt) * self.nodes[0] + N[-1](gl_pt) * self.nodes[1]
-      integral += gl_wts[i] * f(x) * np.array([N[0](gl_pt), N[-1](gl_pt)])
+      x = N[0](gl_pt) * nodes_coord[0] + N[-1](gl_pt) * nodes_coord[1]
+      f_n = f(x[0], x[1]) @ normal
+      integral += gl_wts[i] * f_n * np.array([N[0](gl_pt), N[-1](gl_pt)])
     integral *= self.Jacobian
 
     return integral

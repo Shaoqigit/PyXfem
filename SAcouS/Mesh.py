@@ -226,6 +226,18 @@ class Mesh2D(BaseMesh):
         self.elem_connect = np.array(new_elem_connect)
         self.nb_nodes = len(self.nodes)
 
+  def compute_normal(self, edge):
+    """compute normal of the element"""
+    assert (len(edge) == 2)
+    edge = edge
+    node_1_coord = self.nodes[edge[0]]    # in physical space
+    node_2_coord = self.nodes[edge[1]]
+    tangent = np.array(
+        [node_2_coord[0] - node_1_coord[0], node_2_coord[1] - node_1_coord[1]])
+    normal = np.array([tangent[1], -tangent[0]])
+    normal = normal / np.linalg.norm(normal)
+    return normal
+
 
 class Mesh3D(Mesh2D):
 
@@ -239,6 +251,21 @@ class Mesh3D(Mesh2D):
 
   def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
     raise NotImplementedError("3D mesh plot not implemented yet")
+
+  def compute_normal(self, facet):
+    """compute normal of the element"""
+    assert (len(facet) == 3)
+    facet = facet
+    node_1_coord = self.nodes[facet[0]]    # in physical space
+    node_2_coord = self.nodes[facet[1]]
+    node_3_coord = self.nodes[facet[2]]
+    vect_1 = node_2_coord - node_1_coord
+    vect_2 = node_3_coord - node_1_coord
+    # compute the normal vector with cross product
+    normal = np.cross(vect_1, vect_2)
+    normal = normal / np.linalg.norm(normal)
+
+    return normal
 
 
 def mesh_constructor(dim,
