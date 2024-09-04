@@ -187,7 +187,9 @@ class ApplyBoundaryConditions:
         # gl_pts, gl_wts = gl_q.points(), gl_q.weights()
         # l = Lobatto(1)
         # N = l.get_shape_functions()
-        basis = Lobbato1DElement(var, order=1, nodes=line_index)
+        nodes_coord = np.array(
+            [self.mesh.nodes[i_node] for i_node in line_index])
+        basis = Lobbato1DElement(var, order=1, nodes=nodes_coord)
         f = basis.integrate(nature_bc['value'],
                             self.mesh,
                             line_index,
