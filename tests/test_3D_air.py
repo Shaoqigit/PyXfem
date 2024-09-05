@@ -43,13 +43,12 @@ def test_case_2D():
   # ====================== Pysical Problem ======================
   # define the materials
   air = Air('classical air')
-  freq = 1000
+  freq = 500
   omega = 2 * np.pi * freq    # angular frequency
   # Harmonic Acoustic problem define the frequency
   current_dir = os.path.dirname(os.path.realpath(__file__))
-  slice_points_1 = np.insert(np.arange(402, 797)[::-1], 0, 3)
-  slice_points = np.append(slice_points_1, 2)
-  mesh_reader = MeshReader(current_dir + "/mesh/unit_tube_3D.msh", dim=3)
+  mesh_reader = MeshReader(current_dir + "/mesh/unit_tube_3D_refine.msh",
+                           dim=3)
   mesh = mesh_reader.get_mesh()
 
   air_elements = np.arange(0, mesh.nb_elmes)
@@ -80,7 +79,7 @@ def test_case_2D():
   natural_facet = mesh_reader.get_facet_by_physical('inlet')
   natural_bcs = {
       'type': 'fluid_velocity',
-      'value': lambda x, y: np.array([1 * np.exp(-1j * omega), 0]),
+      'value': lambda x, y, z: np.array([1 * np.exp(-1j * omega), 0, 0]),
       'position': natural_facet
   }    # position: number of facet number
 
@@ -88,18 +87,17 @@ def test_case_2D():
                             dtype=np.complex128)
   BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
                                         right_hand_vec, omega)
-  BCs_applier.apply_nature_bc(natural_bcs, 'Pf')
+  BCs_applier.apply_nature_bc(natural_bcs, 'Pf', 7)
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec, 'petsc')
   sol = linear_solver.u
   save_plot(mesh,
             sol.real,
-            current_dir + "/Pressure_field.pos",
+            current_dir + "/Pressure_field_3D.pos",
             engine='gmsh',
             binary=True)
-  nodes = mesh.nodes[slice_points][:, 0]
-
-  sol = sol[slice_points]
+  # nodes = mesh.nodes[slice_points][:, 0]
+  nodes = np.linspace(0., 1., 397)
 
   elem_connec1 = np.arange(0, 396)
   elem_connec2 = np.arange(1, 397)
@@ -108,7 +106,7 @@ def test_case_2D():
   natural_bcs_ana = {
       'type': 'fluid_velocity',
       'value': np.exp(-1j * omega),
-      'position': -0.5
+      'position': -0.
   }
   kundlt_tube = DoubleleLayerKundltTube(mesh_1d, air, air, omega,
                                         natural_bcs_ana)
@@ -117,9 +115,8 @@ def test_case_2D():
   kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
 
   post_processer = PostProcessField(mesh_1d.nodes, r'2D Helmholtz (2000$Hz$)')
-  post_processer.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'),
-                          (np.real(ana_sol), 'Analytical', 'dashed'))
-  # plt.show()
+  post_processer.plot_sol((np.real(ana_sol), 'Analytical', 'dashed'))
+  plt.show()
   error = np.mean(np.real(sol) - np.real(ana_sol)) / np.mean(np.real(ana_sol))
   print("error:", error)
   if error < 0.0005:

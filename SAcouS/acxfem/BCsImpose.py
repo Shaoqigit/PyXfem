@@ -186,7 +186,9 @@ class ApplyBoundaryConditions:
       for node_indices in facets_connect:
         nodes_coord = np.array(
             [self.mesh.nodes[i_node] for i_node in node_indices])
-        basis = facet_basis[len(node_indices)](var, order=1, nodes=nodes_coord)
+        basis = facet_basis[len(node_indices)](var,
+                                               order=1,
+                                               vertices=nodes_coord)
         f = basis.integrate(nature_bc['value'],
                             self.mesh,
                             node_indices,

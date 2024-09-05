@@ -33,16 +33,16 @@ class Base1DElement(metaclass=ABCMeta):
     parameters:
     order: int
         element order
-    nodes: ndarray
+    vertices: ndarray
         1d: [x1, x2]
         2d: [(x1, y1), (x2, y2)]
         3d: [(x1, y1, z1), (x2, y2, z2)]
     """
 
-  def __init__(self, label, order, nodes):
+  def __init__(self, label, order, vertices):
     self.label = label
     self.order = order
-    self.nodes = nodes
+    self.nodes = vertices
     self.is_discontinue = False
 
   @cached_property
@@ -93,8 +93,8 @@ class Lobbato1DElement(Base1DElement):
     returns:
     """
 
-  def __init__(self, label, order, nodes):
-    super().__init__(label, order, nodes)
+  def __init__(self, label, order, vertices):
+    super().__init__(label, order, vertices)
     add_shape_functions2element(self, self.order)
 
   @cached_property
@@ -208,8 +208,8 @@ class Lobbato1DElement(Base1DElement):
 
 class Helmholtz1DElement(Lobbato1DElement):
 
-  def __init__(self, label, order, nodes, mat_coeffs=[]):
-    super().__init__(label, order, nodes)
+  def __init__(self, label, order, vertices, mat_coeffs=[]):
+    super().__init__(label, order, vertices)
     self.mat_coeffs = mat_coeffs
 
   @cached_property
@@ -273,6 +273,7 @@ class Helmholtz1DElement(Lobbato1DElement):
 
 from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1
 from SAcouS.acxfem.PrecomputeMatricesLag import get_N_B_p1
+from .Polynomial import Lagrange2DTri
 
 
 class BaseNDElement(metaclass=ABCMeta):
@@ -338,10 +339,14 @@ class Lagrange2DTriElement(BaseNDElement):
 
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
+
     if order == 1:
       self.N, self.B = get_N_B_p1(2)
     else:
       print("quadrtic lagrange not supported yet")
+    poly = Lagrange2DTri(order)
+    self.Bd = poly.get_der_shape_functions
+    self.Nd = poly.get_shape_functions
 
   def Jacobian(self):
     """
@@ -349,21 +354,53 @@ class Lagrange2DTriElement(BaseNDElement):
     returns:
     J: 
     J=dx/dxi"""
-    self.J = np.array([[
-        self.vertices[1][0] - self.vertices[0][0],
-        self.vertices[1][1] - self.vertices[0][1]
-    ],
-                       [
-                           self.vertices[2][0] - self.vertices[0][0],
-                           self.vertices[2][1] - self.vertices[0][1]
-                       ]])
+    if self.vertices.shape[1] == 2:
+      self.J = np.array([[
+          self.vertices[1][0] - self.vertices[0][0],
+          self.vertices[1][1] - self.vertices[0][1]
+      ],
+                         [
+                             self.vertices[2][0] - self.vertices[0][0],
+                             self.vertices[2][1] - self.vertices[0][1]
+                         ]])
+    elif self.vertices.shape[1] == 3:
+      self.J = np.array([[
+          self.vertices[1, 0] - self.vertices[0, 0],
+          self.vertices[2, 0] - self.vertices[0, 0]
+      ],
+                         [
+                             self.vertices[1, 1] - self.vertices[0, 1],
+                             self.vertices[2, 1] - self.vertices[0, 1]
+                         ],
+                         [
+                             self.vertices[1, 2] - self.vertices[0, 2],
+                             self.vertices[2, 2] - self.vertices[0, 2]
+                         ]])
 
   def inverse_Jacobian(self):
-    self.inv_J = np.array([[self.J[1, 1], -self.J[0, 1]],
-                           [-self.J[1, 0], self.J[0, 0]]]) * 1 / self.det_J
+    if self.vertices.shape[1] == 2:
+      self.inv_J = np.array([[self.J[1, 1], -self.J[0, 1]],
+                             [-self.J[1, 0], self.J[0, 0]]]) * 1 / self.det_J
+    elif self.vertices.shape[1] == 3:
+      self.inv_J = np.linalg.inv(self.J.T @ self.J) @ self.J.T
 
   def determinant_Jacobian(self):
-    self.det_J = self.J[0, 0] * self.J[1, 1] - self.J[0, 1] * self.J[1, 0]
+    if self.vertices.shape[1] == 2:
+      self.det_J = self.J[0, 0] * self.J[1, 1] - self.J[0, 1] * self.J[1, 0]
+    elif self.vertices.shape[1] == 3:
+      self.det_J = np.sqrt(
+          ((self.vertices[1, 1] - self.vertices[0, 1]) *
+           (self.vertices[2, 2] - self.vertices[0, 2]) -
+           (self.vertices[1, 2] - self.vertices[0, 2]) *
+           (self.vertices[2, 1] - self.vertices[0, 1]))**2 +
+          ((self.vertices[1, 2] - self.vertices[0, 2]) *
+           (self.vertices[2, 0] - self.vertices[0, 0]) -
+           (self.vertices[1, 0] - self.vertices[0, 0]) *
+           (self.vertices[2, 2] - self.vertices[0, 2]))**2 +
+          ((self.vertices[1, 0] - self.vertices[0, 0]) *
+           (self.vertices[2, 1] - self.vertices[0, 1]) -
+           (self.vertices[1, 1] - self.vertices[0, 1]) *
+           (self.vertices[2, 0] - self.vertices[0, 0]))**2) / 2
 
   @cached_property
   def ke(self):
@@ -465,15 +502,17 @@ class Lagrange2DTriElement(BaseNDElement):
     if edge_or_facet is None:
       edge_or_facet = self.vertices
     normal = mesh.compute_normal(edge_or_facet)
-    N = self.N
-    gl_q = GaussLegendre3DTetra(integ_order)
+    N = self.Nd
+    gl_q = GaussLegendre2DTri(integ_order)
     gl_pts, gl_wts = gl_q.points(), gl_q.weights()
-    integral = np.zeros((self.order + 1), dtype=vtype)
+    integral = np.zeros((self.order + 2), dtype=vtype)
+    # breakpoint()
     for i, gl_pt in enumerate(gl_pts):
-      x = N[0](gl_pt) * self.vertices[0] + N[-1](gl_pt) * self.vertices[1]
+      # breakpoint()
+      x = N(*gl_pt) @ self.vertices
       f_n = f(x[0], x[1], x[2]) @ normal
-      integral += gl_wts[i] * f_n * np.array([N[0](gl_pt), N[-1](gl_pt)])
-    integral *= self.Jacobian
+      integral += gl_wts[i] * f_n * N(*gl_pt)
+    integral *= self.det_J
 
     return integral
 
