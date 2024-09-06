@@ -117,12 +117,8 @@ def test_case_2():
 
   # ====================== Analytical Solution ======================
   # analytical solution
-  kundlt_tube = ImpedenceKundltTube(mesh, air, omega, nature_bcs,
-                                    impedence_bcs)
-  ana_sol = np.zeros(
-      num_nodes,
-      dtype=np.complex128)    #initialize the analytical solution vector
-  kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
+  kundlt_tube = ImpedenceKundltTube(air, omega, nature_bcs, impedence_bcs)
+  ana_sol = kundlt_tube.sol_on_mesh(mesh, sol_type='pressure')
 
   # # plot the solution
   post_process = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')

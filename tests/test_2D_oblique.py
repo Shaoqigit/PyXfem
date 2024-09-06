@@ -61,10 +61,8 @@ def test_case_2D():
   mesh = mesh_reader.get_mesh()
 
   # ====================== Analytical solution ======================
-  analytical_solution = ObliquePlaneWave(mesh, air, xfm, omega, 45, 1.)
-  nb_nodes = mesh.get_nb_nodes()
-  analytical_solution_vec = np.zeros((nb_nodes), dtype=np.complex128)
-  analytical_solution.sol_on_nodes(analytical_solution_vec)
+  analytical_solution = ObliquePlaneWave(air, xfm, omega, 45, 1.)
+  analytical_solution_vec = analytical_solution.sol_on_mesh(mesh)
   save_plot(mesh,
             analytical_solution_vec.real,
             current_dir + "/Pressure_field_oblique_ana.pos",
@@ -80,8 +78,6 @@ def test_case_2D():
   left_bottom_boundary = mesh_reader.get_facet_by_physical('left_bot')
   right_bottom_boundary = mesh_reader.get_facet_by_physical('right_bot')
   elements2node = mesh.get_mesh()
-  # breakpoint()
-  # subdomains = {air: all_elements}
   subdomains = {air: air_elements, xfm: foam_elements}
   xfm.set_frequency(omega)
   Pf_bases = []

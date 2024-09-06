@@ -31,7 +31,6 @@ from SAcouS.acxfem import LinearSolver
 
 from SAcouS.acxmor import EigenSolver, ModalReduction
 from SAcouS.acxfem import PostProcessField, PostProcessFRF
-from analytical.fluid_sol import ImpedenceKundltTube
 
 
 def int_or_str(text):

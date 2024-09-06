@@ -36,7 +36,6 @@ from SAcouS.acxtmm import bcm_poro_fluid, bcm_fluid_poro2, bcm_poro_rigid_wall, 
 from SAcouS.acxtmm import AdmAssembler
 from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem import AdmittanceSolver
-from analytical.fluid_sol import DoubleleLayerKundltTube
 
 # mesh.refine_mesh(1)
 

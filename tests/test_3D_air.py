@@ -43,7 +43,7 @@ def test_case_2D():
   # ====================== Pysical Problem ======================
   # define the materials
   air = Air('classical air')
-  freq = 500
+  freq = 200
   omega = 2 * np.pi * freq    # angular frequency
   # Harmonic Acoustic problem define the frequency
   current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -87,7 +87,7 @@ def test_case_2D():
                             dtype=np.complex128)
   BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,
                                         right_hand_vec, omega)
-  BCs_applier.apply_nature_bc(natural_bcs, 'Pf', 7)
+  BCs_applier.apply_nature_bc(natural_bcs, 'Pf', 13)
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec, 'petsc')
   sol = linear_solver.u
@@ -96,28 +96,23 @@ def test_case_2D():
             current_dir + "/Pressure_field_3D.pos",
             engine='gmsh',
             binary=True)
-  # nodes = mesh.nodes[slice_points][:, 0]
-  nodes = np.linspace(0., 1., 397)
 
-  elem_connec1 = np.arange(0, 396)
-  elem_connec2 = np.arange(1, 397)
-  connectivity = np.vstack((elem_connec1, elem_connec2)).T
-  mesh_1d = Mesh1D(nodes, connectivity)
   natural_bcs_ana = {
       'type': 'fluid_velocity',
       'value': np.exp(-1j * omega),
       'position': -0.
   }
-  kundlt_tube = DoubleleLayerKundltTube(mesh_1d, air, air, omega,
+  kundlt_tube = DoubleleLayerKundltTube(0, 1., air, air, omega,
                                         natural_bcs_ana)
-  ana_sol = np.zeros(
-      397, dtype=np.complex128)    #initialize the analytical solution vector
-  kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
+  ana_sol = kundlt_tube.sol_on_mesh(mesh, sol_type='pressure')
+  save_plot(mesh,
+            ana_sol.real,
+            current_dir + "/Pressure_field_3D_analy.pos",
+            engine='gmsh',
+            binary=True)
 
-  post_processer = PostProcessField(mesh_1d.nodes, r'2D Helmholtz (2000$Hz$)')
-  post_processer.plot_sol((np.real(ana_sol), 'Analytical', 'dashed'))
-  plt.show()
-  error = np.mean(np.real(sol) - np.real(ana_sol)) / np.mean(np.real(ana_sol))
+  # breakpoint()
+  error = np.mean(np.abs(sol - ana_sol)) / np.mean(np.abs(ana_sol))
   print("error:", error)
   if error < 0.0005:
     print("Test passed!")

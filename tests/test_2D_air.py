@@ -110,11 +110,9 @@ def test_case_2D():
       'value': np.exp(-1j * omega),
       'position': -0.5
   }
-  kundlt_tube = DoubleleLayerKundltTube(mesh_1d, air, air, omega,
+  kundlt_tube = DoubleleLayerKundltTube(0.5, 0.5, air, air, omega,
                                         natural_bcs_ana)
-  ana_sol = np.zeros(
-      397, dtype=np.complex128)    #initialize the analytical solution vector
-  kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
+  ana_sol = kundlt_tube.sol_on_mesh(mesh_1d, sol_type='pressure')
 
   post_processer = PostProcessField(mesh_1d.nodes, r'2D Helmholtz (2000$Hz$)')
   post_processer.plot_sol((np.real(sol), f'FEM ($p=3$)', 'solid'),

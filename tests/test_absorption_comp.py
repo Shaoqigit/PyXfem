@@ -86,15 +86,10 @@ def discrete_in_frequency(freq):
 
   # ====================== Analytical Solution ======================
   # analytical solution
-  kundlt_tube = DoubleleLayerKundltTube(mesh, air, xfm, omega, nature_bcs)
-  ana_p = np.zeros(
-      num_nodes,
-      dtype=np.complex128)    #initialize the analytical solution vector
-  p_analy = kundlt_tube.sol_on_nodes(ana_p, sol_type='pressure')
-  ana_v = np.zeros(
-      num_nodes,
-      dtype=np.complex128)    #initialize the analytical solution vector
-  v_analy = kundlt_tube.sol_on_nodes(ana_v, sol_type='fluid_velocity')
+  kundlt_tube = DoubleleLayerKundltTube(0.1, 0.1, air, xfm, omega, nature_bcs)
+
+  p_analy = kundlt_tube.sol_on_mesh(mesh, sol_type='pressure')
+  v_analy = kundlt_tube.sol_on_mesh(mesh, sol_type='fluid_velocity')
   # import pdb; pdb.set_trace()
   Z_s = p_analy[0] / v_analy[0]
   ref_analy = (Z_s - air.Z_f) / (Z_s + air.Z_f)

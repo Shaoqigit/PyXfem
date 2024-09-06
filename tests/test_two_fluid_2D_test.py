@@ -105,11 +105,8 @@ def test_case_1():
   sol = linear_solver.u
   # ====================== Analytical Solution ======================
   # analytical solution
-  kundlt_tube = DoubleleLayerKundltTube(mesh, air, air, omega, nature_bcs)
-  ana_sol = np.zeros(
-      num_nodes,
-      dtype=np.complex128)    #initialize the analytical solution vector
-  kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
+  kundlt_tube = DoubleleLayerKundltTube(0.1, 0.1, air, air, omega, nature_bcs)
+  ana_sol = kundlt_tube.sol_on_mesh(mesh, sol_type='pressure')
 
   # plot the solution
   post_processer = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')

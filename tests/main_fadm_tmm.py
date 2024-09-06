@@ -27,7 +27,6 @@ from SAcouS.Materials import Air, Fluid, EquivalentFluid
 from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem import AdmittanceSolver
 from SAcouS.PostProcess import PostProcessField
-from analytical.fluid_sol import DoubleleLayerKundltTube
 
 
 def test_case_1():

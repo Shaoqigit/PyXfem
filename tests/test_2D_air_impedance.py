@@ -35,7 +35,6 @@ from SAcouS.acxfem import HelmholtzAssembler
 from SAcouS.acxfem import Helmholtz2DElement
 from SAcouS.acxfem import LinearSolver
 from SAcouS.acxfem import ApplyBoundaryConditions
-from analytical.fluid_sol import DoubleleLayerKundltTube
 
 
 def test_case_2D():

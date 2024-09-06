@@ -117,12 +117,9 @@ def test_case_2D():
       'value': np.exp(-1j * omega),
       'position': -0.5
   }
-  kundlt_tube = DoubleleLayerKundltTube(mesh_1d, air, xfm, omega,
+  kundlt_tube = DoubleleLayerKundltTube(0.5, 0.5, air, xfm, omega,
                                         natural_bcs_ana)
-  ana_sol = np.zeros(
-      num_nodes,
-      dtype=np.complex128)    #initialize the analytical solution vector
-  kundlt_tube.sol_on_nodes(ana_sol, sol_type='pressure')
+  ana_sol = kundlt_tube.sol_on_mesh(mesh_1d, sol_type='pressure')
 
   # it's not a great verification, but it's a acceptable one
   sol_value = np.max(sol) + np.min(sol) + np.mean(sol)

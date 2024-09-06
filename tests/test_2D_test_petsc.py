@@ -61,10 +61,8 @@ def test_case_2D():
   mesh = mesh_reader.get_mesh()
 
   # ====================== Analytical solution ======================
-  analytical_solution = ObliquePlaneWave(mesh, air, xfm, omega, 45, 1.)
-  nb_nodes = mesh.get_nb_nodes()
-  analytical_solution_vec = np.zeros((nb_nodes), dtype=np.complex128)
-  analytical_solution.sol_on_nodes(analytical_solution_vec)
+  analytical_solution = ObliquePlaneWave(air, xfm, omega, 45, 1.)
+  analytical_solution_vec = analytical_solution.sol_on_mesh(mesh)
   save_plot(mesh,
             analytical_solution_vec.real,
             current_dir + "/Pressure_field_oblique_ana.pos",

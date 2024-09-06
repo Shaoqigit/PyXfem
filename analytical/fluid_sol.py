@@ -5,8 +5,7 @@ from cmath import sin, cos
 
 class ImpedenceKundltTube():
 
-  def __init__(self, mesh, *args) -> None:
-    self.mesh = mesh
+  def __init__(self, *args) -> None:
     self.mat = args[0]
     self.omega = args[1]
     self.nature_bc = args[2]
@@ -27,27 +26,31 @@ class ImpedenceKundltTube():
     beta = alpha * (1 - A) / (1 + A)
     self.p = lambda x: alpha * np.exp(-1j * k * x) + beta * np.exp(1j * k * x)
 
-  def sol_on_nodes(self, ana_sol, sol_type='pressure'):
+  def sol_on_mesh(self, mesh, sol_type='pressure'):
     # import pdb; pdb.set_trace()
-    for i, x in enumerate(self.mesh.nodes):
+    ana_sol = np.zeros(
+        mesh.nb_nodes,
+        dtype=np.complex128)    #initialize the analytical solution vector
+    for i, x in enumerate(mesh.nodes):
       ana_sol[i] = self.p(x)
+    return ana_sol
 
 
 class DoubleleLayerKundltTube():
 
-  def __init__(self, mesh, *args) -> None:
-    self.mesh = mesh
-    self.mat1 = args[0]
-    self.mat2 = args[1]
-    self.omega = args[2]
-    self.bc = args[3]
+  def __init__(self, *args) -> None:
+    self.l1 = args[0]
+    self.l2 = args[1]
+    self.mat1 = args[2]
+    self.mat2 = args[3]
+    self.omega = args[4]
+    self.bc = args[5]
     assert (self.bc['type'] == 'fluid_velocity')
     self.analytical_field()
 
   def analytical_field(self):
-    l1, l2 = abs(self.mesh.nodes[0]), abs(self.mesh.nodes[-1])
-    l_a = l1
-    l_eq = l2
+    l_a = self.l1
+    l_eq = self.l2
     v_0 = self.bc['value']
     k_a = self.omega / self.mat1.c_f
     rho_a = self.mat1.rho_f
@@ -65,49 +68,64 @@ class DoubleleLayerKundltTube():
                 sin(k_a * l_a) * cos(k_eq * l_eq) + 1j * self.omega * k_a *
                 k_eq * rho_a * sin(k_eq * l_eq) * cos(k_a * l_a))
 
-    self.P_analy.append(lambda x: (
+    self.P_analy.append(lambda *x: (
         (1j * v_0 * sigma_film * Thickness * self.omega * k_a * k_eq * rho_a *
          sin(k_eq * l_eq) + v_0 * self.omega**2 * rho_a * rho_eq * k_a * cos(
-             k_eq * l_eq)) * cos(k_a * x) / C + v_0 * self.omega**2 * rho_a**2
-        * k_eq * sin(k_eq * l_eq) * sin(k_a * x) / C))
-    self.v_analy.append(lambda x: (
+             k_eq * l_eq)) * cos(k_a * x[0]) / C + v_0 * self.omega**2 * rho_a
+        **2 * k_eq * sin(k_eq * l_eq) * sin(k_a * x[0]) / C))
+    self.v_analy.append(lambda *x: (
         (1j * v_0 * sigma_film * Thickness * self.omega * k_a * k_eq * rho_a *
          sin(k_eq * l_eq) + v_0 * self.omega**2 * rho_a * rho_eq * k_a * cos(
-             k_eq * l_eq)) * k_a * sin(k_a * x) / (1j * self.omega * rho_a * C)
-        + v_0 * self.omega**2 * rho_a**2 * k_eq * sin(k_eq * l_eq) * k_a * cos(
-            k_a * x) / (-1j * self.omega * rho_a * C)))
-
-    self.P_analy.append(
-        lambda x: (v_0 * self.omega**2 * rho_a * rho_eq * k_a * cos(
-            k_eq * l_eq) * cos(k_eq * x) / C + v_0 * self.omega**2 * rho_a *
-                   rho_eq * k_a * sin(k_eq * l_eq) * sin(k_eq * x) / C))
-    self.v_analy.append(lambda x: (
-        v_0 * self.omega**2 * rho_a * rho_eq * k_a * cos(k_eq * l_eq) * k_eq *
-        sin(k_eq * x) / (1j * self.omega * rho_a * C) + v_0 * self.omega**2 *
-        rho_a * rho_eq * k_a * sin(k_eq * l_eq) * k_eq * cos(k_eq * x) /
+             k_eq * l_eq)) * k_a * sin(k_a * x[0]) /
+        (1j * self.omega * rho_a * C) + v_0 * self.omega**2 * rho_a**2 * k_eq *
+        sin(k_eq * l_eq) * k_a * cos(k_a * x[0]) /
         (-1j * self.omega * rho_a * C)))
 
-  def sol_on_nodes(self, ana_sol, sol_type):
-    for i, x in enumerate(self.mesh.nodes):
-      if x <= 0:
-        if sol_type == 'pressure':
-          sol = self.P_analy[0](x)
-        elif sol_type == 'fluid_velocity':
-          sol = self.v_analy[0](x)
-      elif x >= 0:
-        if sol_type == 'pressure':
-          sol = self.P_analy[1](x)
-        elif sol_type == 'fluid_velocity':
-          sol = self.v_analy[1](x)
+    self.P_analy.append(
+        lambda *x: (v_0 * self.omega**2 * rho_a * rho_eq * k_a * cos(
+            k_eq * l_eq) * cos(k_eq * x[0]) / C + v_0 * self.omega**2 * rho_a *
+                    rho_eq * k_a * sin(k_eq * l_eq) * sin(k_eq * x[0]) / C))
+    self.v_analy.append(lambda *x: (
+        v_0 * self.omega**2 * rho_a * rho_eq * k_a * cos(k_eq * l_eq) * k_eq *
+        sin(k_eq * x[0]) / (1j * self.omega * rho_a * C) + v_0 * self.omega**2
+        * rho_a * rho_eq * k_a * sin(k_eq * l_eq) * k_eq * cos(k_eq * x[0]) /
+        (-1j * self.omega * rho_a * C)))
 
-      ana_sol[i] = sol
+  def sol_on_mesh(self, mesh, sol_type):
+    ana_sol = np.zeros(mesh.nb_nodes, dtype=np.complex128)
+    if mesh.dim == 1:
+      for i, x in enumerate(mesh.nodes):
+        if x <= 0:
+          if sol_type == 'pressure':
+            sol = self.P_analy[0](x)
+          elif sol_type == 'fluid_velocity':
+            sol = self.v_analy[0](x)
+        elif x >= 0:
+          if sol_type == 'pressure':
+            sol = self.P_analy[1](x)
+          elif sol_type == 'fluid_velocity':
+            sol = self.v_analy[1](x)
+        ana_sol[i] = sol
+
+    elif mesh.dim >= 2:
+      for i, x in enumerate(mesh.nodes):
+        if x[0] <= 0:
+          if sol_type == 'pressure':
+            sol = self.P_analy[0](*x)
+          elif sol_type == 'fluid_velocity':
+            sol = self.v_analy[0](*x)
+        elif x[0] >= 0:
+          if sol_type == 'pressure':
+            sol = self.P_analy[1](*x)
+          elif sol_type == 'fluid_velocity':
+            sol = self.v_analy[1](*x)
+        ana_sol[i] = sol
     return ana_sol
 
 
 class ObliquePlaneWave():
 
-  def __init__(self, mesh, *args) -> None:
-    self.mesh = mesh
+  def __init__(self, *args) -> None:
     self.mat1 = args[0]
     self.mat2 = args[1]
     self.omega = args[2]
@@ -156,11 +174,6 @@ class ObliquePlaneWave():
         (-1j * k1_y * np.exp(-1j * k1_x * x - 1j * k1_y * y) - 1j * k1_y * R *
          np.exp(1j * k1_x * x - 1j * k1_y * y))
     ])
-    # self.velocity_1 = lambda x, y: np.array([
-    #     1 / rho_1 * (-1j * k1_x * np.exp(-1j * k1_x * x - 1j * k1_y * y) + 1j *
-    #                  k1_x * R * np.exp(1j * k1_x * x - 1j * k1_y * y)), 0.
-    # ])
-    # x>0
     self.velocity_2 = lambda x, y: np.array([
         1 / rho_2 * -1j * k2_x * T * np.exp(-1j * k2_x * x - 1j * k2_y * y), 1
         / rho_2 * -1j * k2_y * T * np.exp(-1j * k2_x * x - 1j * k2_y * y)
@@ -169,8 +182,9 @@ class ObliquePlaneWave():
     #     1 / rho_2 * -1j * k2_x * T * np.exp(-1j * k2_x * x - 1j * k2_y * y), 0.
     # ])
 
-  def sol_on_nodes(self, ana_sol, sol_type='pressure'):
-    for i, x in enumerate(self.mesh.nodes):
+  def sol_on_mesh(self, mesh, sol_type='pressure'):
+    ana_sol = np.zeros((mesh.nb_nodes), dtype=np.complex128)
+    for i, x in enumerate(mesh.nodes):
       if x[0] <= 0:
         if sol_type == 'pressure':
           sol = self.p[0](x[0], x[1])
