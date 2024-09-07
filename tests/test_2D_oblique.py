@@ -65,6 +65,7 @@ def test_case_2D():
   analytical_solution_vec = analytical_solution.sol_on_mesh(mesh)
   save_plot(mesh,
             analytical_solution_vec.real,
+            'Pressure_ana',
             current_dir + "/Pressure_field_oblique_ana.pos",
             engine='gmsh',
             binary=True)
@@ -160,6 +161,7 @@ def test_case_2D():
 
   save_plot(mesh,
             sol.real,
+            'Pressure_field',
             current_dir + "/Pressure_field_oblique_succes.pos",
             engine='gmsh',
             binary=True)

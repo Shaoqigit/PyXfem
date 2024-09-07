@@ -245,6 +245,7 @@ class Mesh3D(Mesh2D):
     super().__init__(nodes, elem_connect, surface_connect, io_mesh)
     self.dim = 3
     self.surface_connect = surface_connect
+    self.mesh_center = np.mean(self.nodes, axis=0)
 
   def get_mesh(self):
     return super().get_mesh()
@@ -262,9 +263,13 @@ class Mesh3D(Mesh2D):
     vect_1 = node_2_coord - node_1_coord
     vect_2 = node_3_coord - node_1_coord
     # compute the normal vector with cross product
-    normal = -1 * np.cross(vect_1, vect_2)
+    normal = np.cross(vect_1, vect_2)
     normal = normal / np.linalg.norm(normal)
-
+    element_center = np.mean([node_1_coord, node_2_coord, node_3_coord],
+                             axis=0)
+    outwards = element_center - self.mesh_center
+    if np.dot(normal, outwards) < 0:
+      normal = -normal
     return normal
 
 

@@ -107,11 +107,13 @@ def test_case_2D():
   sol = linear_solver.u
   save_plot(mesh,
             np.real(sol),
+            'Pressure_field_real',
             current_dir + "/Pressure_field_real.pos",
             engine='gmsh',
             binary=True)
   save_plot(mesh,
             np.imag(sol),
+            'Pressure_field_imag',
             current_dir + "/Pressure_field_imag.pos",
             engine='gmsh',
             binary=True)

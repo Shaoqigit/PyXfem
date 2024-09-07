@@ -92,6 +92,7 @@ def test_case_2D():
   sol = linear_solver.u
   save_plot(mesh,
             sol.real,
+            'Pf_numerical',
             current_dir + "/Pressure_field_3D.pos",
             engine='gmsh',
             binary=True)
@@ -106,6 +107,7 @@ def test_case_2D():
   ana_sol = kundlt_tube.sol_on_mesh(mesh, sol_type='pressure')
   save_plot(mesh,
             ana_sol.real,
+            'Pf_analytical',
             current_dir + "/Pressure_field_3D_analy.pos",
             engine='gmsh',
             binary=True)

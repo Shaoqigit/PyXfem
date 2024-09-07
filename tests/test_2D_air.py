@@ -94,6 +94,7 @@ def test_case_2D():
   sol = linear_solver.u
   save_plot(mesh,
             sol.real,
+            'Numeral_solution',
             current_dir + "/Pressure_field.pos",
             engine='gmsh',
             binary=True)

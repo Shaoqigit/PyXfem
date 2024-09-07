@@ -172,18 +172,18 @@ def plot_field(mesh, sol, title, quantity='Pressure', unit='Pa'):
     print("Unsupported mesh dimension.")
 
 
-def save_gmsh(mesh, sol, file_name, binary):
+def save_gmsh(mesh, sol, quantity, file_name, binary):
   mesh = mesh.io_mesh
-  mesh.point_data = {'Pressure': sol}
+  mesh.point_data = {quantity: sol}
   meshio.gmsh.write(file_name, mesh, "2.2", binary)
 
 
-def save_plot(mesh, sol, file_name, engine=None, binary=True):
+def save_plot(mesh, sol, quantity, file_name, engine=None, binary=True):
   if engine == 'None':
     engine = 'matplotlib'
   if engine == 'gmsh':
     # write the solution to a .msh file
-    save_gmsh(mesh, sol, file_name, binary)
+    save_gmsh(mesh, sol, quantity, file_name, binary)
   else:
     print("Unsupported plotting engine.")
 

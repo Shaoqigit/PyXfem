@@ -502,11 +502,11 @@ class Lagrange2DTriElement(BaseNDElement):
     if edge_or_facet is None:
       edge_or_facet = self.vertices
     normal = mesh.compute_normal(edge_or_facet)
+    # breakpoint()
     N = self.Nd
     gl_q = GaussLegendre2DTri(integ_order)
     gl_pts, gl_wts = gl_q.points(), gl_q.weights()
     integral = np.zeros((self.order + 2), dtype=vtype)
-    # breakpoint()
     for i, gl_pt in enumerate(gl_pts):
       # breakpoint()
       x = N(*gl_pt) @ self.vertices
