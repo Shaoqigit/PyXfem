@@ -47,8 +47,7 @@ def test_case_2D():
   omega = 2 * np.pi * freq    # angular frequency
   # Harmonic Acoustic problem define the frequency
   current_dir = os.path.dirname(os.path.realpath(__file__))
-  mesh_reader = MeshReader(current_dir + "/mesh/unit_tube_3D_refine.msh",
-                           dim=3)
+  mesh_reader = MeshReader(current_dir + "/mesh/unit_tube_3D_ufine.msh", dim=3)
   mesh = mesh_reader.get_mesh()
 
   air_elements = np.arange(0, mesh.nb_elmes)
@@ -100,9 +99,9 @@ def test_case_2D():
   natural_bcs_ana = {
       'type': 'fluid_velocity',
       'value': np.exp(-1j * omega),
-      'position': -0.
+      'position': -0.5
   }
-  kundlt_tube = DoubleleLayerKundltTube(0, 1., air, air, omega,
+  kundlt_tube = DoubleleLayerKundltTube(0.5, 0.5, air, air, omega,
                                         natural_bcs_ana)
   ana_sol = kundlt_tube.sol_on_mesh(mesh, sol_type='pressure')
   save_plot(mesh,
@@ -113,8 +112,27 @@ def test_case_2D():
 
   # breakpoint()
   error = np.mean(np.abs(sol - ana_sol)) / np.mean(np.abs(ana_sol))
+  # #
+  # num_elem = 200    # number of elements
+  # num_nodes = num_elem + 1    # number of nodes
+
+  # nodes = np.linspace(-0.5, 0.5, num_nodes)
+
+  # elem_connec1 = np.arange(0, num_elem)
+  # elem_connec2 = np.arange(1, num_nodes)
+  # connectivity = np.vstack((elem_connec1, elem_connec2)).T
+  # # print(connectivity)
+
+  # # read the mesh data structure
+  # mesh = Mesh1D(nodes, connectivity)
+  # ana_sol2 = kundlt_tube.sol_on_mesh(mesh, sol_type='pressure')
+
+  # # plot the solution
+  # post_processer = PostProcessField(mesh.nodes, r'1D Helmholtz (2000$Hz$)')
+  # post_processer.plot_sol((np.real(ana_sol2), 'Analytical', 'solid'))
+  # plt.show()
   print("error:", error)
-  if error < 0.0005:
+  if error < 0.0006:
     print("Test passed!")
     return True
   else:

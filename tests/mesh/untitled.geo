@@ -1,18 +1,18 @@
 //+
-Point(1) = {0., 0, 0., 1.0};
-Point(2) = {1., 0, 0., 1.0};
+Point(1) = {-0.5, 0, 0., 1.0};
+Point(2) = {0.5, 0, 0., 1.0};
 //+
-Point(3) = {1, 0.2, 0., 1.0};
+Point(3) = {0.5, 0.1, 0., 1.0};
 //+
-Point(4) = {0., 0.2, 0., 1.0};
+Point(4) = {-0.5, 0.1, 0., 1.0};
 //+
-Point(5) = {0., 0., 0.2, 1.0};
+Point(5) = {-0.5, 0., 0.1, 1.0};
 //+
-Point(6) = {1, 0., 0.2, 1.0};
+Point(6) = {0.5, 0., 0.1, 1.0};
 //+
-Point(7) = {1, 0.2, 0.2, 1.0};
+Point(7) = {0.5, 0.1, 0.1, 1.0};
 //+
-Point(8) = {0., 0.2, 0.2, 1.0};
+Point(8) = {-0.5, 0.1, 0.1, 1.0};
 //+
 Line(1) = {5, 6};
 //+
@@ -68,6 +68,6 @@ Volume(1) = {1};
 //+
 Physical Volume("air", 13) = {1};
 //+
-Physical Surface("inlet", 14) = {3};
+Physical Surface("inlet", 14) = {1};
 //+
-Transfinite Curve {3, 1, 7, 9} = 5 Using Progression 1;
+Transfinite Curve {3, 1, 7, 9} = 10 Using Progression 1;

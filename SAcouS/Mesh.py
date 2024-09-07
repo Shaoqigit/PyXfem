@@ -262,7 +262,7 @@ class Mesh3D(Mesh2D):
     vect_1 = node_2_coord - node_1_coord
     vect_2 = node_3_coord - node_1_coord
     # compute the normal vector with cross product
-    normal = np.cross(vect_1, vect_2)
+    normal = -1 * np.cross(vect_1, vect_2)
     normal = normal / np.linalg.norm(normal)
 
     return normal
