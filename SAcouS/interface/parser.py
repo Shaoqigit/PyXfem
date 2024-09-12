@@ -1,7 +1,7 @@
 from abc import abstractmethod, ABCMeta
 import numpy as np
 
-from SAcouS.acxfem.materials import MaterialFactory
+from SAcouS.Materials import MaterialFactory
 
 class BaseParser(metaclass=ABCMeta):
     def __init__(self, file_path):
