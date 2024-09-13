@@ -173,7 +173,6 @@ def plot_field(mesh, sol, title, quantity='Pressure', unit='Pa'):
 
 
 def save_gmsh(mesh, sol, quantity, file_name, binary):
-  mesh = mesh.io_mesh
   mesh.point_data = {quantity: sol}
   meshio.gmsh.write(file_name, mesh, "2.2", binary)
 

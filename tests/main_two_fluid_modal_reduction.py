@@ -73,7 +73,7 @@ def test_case_1():
   xfm_elements = np.arange(int(num_elem / 2), num_elem)
   subdomains = {air: air_elements, xfm: xfm_elements}
   check_material_compability(subdomains)
-  elements2node = mesh.get_mesh(
+  elements2node = mesh.mesh_coordinates(
   )    # dict: elements number with nodes coodinates
   # print(elements_set)
   order = 2    # global order of the bases

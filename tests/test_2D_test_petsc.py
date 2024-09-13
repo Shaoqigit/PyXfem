@@ -78,7 +78,7 @@ def test_case_2D():
   right_top_boundary = mesh_reader.get_facet_by_physical('right_top')
   left_bottom_boundary = mesh_reader.get_facet_by_physical('left_bot')
   right_bottom_boundary = mesh_reader.get_facet_by_physical('right_bot')
-  elements2node = mesh.get_mesh()
+  elements2node = mesh.mesh_coordinates()
   # breakpoint()
   # subdomains = {air: all_elements}
   subdomains = {air: air_elements, xfm: foam_elements}
@@ -160,8 +160,8 @@ def test_case_2D():
   sol = linear_solver.u
 
   print("Time taken of FEM process:", time.time() - start_time)
-
-  save_plot(mesh,
+  mesh_io = mesh_reader.meshio_object
+  save_plot(mesh_io,
             sol.real,
             'Pressure_field',
             current_dir + "/Pressure_field_oblique_succes.pos",

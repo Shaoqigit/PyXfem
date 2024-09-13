@@ -79,7 +79,7 @@ def test_case():
   mesh = Mesh1D(nodes, connectivity)
   # mesh.refine_mesh(1)
 
-  elements2node = mesh.get_mesh(
+  elements2node = mesh.mesh_coordinates(
   )    # dict: elements number with nodes coodinates
   # define the subdomains: domain name (material) and the elements in the domain
   xfm_elements = np.arange(0, num_elem)

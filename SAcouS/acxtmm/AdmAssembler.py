@@ -10,7 +10,7 @@ class AdmAssembler:
   def __init__(self, mesh, subdomains, omega, dtype):
     self.dtype = dtype
     self.omega = omega
-    self.mesh = mesh.get_mesh()
+    self.mesh = mesh.mesh_coordinates()
     self.nb_dofs = mesh.get_nb_nodes()
     self.elem_mats = {}
     for key, elems in subdomains.items():

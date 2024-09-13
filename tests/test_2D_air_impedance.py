@@ -48,7 +48,7 @@ def test_case_2D():
   mesh_reader = MeshReader(current_dir + "/mesh/square_air_imp.msh")
   mesh = mesh_reader.get_mesh()
 
-  elements2node = mesh.get_mesh()
+  elements2node = mesh.mesh_coordinates()
   air_elements = mesh_reader.get_elem_by_physical('air')
   imp_boundary = mesh_reader.get_facet_by_physical('impedance')
   subdomains = {air: air_elements}
@@ -105,13 +105,15 @@ def test_case_2D():
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec)
   sol = linear_solver.u
-  save_plot(mesh,
+
+  mesh_io = mesh_reader.meshio_object
+  save_plot(mesh_io,
             np.real(sol),
             'Pressure_field_real',
             current_dir + "/Pressure_field_real.pos",
             engine='gmsh',
             binary=True)
-  save_plot(mesh,
+  save_plot(mesh_io,
             np.imag(sol),
             'Pressure_field_imag',
             current_dir + "/Pressure_field_imag.pos",

@@ -53,7 +53,7 @@ def test_case_2D():
   mesh = mesh_reader.get_mesh()
 
   air_elements = np.arange(0, mesh.nb_elmes)
-  elements2node = mesh.get_mesh()
+  elements2node = mesh.mesh_coordinates()
   subdomains = {air: air_elements}
   Pf_bases = []
   order = 1
@@ -92,7 +92,8 @@ def test_case_2D():
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec, 'petsc')
   sol = linear_solver.u
-  save_plot(mesh,
+  mesh_io = mesh_reader.meshio_object
+  save_plot(mesh_io,
             sol.real,
             'Numeral_solution',
             current_dir + "/Pressure_field.pos",

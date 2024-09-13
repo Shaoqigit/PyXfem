@@ -32,7 +32,8 @@ class BaseMesh(metaclass=ABCMeta):
     return lines
 
   @abstractmethod
-  def get_mesh(self):
+  def mesh_coordinates(self):
+    """return element to nodes coordinates"""
     pass
 
   @abstractmethod
@@ -65,7 +66,7 @@ class BaseMesh(metaclass=ABCMeta):
 
   def get_nodes_from_elem(self, elem):
     """return nodes of corresoinding element"""
-    return self.get_mesh()[elem]
+    return self.mesh_coordinates()[elem]
 
   @property
   def num_node2coord(self):
@@ -86,8 +87,9 @@ class Mesh1D(BaseMesh):
     self.elem_connect = elem_connect
     self.dim = 1
     self.node_index = np.arange(self.nb_nodes)
+    self.subdomains = None
 
-  def get_mesh(self):
+  def mesh_coordinates(self):
     """dict of element number and nodes coordinates"""
     elems = {}
     for i in range(len(self.elem_connect)):
@@ -151,14 +153,14 @@ import meshio
 
 class Mesh2D(BaseMesh):
 
-  def __init__(self, nodes, elem_connect, edge_connect=None, io_mesh=None):
+  def __init__(self, nodes, elem_connect, edge_connect=None):
     self.nodes = nodes
     self.elem_connect = elem_connect
     self.nb_elmes = len(self.elem_connect)
     self.nb_nodes = len(self.nodes)
     self.node_index = np.arange(self.nb_nodes)
     self.exterior_facets = edge_connect    # [node1, node2]
-    self.io_mesh = io_mesh
+    self.mesh_center = np.mean(self.nodes, axis=0)    # center of the mesh
     self.dim = 2
 
   def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
@@ -192,7 +194,7 @@ class Mesh2D(BaseMesh):
     plt.ylabel('Y', fontsize=14)
     plt.show()
 
-  def get_mesh(self):
+  def mesh_coordinates(self):
     """dict of element number and nodes coordinates"""
     return {i: self.nodes[conn] for i, conn in enumerate(self.elem_connect)}
 
@@ -241,14 +243,14 @@ class Mesh2D(BaseMesh):
 
 class Mesh3D(Mesh2D):
 
-  def __init__(self, nodes, elem_connect, surface_connect, io_mesh=None):
-    super().__init__(nodes, elem_connect, surface_connect, io_mesh)
+  def __init__(self, nodes, elem_connect, surface_connect):
+    super().__init__(nodes, elem_connect, surface_connect)
     self.dim = 3
     self.surface_connect = surface_connect
     self.mesh_center = np.mean(self.nodes, axis=0)
 
-  def get_mesh(self):
-    return super().get_mesh()
+  def mesh_coordinates(self):
+    return super().mesh_coordinates()
 
   def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
     raise NotImplementedError("3D mesh plot not implemented yet")
@@ -273,63 +275,76 @@ class Mesh3D(Mesh2D):
     return normal
 
 
-def mesh_constructor(dim,
-                     nodes,
-                     elem_connect,
-                     edge_connect=None,
-                     io_mesh=None):
+def mesh_constructor(dim, nodes, elem_connect, edge_connect=None):
   if dim == 1:
     return Mesh1D(nodes, elem_connect)
   elif dim == 2:
-    return Mesh2D(nodes, elem_connect, edge_connect, io_mesh)
+    return Mesh2D(nodes, elem_connect, edge_connect)
   elif dim == 3:
-    return Mesh3D(nodes, elem_connect, edge_connect, io_mesh)
+    return Mesh3D(nodes, elem_connect, edge_connect)
   else:
     raise ValueError("dimension not supported")
 
 
-class MeshReader:
+GMSH_DIM_FACET_MAP = {2: 'triangle', 3: 'tetra'}
+GMSH_DIM_EDGE_MAP = {2: 'line', 3: 'triangle'}
 
-  dim2elem_type = {2: 'triangle', 3: 'tetra'}
-  dim2facet_type = {2: 'line', 3: 'triangle'}
+
+class MeshReader:
 
   def __init__(self, mesh_file_name, dim=2):
     self.extension = mesh_file_name.split('.')[-1]
     self.dim = dim
-    self.mesh = meshio.read(mesh_file_name)
+    self.meshio_object = meshio.read(mesh_file_name)
 
   def get_mesh(self) -> BaseMesh:
     if self.extension == 'msh':
       # version 2.2 without saving all parameters
-      nodes = self.mesh.points[:, :self.dim]
-      for elem in self.mesh.cells:
-        if elem.type == MeshReader.dim2elem_type[self.dim]:
+      nodes = self.meshio_object.points[:, :self.dim]
+      for elem in self.meshio_object.cells:
+        if elem.type == GMSH_DIM_FACET_MAP[self.dim]:
           elem_connect = elem.data
-        elif elem.type == MeshReader.dim2facet_type[self.dim]:
+        elif elem.type == GMSH_DIM_EDGE_MAP[self.dim]:
           facet_connect = elem.data
-      return mesh_constructor(self.dim,
-                              nodes,
-                              elem_connect,
-                              facet_connect,
-                              io_mesh=self.mesh)
+      return mesh_constructor(self.dim, nodes, elem_connect, facet_connect)
+
+  def init_subdomains(self, physical_tag2material: dict) -> dict:
+    """return subdomains"""
+    subdomains = {}
+    for tag, material in physical_tag2material.items():
+      subdomains[material] = self.get_elem_by_physical(tag)
+    return subdomains
 
   def get_elem_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
+    """return element number by physical tag
+    3D elements in dim=3
+    2D elements in dim=2
+    """
     if isinstance(physical_tag, str):
-      elem_tag = int(self.mesh.field_data[physical_tag][0])
+      elem_tag = int(self.meshio_object.field_data[physical_tag][0])
     else:
       elem_tag = physical_tag
-    elem_index = np.where(self.mesh.cell_data_dict['gmsh:physical'][
-        MeshReader.dim2elem_type[self.dim]] == elem_tag)
+    elem_index = np.where(self.meshio_object.cell_data_dict['gmsh:physical'][
+        GMSH_DIM_FACET_MAP[self.dim]] == elem_tag)
     return elem_index[0]
 
   def get_facet_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
+    """return facet number by physical tag
+    2D facets in dim=3
+    1D facets in dim=2
+    """
     if isinstance(physical_tag, str):
-      edge_tag = int(self.mesh.field_data[physical_tag][0])
+      edge_tag = int(self.meshio_object.field_data[physical_tag][0])
     else:
       edge_tag = physical_tag
-    edge_index = np.where(self.mesh.cell_data_dict['gmsh:physical'][
-        MeshReader.dim2facet_type[self.dim]] == edge_tag)
+    edge_index = np.where(self.meshio_object.cell_data_dict['gmsh:physical'][
+        GMSH_DIM_EDGE_MAP[self.dim]] == edge_tag)
     return edge_index[0]
+
+  def get_vertices_by_physical(self, physical_tag: Union[str,
+                                                         int]) -> np.ndarray:
+    """return vertices number by physical tag"""
+    raise NotImplementedError("vertices not implemented yet")
 
 
 if __name__ == "__main__":

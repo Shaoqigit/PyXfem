@@ -51,7 +51,7 @@ def test_case_2D():
   mesh = mesh_reader.get_mesh()
 
   air_elements = np.arange(0, mesh.nb_elmes)
-  elements2node = mesh.get_mesh()
+  elements2node = mesh.mesh_coordinates()
   subdomains = {air: air_elements}
   Pf_bases = []
   order = 1

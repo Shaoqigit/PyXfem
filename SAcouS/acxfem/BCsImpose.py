@@ -70,7 +70,7 @@ class ApplyBoundaryConditions:
       print("Weak imposing methods has not been implemented")
 
   def apply_source(self, source, bases, var=None):
-    elements2node = self.mesh.get_mesh()
+    elements2node = self.mesh.mesh_coordinates()
     lag2d_poly_o1 = Lagrange2DTri(1)
     points_o1, weights_o1 = GaussLegendre2DTri(3).points(), GaussLegendre2DTri(
         3).weights()

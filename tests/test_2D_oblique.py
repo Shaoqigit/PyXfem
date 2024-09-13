@@ -63,7 +63,8 @@ def test_case_2D():
   # ====================== Analytical solution ======================
   analytical_solution = ObliquePlaneWave(air, xfm, omega, 45, 1.)
   analytical_solution_vec = analytical_solution.sol_on_mesh(mesh)
-  save_plot(mesh,
+  mesh_io = mesh_reader.meshio_object
+  save_plot(mesh_io,
             analytical_solution_vec.real,
             'Pressure_ana',
             current_dir + "/Pressure_field_oblique_ana.pos",
@@ -78,7 +79,7 @@ def test_case_2D():
   right_top_boundary = mesh_reader.get_facet_by_physical('right_top')
   left_bottom_boundary = mesh_reader.get_facet_by_physical('left_bot')
   right_bottom_boundary = mesh_reader.get_facet_by_physical('right_bot')
-  elements2node = mesh.get_mesh()
+  elements2node = mesh.mesh_coordinates()
   subdomains = {air: air_elements, xfm: foam_elements}
   xfm.set_frequency(omega)
   Pf_bases = []
@@ -159,7 +160,7 @@ def test_case_2D():
 
   print("Time taken of FEM process:", time.time() - start_time)
 
-  save_plot(mesh,
+  save_plot(mesh_io,
             sol.real,
             'Pressure_field',
             current_dir + "/Pressure_field_oblique_succes.pos",

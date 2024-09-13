@@ -96,7 +96,7 @@ if __name__ == "__main__":
   connectivity = np.vstack((elem_connec1, elem_connec2)).T
   # read the mesh data structure
   mesh = Mesh1D(nodes, connectivity)
-  elements2node = mesh.get_mesh(
+  elements2node = mesh.mesh_coordinates(
   )    # dict: elements number with nodes coodinates
 
   # define the subdomains: domain name (material) and the elements in the domain

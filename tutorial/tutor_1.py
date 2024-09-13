@@ -68,7 +68,7 @@ def tutor_case_1():
   connectivity = np.vstack((elem_connec1, elem_connec2)).T
   # crate 1D mesh with nodes coordinates and connectivity
   mesh = Mesh1D(nodes, connectivity)
-  elements2node = mesh.get_mesh(
+  elements2node = mesh.mesh_coordinates(
   )    # dict: elements number with nodes coodinates
   print(f"The of {num_elem} elements mesh is created.")
 

@@ -60,7 +60,7 @@ def test_case_2D():
   air_elements = mesh_reader.get_elem_by_physical('air')
   foam_elements = mesh_reader.get_elem_by_physical('foam')
 
-  elements2node = mesh.get_mesh()
+  elements2node = mesh.mesh_coordinates()
   xfm.set_frequency(omega)
   subdomains = {air: air_elements, xfm: foam_elements}
   Pf_bases = []
@@ -97,7 +97,9 @@ def test_case_2D():
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec, solver='petsc')
   sol = linear_solver.u
-  save_plot(mesh,
+  mesh_io = mesh_reader.meshio_object
+
+  save_plot(mesh_io,
             sol.real,
             'Pressure',
             current_dir + "/Pressure_field_two_fluid.pos",

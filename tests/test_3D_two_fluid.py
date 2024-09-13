@@ -57,22 +57,20 @@ def test_case_3D():
   current_dir = os.path.dirname(os.path.realpath(__file__))
   mesh_reader = MeshReader(current_dir + "/mesh/tube_3D_2f_refine.msh", dim=3)
   mesh = mesh_reader.get_mesh()
-  air_elements = mesh_reader.get_elem_by_physical('air')
-  foam_elements = mesh_reader.get_elem_by_physical('foam')
+  mesh.subdomains = mesh_reader.init_subdomains({'air': air, 'foam': xfm})
 
-  elements2node = mesh.get_mesh()
+  elements2node = mesh.mesh_coordinates()
   xfm.set_frequency(omega)
-  subdomains = {air: air_elements, xfm: foam_elements}
   Pf_bases = []
   order = 1
-  for mat, elems in subdomains.items():
+  for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [
           Helmholtz3DElement('Pf', order, elements2node[elem],
                              (1 / mat.rho_f, 1 / mat.K_f)) for elem in elems
       ]
   # handler the dofs: map the basis to mesh
-  fe_space = FESpace(mesh, subdomains, Pf_bases)
+  fe_space = FESpace(mesh, mesh.subdomains, Pf_bases)
   # initialize the assembler
   import time
   start_time = time.time()
@@ -97,7 +95,9 @@ def test_case_3D():
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec, solver='petsc')
   sol = linear_solver.u
-  save_plot(mesh,
+
+  mesh_io = mesh_reader.meshio_object
+  save_plot(mesh_io,
             sol.real,
             'Numeral_solution',
             current_dir + "/Pf_two_fluid_fem.pos",
@@ -113,7 +113,7 @@ def test_case_3D():
   kundlt_tube = DoubleleLayerKundltTube(0.5, 0.5, air, xfm, omega,
                                         natural_bcs_ana)
   ana_sol = kundlt_tube.sol_on_mesh(mesh, sol_type='pressure')
-  save_plot(mesh,
+  save_plot(mesh_io,
             ana_sol.real,
             'Analytical_solution',
             current_dir + "/Pf_two_fluid_analy.pos",

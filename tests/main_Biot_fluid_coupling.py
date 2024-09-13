@@ -47,7 +47,7 @@ def test_case():
   # read the mesh data structure
   mesh = Mesh1D(nodes, connectivity)
   # mesh.refine_mesh(1)
-  elements2node = mesh.get_mesh(
+  elements2node = mesh.mesh_coordinates(
   )    # dict: elements number with nodes coodinates
 
   # ====================== Pysical Problem ======================

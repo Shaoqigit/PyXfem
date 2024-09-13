@@ -51,7 +51,7 @@ def test_case_2D():
   mesh = mesh_reader.get_mesh()
 
   air_elements = np.arange(0, mesh.nb_elmes)
-  elements2node = mesh.get_mesh()
+  elements2node = mesh.mesh_coordinates()
   subdomains = {air: air_elements}
   Pf_bases = []
   order = 1
@@ -90,7 +90,8 @@ def test_case_2D():
   linear_solver = LinearSolver(fe_space=fe_space)
   linear_solver.solve(left_hand_matrix, right_hand_vec, 'petsc')
   sol = linear_solver.u
-  save_plot(mesh,
+  mesh_io = mesh_reader.meshio_object
+  save_plot(mesh_io,
             sol.real,
             'Pf_numerical',
             current_dir + "/Pressure_field_3D.pos",
@@ -105,7 +106,7 @@ def test_case_2D():
   kundlt_tube = DoubleleLayerKundltTube(0.5, 0.5, air, air, omega,
                                         natural_bcs_ana)
   ana_sol = kundlt_tube.sol_on_mesh(mesh, sol_type='pressure')
-  save_plot(mesh,
+  save_plot(mesh_io,
             ana_sol.real,
             'Pf_analytical',
             current_dir + "/Pressure_field_3D_analy.pos",

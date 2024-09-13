@@ -51,7 +51,7 @@ class PyAcoustiXSetuper:
       subdomains[material] = domain_elements
 
     check_material_compability(subdomains)
-    elements2node = mesh.get_mesh()
+    elements2node = mesh.mesh_coordinates()
 
     bases = []
     for mat, elems in subdomains.items():
