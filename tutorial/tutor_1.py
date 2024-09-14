@@ -68,23 +68,23 @@ def tutor_case_1():
   connectivity = np.vstack((elem_connec1, elem_connec2)).T
   # crate 1D mesh with nodes coordinates and connectivity
   mesh = Mesh1D(nodes, connectivity)
-  elements2node = mesh.mesh_coordinates(
+  elements2node = mesh.get_mesh_coordinates(
   )    # dict: elements number with nodes coodinates
   print(f"The of {num_elem} elements mesh is created.")
 
-  # define the subdomains: domain name (material) and the elements in the domain
+  # define the mesh.subdomains: domain name (material) and the elements in the domain
   air_elements = np.arange(0, int(num_elem / 2))
   xfm_elements = np.arange(int(num_elem / 2), num_elem)
-  subdomains = {air: air_elements, xfm: xfm_elements}
+  mesh.subdomains = {air: air_elements, xfm: xfm_elements}
 
   # check if the materials defined in the mesh domains are compatible
-  check_material_compability(subdomains)
+  check_material_compability(mesh.subdomains)
 
   print("=====================set up the FEM bases===========================")
   order = 2    # global order of the bases, which can be defined respectively on each elements
   # applied the basis on each element
   Pf_bases = []
-  for mat, elems in subdomains.items():
+  for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [
           Lobbato1DElement('Pf', order, elements2node[elem]) for elem in elems
@@ -97,8 +97,8 @@ def tutor_case_1():
   # initialize the assembler
   # here two fluid-like materials are defined, so the assembler will be initialized with high wraped HelmholtzAssembler (level-wrapped general assembly can be used as well, but more complicated)
   Helmholtz_assember = HelmholtzAssembler(
-      Helmholtz_dof_handler, subdomains, dtype=np.complex128
-  )    # args: dof_handler, subdomains, dtype (type of left hand matrix and right hand vector)
+      Helmholtz_dof_handler, mesh.subdomains, dtype=np.complex128
+  )    # args: dof_handler, mesh.subdomains, dtype (type of left hand matrix and right hand vector)
   # assembly the global matrix with omega
   Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
   left_hand_matrix = Helmholtz_assember.get_global_matrix(
@@ -109,7 +109,7 @@ def tutor_case_1():
   print(
       "=====================set up the boundary conditions==========================="
   )
-  fe_space = FESpace(mesh, subdomains, Pf_bases)
+  fe_space = FESpace(mesh, Pf_bases)
   right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
                             dtype=np.complex128)
 

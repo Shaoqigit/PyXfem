@@ -50,8 +50,9 @@ class PyAcoustiXSetuper:
       domain_elements = mesh_domains[phy_domain[1]]['domain_elements']
       subdomains[material] = domain_elements
 
+    mesh.subdomains = subdomains
     check_material_compability(subdomains)
-    elements2node = mesh.mesh_coordinates()
+    elements2node = mesh.get_mesh_coordinates()
 
     bases = []
     for mat, elems in subdomains.items():
@@ -61,7 +62,7 @@ class PyAcoustiXSetuper:
             for i, elem in enumerate(elems)
         ]
 
-    fe_space = FESpace(mesh, subdomains, bases)
+    fe_space = FESpace(mesh, bases)
     Helmholtz_assember = HelmholtzAssembler(fe_space,
                                             subdomains,
                                             dtype=np.complex128)

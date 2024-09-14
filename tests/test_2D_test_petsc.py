@@ -78,14 +78,14 @@ def test_case_2D():
   right_top_boundary = mesh_reader.get_facet_by_physical('right_top')
   left_bottom_boundary = mesh_reader.get_facet_by_physical('left_bot')
   right_bottom_boundary = mesh_reader.get_facet_by_physical('right_bot')
-  elements2node = mesh.mesh_coordinates()
+  elements2node = mesh.get_mesh_coordinates()
   # breakpoint()
   # subdomains = {air: all_elements}
-  subdomains = {air: air_elements, xfm: foam_elements}
+  mesh.subdomains = {air: air_elements, xfm: foam_elements}
   xfm.set_frequency(omega)
   Pf_bases = []
   order = 1
-  for mat, elems in subdomains.items():
+  for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Fluid':
       inv_rho = 1 / mat.rho_f
       inv_K = 1 / mat.K_f
@@ -93,7 +93,7 @@ def test_case_2D():
           Helmholtz2DElement('Pf', order, elements2node[elem], (inv_rho,
                                                                 inv_K))
           for elem in elems)
-  fe_space = FESpace(mesh, subdomains, Pf_bases)
+  fe_space = FESpace(mesh, Pf_bases)
   print("Number of global dofs:", fe_space.get_nb_dofs())
   # initialize the assembler
   start_assembly_time = time.time()

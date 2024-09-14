@@ -96,19 +96,19 @@ if __name__ == "__main__":
   connectivity = np.vstack((elem_connec1, elem_connec2)).T
   # read the mesh data structure
   mesh = Mesh1D(nodes, connectivity)
-  elements2node = mesh.mesh_coordinates(
+  elements2node = mesh.get_mesh_coordinates(
   )    # dict: elements number with nodes coodinates
 
   # define the subdomains: domain name (material) and the elements in the domain
   air_elements = np.arange(0, int(num_elem / 2))
   xfm_elements = np.arange(int(num_elem / 2), num_elem)
-  subdomains = {air: air_elements, xfm: xfm_elements}
-  check_material_compability(subdomains)
+  mesh.subdomains = {air: air_elements, xfm: xfm_elements}
+  check_material_compability(mesh.subdomains)
 
   order = 2    # global order of the bases
   # applied the basis on each element
   Pf_bases = []
-  for mat, elems in subdomains.items():
+  for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [
           Lobbato1DElement('Pf', order, elements2node[elem]) for elem in elems
@@ -116,11 +116,11 @@ if __name__ == "__main__":
     # print(basis.ke)
 
   # handler the dofs: map the basis to mesh
-  fe_space = FESpace(mesh, subdomains, Pf_bases)
+  fe_space = FESpace(mesh, Pf_bases)
 
   # initialize the assembler
   Helmholtz_assember = HelmholtzAssembler(fe_space,
-                                          subdomains,
+                                          mesh.subdomains,
                                           dtype=np.complex128)
   K_w = Helmholtz_assember.assemble_material_K(Pf_bases, 'Pf', omega=1)
   M_w = Helmholtz_assember.assemble_material_M(Pf_bases, 'Pf', omega=1)

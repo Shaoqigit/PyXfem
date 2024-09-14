@@ -47,7 +47,7 @@ def test_case():
   # read the mesh data structure
   mesh = Mesh1D(nodes, connectivity)
   # mesh.refine_mesh(1)
-  elements2node = mesh.mesh_coordinates(
+  elements2node = mesh.get_mesh_coordinates(
   )    # dict: elements number with nodes coodinates
 
   # ====================== Pysical Problem ======================
@@ -78,7 +78,7 @@ def test_case():
   # define the subdomains: domain name (material) and the elements in the domain
   air_elements = np.arange(0, int(num_elem / 2))
   xfm_elements = np.arange(int(num_elem / 2), num_elem)
-  subdomains = {air: air_elements, xfm: xfm_elements}
+  mesh.subdomains = {air: air_elements, xfm: xfm_elements}
   check_material_compability(subdomains)
   # print(elements_set)
 
@@ -99,29 +99,32 @@ def test_case():
     else:
       raise ValueError("Material type is not defined!")
 
-  Helmholtz_fe_space = FESpace(mesh, subdomains, Pf_bases)
-  Biot_fe_space = FESpace(mesh, subdomains, Pb_bases, Ux_bases)
+  Helmholtz_fe_space = FESpace(mesh, Pf_bases)
+  Biot_fe_space = FESpace(mesh, Pb_bases, Ux_bases)
 
   # initialize the assembler
   Helmholtz_assember = HelmholtzAssembler(Helmholtz_fe_space,
-                                          subdomains,
+                                          mesh.subdomains,
                                           dtype=np.complex128)
   Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf', omega)
 
-  Biot_assember = BiotAssembler(Biot_fe_space, subdomains, dtype=np.complex128)
+  Biot_assember = BiotAssembler(Biot_fe_space,
+                                mesh.subdomains,
+                                dtype=np.complex128)
   Biot_assember.assembly_global_matrix([Pb_bases, Ux_bases], ['Pb', 'Ux'],
                                        omega)
   import pdb
   pdb.set_trace()
   Assembler = CouplingAssember(mesh,
-                               subdomains, [Helmholtz_assember, Biot_assember],
+                               mesh.subdomains,
+                               [Helmholtz_assember, Biot_assember],
                                coupling_type="PP_continue")
   left_hand_matrix = Assembler.assembly_gloabl_matrix()
 
   # import pdb; pdb.set_trace()
 
   # ============================= Boundary conditions =====================================
-  fe_space = FESpace(mesh, subdomains, Pf_bases, Pb_bases, Ux_bases)
+  fe_space = FESpace(mesh, Pf_bases, Pb_bases, Ux_bases)
   right_hand_vec = np.zeros(Assembler.nb_global_dofs, dtype=np.complex128)
   # essential_bcs = {'type': 'solid_displacement', 'value': P_a(-1,0), 'position': -1.}  # position is the x coordinate
   BCs_applier = ApplyBoundaryConditions(mesh, fe_space, left_hand_matrix,

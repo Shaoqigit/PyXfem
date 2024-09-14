@@ -79,16 +79,16 @@ def test_case():
   mesh = Mesh1D(nodes, connectivity)
   # mesh.refine_mesh(1)
 
-  elements2node = mesh.mesh_coordinates(
+  elements2node = mesh.get_mesh_coordinates(
   )    # dict: elements number with nodes coodinates
-  # define the subdomains: domain name (material) and the elements in the domain
+  # define the mesh.subdomains: domain name (material) and the elements in the domain
   xfm_elements = np.arange(0, num_elem)
-  subdomains = {xfm: xfm_elements}
-  check_material_compability(subdomains)
+  mesh.subdomains = {xfm: xfm_elements}
+  check_material_compability(mesh.subdomains)
 
   order = 3    # global order of the bases
   # applied the basis on each element
-  for mat, elems in subdomains.items():
+  for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Poroelastic':
       Pb_bases = [
           Helmholtz1DElement('Pb', order, elements2node[elem],
@@ -102,7 +102,7 @@ def test_case():
       ]    #
 
   # handler the dofs: map the basis to mesh
-  fe_space = FESpace(mesh, subdomains, Pb_bases, Ux_bases)
+  fe_space = FESpace(mesh, Pb_bases, Ux_bases)
 
   # initialize the assembler
   Biot_assember = BiotAssembler(fe_space, dtype=np.complex128)

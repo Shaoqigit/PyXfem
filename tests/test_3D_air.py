@@ -51,18 +51,18 @@ def test_case_2D():
   mesh = mesh_reader.get_mesh()
 
   air_elements = np.arange(0, mesh.nb_elmes)
-  elements2node = mesh.mesh_coordinates()
-  subdomains = {air: air_elements}
+  elements2node = mesh.get_mesh_coordinates()
+  mesh.subdomains = {air: air_elements}
   Pf_bases = []
   order = 1
-  for mat, elems in subdomains.items():
+  for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [
           Helmholtz3DElement('Pf', order, elements2node[elem],
                              (1 / mat.rho_f, 1 / mat.K_f)) for elem in elems
       ]
   # handler the dofs: map the basis to mesh
-  fe_space = FESpace(mesh, subdomains, Pf_bases)
+  fe_space = FESpace(mesh, Pf_bases)
   # initialize the assembler
   import time
   start_time = time.time()

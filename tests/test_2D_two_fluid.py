@@ -60,19 +60,19 @@ def test_case_2D():
   air_elements = mesh_reader.get_elem_by_physical('air')
   foam_elements = mesh_reader.get_elem_by_physical('foam')
 
-  elements2node = mesh.mesh_coordinates()
+  elements2node = mesh.get_mesh_coordinates()
   xfm.set_frequency(omega)
-  subdomains = {air: air_elements, xfm: foam_elements}
+  mesh.subdomains = {air: air_elements, xfm: foam_elements}
   Pf_bases = []
   order = 1
-  for mat, elems in subdomains.items():
+  for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [
           Helmholtz2DElement('Pf', order, elements2node[elem],
                              (1 / mat.rho_f, 1 / mat.K_f)) for elem in elems
       ]
   # handler the dofs: map the basis to mesh
-  fe_space = FESpace(mesh, subdomains, Pf_bases)
+  fe_space = FESpace(mesh, Pf_bases)
   # initialize the assembler
   import time
   start_time = time.time()

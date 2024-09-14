@@ -54,7 +54,7 @@ def test_case():
   mesh = Mesh1D(nodes, connectivity)
   # mesh.refine_mesh(1)
 
-  elements_set = mesh.mesh_coordinates(
+  elements_set = mesh.get_mesh_coordinates(
   )    # dict: elements number with nodes coodinates
   # print(elements_set)
 

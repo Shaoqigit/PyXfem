@@ -68,18 +68,18 @@ def test_case_1():
   # read the mesh data structure
   mesh = Mesh1D(nodes, connectivity)
   # mesh.plotmesh(withnode=True)
-  # define the subdomains: domain name (material) and the elements in the domain
+  # define the mesh.subdomains: domain name (material) and the elements in the domain
   air_elements = np.arange(0, int(num_elem / 2))
   xfm_elements = np.arange(int(num_elem / 2), num_elem)
-  subdomains = {air: air_elements, xfm: xfm_elements}
-  check_material_compability(subdomains)
-  elements2node = mesh.mesh_coordinates(
+  mesh.subdomains = {air: air_elements, xfm: xfm_elements}
+  check_material_compability(mesh.subdomains)
+  elements2node = mesh.get_mesh_coordinates(
   )    # dict: elements number with nodes coodinates
   # print(elements_set)
   order = 2    # global order of the bases
   # applied the basis on each element
   Pf_bases = []
-  for mat, elems in subdomains.items():
+  for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [
           Helmholtz1DElement('Pf', order, elements2node[elem],
@@ -89,7 +89,7 @@ def test_case_1():
     # print(basis.me)
 
   # handler the dofs: map the basis to mesh
-  fe_space = FESpace(mesh, subdomains, Pf_bases)
+  fe_space = FESpace(mesh, Pf_bases)
 
   # initialize the assembler
   Helmholtz_assember = HelmholtzAssembler(fe_space, dtype=np.complex128)

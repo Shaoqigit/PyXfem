@@ -53,14 +53,16 @@ def test_case_3D():
 
   freq = 1000
   omega = 2 * np.pi * freq    # angular frequency
+  xfm.set_frequency(omega)
+
   # Harmonic Acoustic problem define the frequency
   current_dir = os.path.dirname(os.path.realpath(__file__))
   mesh_reader = MeshReader(current_dir + "/mesh/tube_3D_2f_refine.msh", dim=3)
   mesh = mesh_reader.get_mesh()
-  mesh.subdomains = mesh_reader.init_subdomains({'air': air, 'foam': xfm})
+  mesh_reader.init_subdomains(mesh, {'air': air, 'foam': xfm})
 
-  elements2node = mesh.mesh_coordinates()
-  xfm.set_frequency(omega)
+  # ============================== construct the bases ==============================
+  elements2node = mesh.get_mesh_coordinates()
   Pf_bases = []
   order = 1
   for mat, elems in mesh.subdomains.items():
@@ -69,8 +71,9 @@ def test_case_3D():
           Helmholtz3DElement('Pf', order, elements2node[elem],
                              (1 / mat.rho_f, 1 / mat.K_f)) for elem in elems
       ]
+
   # handler the dofs: map the basis to mesh
-  fe_space = FESpace(mesh, mesh.subdomains, Pf_bases)
+  fe_space = FESpace(mesh, Pf_bases)
   # initialize the assembler
   import time
   start_time = time.time()
@@ -78,10 +81,10 @@ def test_case_3D():
   Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
   left_hand_matrix = Helmholtz_assember.get_global_matrix(omega)
   print("Time taken to assemble the matrix:", time.time() - start_time)
-  right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
-                            dtype=np.complex128)
 
   # ====================== Boundary Conditions ======================
+  right_hand_vec = np.zeros(Helmholtz_assember.nb_global_dofs,
+                            dtype=np.complex128)
   natural_facet = mesh_reader.get_facet_by_physical('inlet')
   natural_bcs = {
       'type': 'fluid_velocity',

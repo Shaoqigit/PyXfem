@@ -50,7 +50,7 @@ connectivity = np.vstack((elem_connec1, elem_connec2)).T
 mesh = Mesh1D(nodes, connectivity)
 # mesh.refine_mesh(1)
 
-elements_set = mesh.mesh_coordinates(
+elements_set = mesh.get_mesh_coordinates(
 )    # dict: elements number with nodes coodinates
 print(elements_set)
 

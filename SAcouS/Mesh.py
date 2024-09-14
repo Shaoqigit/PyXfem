@@ -32,7 +32,7 @@ class BaseMesh(metaclass=ABCMeta):
     return lines
 
   @abstractmethod
-  def mesh_coordinates(self):
+  def get_mesh_coordinates(self):
     """return element to nodes coordinates"""
     pass
 
@@ -66,7 +66,7 @@ class BaseMesh(metaclass=ABCMeta):
 
   def get_nodes_from_elem(self, elem):
     """return nodes of corresoinding element"""
-    return self.mesh_coordinates()[elem]
+    return self.get_mesh_coordinates()[elem]
 
   @property
   def num_node2coord(self):
@@ -89,7 +89,7 @@ class Mesh1D(BaseMesh):
     self.node_index = np.arange(self.nb_nodes)
     self.subdomains = None
 
-  def mesh_coordinates(self):
+  def get_mesh_coordinates(self):
     """dict of element number and nodes coordinates"""
     elems = {}
     for i in range(len(self.elem_connect)):
@@ -162,6 +162,7 @@ class Mesh2D(BaseMesh):
     self.exterior_facets = edge_connect    # [node1, node2]
     self.mesh_center = np.mean(self.nodes, axis=0)    # center of the mesh
     self.dim = 2
+    self.subdomains = None
 
   def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
     """
@@ -194,7 +195,7 @@ class Mesh2D(BaseMesh):
     plt.ylabel('Y', fontsize=14)
     plt.show()
 
-  def mesh_coordinates(self):
+  def get_mesh_coordinates(self):
     """dict of element number and nodes coordinates"""
     return {i: self.nodes[conn] for i, conn in enumerate(self.elem_connect)}
 
@@ -249,8 +250,8 @@ class Mesh3D(Mesh2D):
     self.surface_connect = surface_connect
     self.mesh_center = np.mean(self.nodes, axis=0)
 
-  def mesh_coordinates(self):
-    return super().mesh_coordinates()
+  def get_mesh_coordinates(self):
+    return super().get_mesh_coordinates()
 
   def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
     raise NotImplementedError("3D mesh plot not implemented yet")
@@ -308,11 +309,13 @@ class MeshReader:
           facet_connect = elem.data
       return mesh_constructor(self.dim, nodes, elem_connect, facet_connect)
 
-  def init_subdomains(self, physical_tag2material: dict) -> dict:
+  def init_subdomains(self, mesh: BaseMesh,
+                      physical_tag2material: dict) -> dict:
     """return subdomains"""
     subdomains = {}
     for tag, material in physical_tag2material.items():
       subdomains[material] = self.get_elem_by_physical(tag)
+    mesh.subdomains = subdomains
     return subdomains
 
   def get_elem_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:

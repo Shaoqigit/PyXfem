@@ -17,6 +17,7 @@
 # dofhandle.py
 # deal with mesh and basis, return global dof index t
 
+from functools import cached_property
 import numpy as np
 from collections import defaultdict
 
@@ -263,18 +264,19 @@ class GeneralDofHandler1D(DofHandler1D):
 
 class FESpace:
 
-  def __init__(self, mesh, subdomains, *all_bases) -> None:
+  def __init__(self, mesh, *all_bases) -> None:
     self.mesh = mesh
-    self.subdomains = subdomains
+    self.subdomains = mesh.subdomains
     self.nb_var = len(all_bases)
     self.whole_bases = [base for bases in all_bases for base in bases]
     self.var_names = [base.label for base in self.whole_bases]
 
-    self.elem_mat = {}
-    self.subdoamin_start_index = {}
+  @cached_property
+  def element_index2material(self):
+    elem_mat = {}
     for mat, elems in self.subdomains.items():
-      self.subdoamin_start_index[mat] = elems[0]
-      self.elem_mat.update({elem: mat for elem in elems})
+      elem_mat.update({elem: mat for elem in elems})
+    return elem_mat
 
   @property
   def nb_external_dofs(self):
@@ -283,6 +285,11 @@ class FESpace:
   @property
   def nb_internal_dofs(self):
     return self.get_nb_dofs() - self.nb_external_dofs
+
+  def compute_subdomain_start_index(self):
+    self.subdoamin_start_index = {}
+    for mat, elems in self.subdomains.items():
+      self.subdoamin_start_index[mat] = elems[0]
 
   def get_nb_dofs(self):
     # to be modified to adapet to 2D/3D
@@ -345,6 +352,7 @@ class FESpace:
     return base4dofs.get(label, None)
 
   def get_dofs_from_var_coord(self, coord, var):
+    self.compute_subdomain_start_index()
     self.mat2dofs = defaultdict(
         dict)    # {mat: {coord: dofs}} for BC imposition
     for mat, elems in self.subdomains.items():

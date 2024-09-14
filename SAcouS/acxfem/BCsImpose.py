@@ -10,18 +10,17 @@ from .Quadratures import GaussLegendre2DTri
 
 class ApplyBoundaryConditions:
 
-  def __init__(self, mesh, FE_space, left_hand_side, right_hand_side, omega=0):
+  def __init__(self, mesh, fe_space, left_hand_side, right_hand_side, omega=0):
     self.mesh = mesh
-    self.FE_space = FE_space
-    self.elem_mat = FE_space.elem_mat
+    self.fe_space = fe_space
     self.left_hand_side = left_hand_side
     self.right_hand_side = right_hand_side
-    self.nb_dofs = FE_space.get_nb_dofs()
+    self.nb_dofs = fe_space.get_nb_dofs()
     self.omega = omega
     self.dtype = self.right_hand_side.dtype
 
   def mesh2dof(self, position, var=None):
-    return self.FE_space.get_dofs_from_var_coord(position, var)
+    return self.fe_space.get_dofs_from_var_coord(position, var)
 
   def apply_essential_bc(self,
                          essential_bcs,
@@ -40,9 +39,10 @@ class ApplyBoundaryConditions:
       self.right_hand_side[dof_index] += essential_bcs['value']
 
     elif bctype == 'penalty':
+      elem_mat = self.fe_space.element_index2material
       row = np.array([dof_index])
       col = np.array([dof_index])
-      mat = self.elem_mat[0]
+      mat = elem_mat[0]
       data = penalty * mat.P_hat * np.ones((1), dtype=self.dtype)
       # data = penalty*basis.me[1,1]
       self.left_hand_side += csr_array((data, (row, col)),
@@ -51,7 +51,8 @@ class ApplyBoundaryConditions:
       self.right_hand_side[dof_index] += penalty * essential_bcs['value']
 
     elif bctype == 'nitsche':
-      mat = self.elem_mat[0]
+      elem_mat = self.fe_space.element_index2material
+      mat = elem_mat[0]
       alpha = 1e1
       scaling = 2 * self.mesh.get_nb_elems()
       nitsch = -1 * mat.P_hat * scaling * np.array(
@@ -70,14 +71,14 @@ class ApplyBoundaryConditions:
       print("Weak imposing methods has not been implemented")
 
   def apply_source(self, source, bases, var=None):
-    elements2node = self.mesh.mesh_coordinates()
+    elements2node = self.mesh.get_mesh_coordinates()
     lag2d_poly_o1 = Lagrange2DTri(1)
     points_o1, weights_o1 = GaussLegendre2DTri(3).points(), GaussLegendre2DTri(
         3).weights()
     if var is None:
-      dofs_index = self.FE_space.get_global_dofs()
+      dofs_index = self.fe_space.get_global_dofs()
     else:
-      dofs_index = self.FE_space.get_global_dofs_by_base(var)
+      dofs_index = self.fe_space.get_global_dofs_by_base(var)
     max_entries = len(dofs_index) * len(dofs_index[0]) * len(dofs_index[0])
     rows = np.empty(max_entries, dtype=int)
     data_M = np.empty(max_entries, dtype=self.dtype)
@@ -109,10 +110,11 @@ class ApplyBoundaryConditions:
 
   def apply_impedance_bc(self, impedence_bcs, var=None):
     if isinstance(impedence_bcs['position'], float):    #1D case
+      elem_mat = self.fe_space.element_index2material
       dof_index = self.mesh2dof(impedence_bcs['position'], var)
       row = np.array([dof_index])
       col = np.array([dof_index])
-      mat = self.elem_mat[dof_index - 1]
+      mat = elem_mat[dof_index - 1]
       mat.set_frequency(self.omega)
       mat_coeff = 1j * 1 / mat.rho_f * (self.omega /
                                         mat.c_f) * impedence_bcs['value']
