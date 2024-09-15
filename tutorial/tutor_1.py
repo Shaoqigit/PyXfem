@@ -24,15 +24,16 @@ sys.path.append('/home/shaoqi/Devlop/PyXfem/PyAcoustiX/')
 import numpy as np
 import matplotlib.pyplot as plt
 
-from SAcouS.acxfem.basis import Lobbato1DElement
-from SAcouS.acxfem.mesh import Mesh1D
-from SAcouS.acxfem.dofhandler import GeneralDofHandler1D, FESpace
-from SAcouS.acxfem.physic_assembler import HelmholtzAssembler
-from SAcouS.acxfem.BCs_impose import ApplyBoundaryConditions
-from SAcouS.acxfem.materials import Air, EquivalentFluid
-from SAcouS.acxfem.utilities import check_material_compability, plot_matrix_partten
-from SAcouS.acxfem.solver import LinearSolver
-from SAcouS.acxfem.postprocess import PostProcessField
+from SAcouS.acxfem import Lobbato1DElement
+from SAcouS.Materials import Air, EquivalentFluid
+from SAcouS.PostProcess import PostProcessField
+
+from SAcouS.Mesh import Mesh1D
+from SAcouS.acxfem import GeneralDofHandler1D, FESpace
+from SAcouS.acxfem import HelmholtzAssembler
+from SAcouS.acxfem import ApplyBoundaryConditions
+from SAcouS.acxfem import check_material_compability, plot_matrix_partten
+from SAcouS.acxfem import LinearSolver
 from analytical.fluid_sol import DoubleleLayerKundltTube
 
 

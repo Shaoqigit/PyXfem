@@ -79,12 +79,12 @@ def test_case():
   air_elements = np.arange(0, int(num_elem / 2))
   xfm_elements = np.arange(int(num_elem / 2), num_elem)
   mesh.subdomains = {air: air_elements, xfm: xfm_elements}
-  check_material_compability(subdomains)
+  check_material_compability(mesh.subdomains)
   # print(elements_set)
 
   order = 3    # global order of the bases
   # applied the basis on each element
-  for mat, elems in subdomains.items():
+  for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases = [
           Lobbato1DElement('Pf', order, elements2node[elem]) for elem in elems
@@ -113,8 +113,6 @@ def test_case():
                                 dtype=np.complex128)
   Biot_assember.assembly_global_matrix([Pb_bases, Ux_bases], ['Pb', 'Ux'],
                                        omega)
-  import pdb
-  pdb.set_trace()
   Assembler = CouplingAssember(mesh,
                                mesh.subdomains,
                                [Helmholtz_assember, Biot_assember],

@@ -13,3 +13,8 @@ dist/
 *.pyc
 *.pyo
 *.pyd
+
+# Ignore post processing reuslt files
+*.vtk
+*.vtu
+*.pos
