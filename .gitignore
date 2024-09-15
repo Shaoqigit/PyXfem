@@ -15,6 +15,6 @@ dist/
 *.pyd
 
 # Ignore post processing reuslt files
-*.vtk
-*.vtu
-*.pos
+tests/*.vtk
+tests/*.vtu
+tests/*.pos
