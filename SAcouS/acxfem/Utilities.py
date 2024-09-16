@@ -19,29 +19,32 @@
 
 from scipy.sparse import csr_array
 
+
 def check_material_compability(subdomains):
-    if len(subdomains) == 1:
-         print("Material models are compatible, computation continues ...")
-         return True
-    mats = []
-    for key in subdomains.keys():
-        mats.append(key)
+  if len(subdomains) == 1:
+    print("Material models are compatible, computation continues ...")
+    return True
+  mats = []
+  for key in subdomains.keys():
+    mats.append(key)
 
-    compatibale_mats = mats[0].COMPATIBLE
-    # print(compatibale_mats)
-    for mat in mats:
-        # print(mat.TYPE)
-        if mat.TYPE not in compatibale_mats:
-            raise ValueError("Material model is not compatible")
-        else:
-            print(f"Material models {mat.name} are compatible, computation continues ...")
-
-
-def display_matrix_in_array(M:csr_array):
-        return M.toarray()
+  compatibale_mats = mats[0].COMPATIBLE
+  # print(compatibale_mats)
+  for mat in mats:
+    # print(mat.TYPE)
+    if mat.TYPE not in compatibale_mats:
+      raise ValueError("Material model is not compatible")
+    else:
+      print(
+          f"Material models {mat.name} are compatible, computation continues ..."
+      )
 
 
-def plot_matrix_partten(M:csr_array):
-    import matplotlib.pyplot as plt
-    plt.spy(M)
-    plt.show()
+def display_matrix_in_array(M: csr_array):
+  return M.toarray()
+
+
+def plot_matrix_partten(M: csr_array):
+  import matplotlib.pyplot as plt
+  plt.spy(M)
+  plt.show()

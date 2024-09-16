@@ -3,9 +3,8 @@ import numpy as np
 from scipy.sparse import csr_array, csr_matrix, coo_matrix
 
 from .Basis import Lobbato1DElement, Lagrange2DTriElement
-from .Quadratures import GaussLegendreQuadrature
 from .Polynomial import Lobatto, Lagrange2DTri
-from .Quadratures import GaussLegendre2DTri
+from .Quadratures import get_quadrature_points_weights
 
 
 class ApplyBoundaryConditions:
@@ -29,52 +28,48 @@ class ApplyBoundaryConditions:
                          penalty=1e5):
     # import pdb; pdb.set_trace()
     dof_index = self.mesh2dof(essential_bcs['position'], var)
+    match bctype:
+      case 'strong':
+        left_hand_side_lil = self.left_hand_side.tolil()
+        left_hand_side_lil[dof_index, :] = 0
+        left_hand_side_lil[:, dof_index] = 0
+        left_hand_side_lil[dof_index, dof_index] = 1
+        self.left_hand_side = left_hand_side_lil.tocsr()
+        self.right_hand_side[dof_index] += essential_bcs['value']
+      case 'penalty':
+        elem_mat = self.fe_space.element_index2material
+        row = np.array([dof_index])
+        col = np.array([dof_index])
+        mat = elem_mat[0]
+        data = penalty * mat.P_hat * np.ones((1), dtype=self.dtype)
+        # data = penalty*basis.me[1,1]
+        self.left_hand_side += csr_array((data, (row, col)),
+                                         shape=(self.nb_dofs, self.nb_dofs),
+                                         dtype=self.dtype)
+        self.right_hand_side[dof_index] += penalty * essential_bcs['value']
 
-    if bctype == 'strong':
-      left_hand_side_lil = self.left_hand_side.tolil()
-      left_hand_side_lil[dof_index, :] = 0
-      left_hand_side_lil[:, dof_index] = 0
-      left_hand_side_lil[dof_index, dof_index] = 1
-      self.left_hand_side = left_hand_side_lil.tocsr()
-      self.right_hand_side[dof_index] += essential_bcs['value']
+      case 'nitsche':
+        elem_mat = self.fe_space.element_index2material
+        mat = elem_mat[0]
+        alpha = 1e1
+        scaling = 2 * self.mesh.get_nb_elems()
+        nitsch = -1 * mat.P_hat * scaling * np.array(
+            [[0, 0], [-0.5, 0.5]]) - 1 * mat.P_hat * scaling * np.array(
+                [[0, -0.5], [0, 0.5]]) + alpha * np.array([[0, 0], [0, 1]])
+        left_hand_side_lil = self.left_hand_side.tolil()
+        left_hand_side_lil[dof_index - 1:dof_index + 1,
+                           dof_index - 1:dof_index + 1] += nitsch
+        self.left_hand_side = left_hand_side_lil.tocsr()
 
-    elif bctype == 'penalty':
-      elem_mat = self.fe_space.element_index2material
-      row = np.array([dof_index])
-      col = np.array([dof_index])
-      mat = elem_mat[0]
-      data = penalty * mat.P_hat * np.ones((1), dtype=self.dtype)
-      # data = penalty*basis.me[1,1]
-      self.left_hand_side += csr_array((data, (row, col)),
-                                       shape=(self.nb_dofs, self.nb_dofs),
-                                       dtype=self.dtype)
-      self.right_hand_side[dof_index] += penalty * essential_bcs['value']
+        self.right_hand_side[dof_index - 1] += 0.5 * essential_bcs['value']
+        self.right_hand_side[dof_index] += alpha * essential_bcs[
+            'value'] - 0.5 * essential_bcs['value']
 
-    elif bctype == 'nitsche':
-      elem_mat = self.fe_space.element_index2material
-      mat = elem_mat[0]
-      alpha = 1e1
-      scaling = 2 * self.mesh.get_nb_elems()
-      nitsch = -1 * mat.P_hat * scaling * np.array(
-          [[0, 0], [-0.5, 0.5]]) - 1 * mat.P_hat * scaling * np.array(
-              [[0, -0.5], [0, 0.5]]) + alpha * np.array([[0, 0], [0, 1]])
-      left_hand_side_lil = self.left_hand_side.tolil()
-      left_hand_side_lil[dof_index - 1:dof_index + 1,
-                         dof_index - 1:dof_index + 1] += nitsch
-      self.left_hand_side = left_hand_side_lil.tocsr()
-
-      self.right_hand_side[dof_index - 1] += 0.5 * essential_bcs['value']
-      self.right_hand_side[dof_index] += alpha * essential_bcs[
-          'value'] - 0.5 * essential_bcs['value']
-
-    else:
-      print("Weak imposing methods has not been implemented")
+      case _:
+        print("Weak imposing methods has not been implemented")
 
   def apply_source(self, source, bases, var=None):
     elements2node = self.mesh.get_mesh_coordinates()
-    lag2d_poly_o1 = Lagrange2DTri(1)
-    points_o1, weights_o1 = GaussLegendre2DTri(3).points(), GaussLegendre2DTri(
-        3).weights()
     if var is None:
       dofs_index = self.fe_space.get_global_dofs()
     else:
@@ -109,104 +104,107 @@ class ApplyBoundaryConditions:
     return self.right_hand_side
 
   def apply_impedance_bc(self, impedence_bcs, var=None):
-    if isinstance(impedence_bcs['position'], float):    #1D case
-      elem_mat = self.fe_space.element_index2material
-      dof_index = self.mesh2dof(impedence_bcs['position'], var)
-      row = np.array([dof_index])
-      col = np.array([dof_index])
-      mat = elem_mat[dof_index - 1]
-      mat.set_frequency(self.omega)
-      mat_coeff = 1j * 1 / mat.rho_f * (self.omega /
-                                        mat.c_f) * impedence_bcs['value']
-      data = np.array([mat_coeff * 1])
-      C_damp = csr_array((data, (row, col)),
-                         shape=(self.nb_dofs, self.nb_dofs),
-                         dtype=self.dtype)
-      self.left_hand_side += C_damp
-      return C_damp
-    elif isinstance(impedence_bcs['position'], np.ndarray):
-      edges = impedence_bcs['position']
-      lines = self.mesh.exterior_facets[edges]
-      rows = []
-      cols = []
-      data_M = []
-      for line_index in lines:
-        node_1_coord = self.mesh.nodes[line_index[0]]
-        node_2_coord = self.mesh.nodes[line_index[1]]
-        gl_q = GaussLegendreQuadrature(3)
-        jac = np.linalg.norm(node_1_coord - node_2_coord) / 2
-        gl_pts, gl_wts = gl_q.points(), gl_q.weights()
-        l = Lobatto(1)
-        N = l.get_shape_functions()
-        f = np.zeros((2, 2), dtype=self.left_hand_side.dtype)
-        for i, gl_pt in enumerate(gl_pts):
-          x = N[0](gl_pt) * node_1_coord + N[1](gl_pt) * node_2_coord
-          f_e = 1j / (self.omega * impedence_bcs['value'](x[0], x[1]))
-          f += gl_wts[i] * np.array([[
-              N[0](gl_pt) * N[0](gl_pt), N[0](gl_pt) * N[1](gl_pt)
-          ], [N[1](gl_pt) * N[0](gl_pt), N[1](gl_pt) * N[1](gl_pt)]]) * f_e
-        f *= jac    #
-        local_index = np.arange(len(N))
-        local_indices = np.stack(
-            (np.repeat(local_index, len(N)), np.tile(local_index, len(N))),
-            axis=1)
-        global_indices = np.stack(
-            (np.repeat(line_index,
-                       len(line_index)), np.tile(line_index, len(line_index))),
-            axis=1)
-        elem_data_M = f[local_indices[:, 0], local_indices[:, 1]]
-        row = global_indices[:, 0]
-        col = global_indices[:, 1]
-        rows.extend(row)
-        cols.extend(col)
-        data_M.extend(elem_data_M)
+    match impedence_bcs['position']:
+      case float(position):
+        elem_mat = self.fe_space.element_index2material
+        dof_index = self.mesh2dof(position, var)
+        row = np.array([dof_index])
+        col = np.array([dof_index])
+        mat = elem_mat[dof_index - 1]
+        mat.set_frequency(self.omega)
+        mat_coeff = 1j * 1 / mat.rho_f * (self.omega /
+                                          mat.c_f) * impedence_bcs['value']
+        data = np.array([mat_coeff * 1])
+        C_damp = csr_array((data, (row, col)),
+                           shape=(self.nb_dofs, self.nb_dofs),
+                           dtype=self.dtype)
+        self.left_hand_side += C_damp
+        return C_damp
+      case np.ndarray():
+        edges = impedence_bcs['position']
+        lines = self.mesh.exterior_facets[edges]
+        rows = []
+        cols = []
+        data_M = []
+        for line_index in lines:
+          node_1_coord = self.mesh.nodes[line_index[0]]
+          node_2_coord = self.mesh.nodes[line_index[1]]
+          gl_pts, gl_wts = get_quadrature_points_weights(3, 1)
+          jac = np.linalg.norm(node_1_coord - node_2_coord) / 2
+          l = Lobatto(1)
+          N = l.get_shape_functions()
+          f = np.zeros((2, 2), dtype=self.left_hand_side.dtype)
+          for i, gl_pt in enumerate(gl_pts):
+            x = N[0](gl_pt) * node_1_coord + N[1](gl_pt) * node_2_coord
+            f_e = 1j / (self.omega * impedence_bcs['value'](x[0], x[1]))
+            f += gl_wts[i] * np.array([[
+                N[0](gl_pt) * N[0](gl_pt), N[0](gl_pt) * N[1](gl_pt)
+            ], [N[1](gl_pt) * N[0](gl_pt), N[1](gl_pt) * N[1](gl_pt)]]) * f_e
+          f *= jac    #
+          local_index = np.arange(len(N))
+          local_indices = np.stack(
+              (np.repeat(local_index, len(N)), np.tile(local_index, len(N))),
+              axis=1)
+          global_indices = np.stack((np.repeat(line_index, len(line_index)),
+                                     np.tile(line_index, len(line_index))),
+                                    axis=1)
+          elem_data_M = f[local_indices[:, 0], local_indices[:, 1]]
+          row = global_indices[:, 0]
+          col = global_indices[:, 1]
+          rows.extend(row)
+          cols.extend(col)
+          data_M.extend(elem_data_M)
 
-      C_damp = coo_matrix((data_M, (rows, cols)),
-                          shape=(self.nb_dofs, self.nb_dofs),
-                          dtype=self.dtype).tocsr()
+        C_damp = coo_matrix((data_M, (rows, cols)),
+                            shape=(self.nb_dofs, self.nb_dofs),
+                            dtype=self.dtype).tocsr()
 
-      self.left_hand_side += C_damp
-    return self.left_hand_side
+        self.left_hand_side += C_damp
+        return self.left_hand_side
+      case _:
+        raise ValueError("Unsupported type for 'position' in impedence_bcs")
 
   def apply_nature_bc(self, nature_bc, var=None, integr_order=1):
-    if isinstance(nature_bc['position'], float):    #1D case
-      dof_index = self.mesh2dof(nature_bc['position'], var)
-      if nature_bc['type'] == 'fluid_velocity':
-        self.right_hand_side[dof_index] += -nature_bc['value'] / (1j *
-                                                                  self.omega)
-      elif nature_bc['type'] == 'total_displacement':
-        self.right_hand_side[dof_index] += nature_bc['value']
-      elif nature_bc['type'] == 'solid_stress':
-        self.right_hand_side[dof_index] += nature_bc['value']
-      else:
-        print("Nature BC type not supported")
-    elif isinstance(nature_bc['position'], np.ndarray):
-      facet_basis = {2: Lobbato1DElement, 3: Lagrange2DTriElement}
-      facets = nature_bc['position']    # 2D edge ir 3D facet
-      facets_connect = self.mesh.exterior_facets[
-          facets]    # connectity of the facets
-      for node_indices in facets_connect:
-        nodes_coord = np.array(
-            [self.mesh.nodes[i_node] for i_node in node_indices])
-        basis = facet_basis[len(node_indices)](var,
-                                               order=1,
-                                               vertices=nodes_coord)
-        f = basis.integrate(nature_bc['value'],
-                            self.mesh,
-                            node_indices,
-                            integ_order=integr_order,
-                            vtype=self.dtype)
-        # map coordiante into reference space
-        if nature_bc['type'] == 'fluid_velocity':
-          self.right_hand_side[node_indices] += f / (1j * self.omega)
-        elif nature_bc['type'] == 'analytical_gradient':
-          self.right_hand_side[node_indices] += f / self.omega**2
-        elif nature_bc['type'] == 'total_displacement':
-          self.right_hand_side[node_indices] += f
-        elif nature_bc['type'] == 'solid_stress':
-          self.right_hand_side[node_indices] += f
-        else:
-          print("Nature BC type not supported")
+    match nature_bc['position']:
+      case float(position):
+        dof_index = self.mesh2dof(position, var)
+        match nature_bc['type']:
+          case 'fluid_velocity':
+            self.right_hand_side[dof_index] += -nature_bc['value'] / (
+                1j * self.omega)
+          case 'total_displacement':
+            self.right_hand_side[dof_index] += nature_bc['value']
+          case 'solid_stress':
+            self.right_hand_side[dof_index] += nature_bc['value']
+          case _:
+            print("Nature BC type not supported")
+      case np.ndarray():
+        facets = nature_bc['position']
+        facet_basis = {2: Lobbato1DElement, 3: Lagrange2DTriElement}
+        facets_connect = self.mesh.exterior_facets[
+            facets]    # connectity of the facets
+        for node_indices in facets_connect:
+          nodes_coord = np.array(
+              [self.mesh.nodes[i_node] for i_node in node_indices])
+          basis = facet_basis[len(node_indices)](var,
+                                                 order=1,
+                                                 vertices=nodes_coord)
+          f = basis.integrate(nature_bc['value'],
+                              self.mesh,
+                              node_indices,
+                              integ_order=integr_order,
+                              vtype=self.dtype)
+          # map coordiante into reference space
+          if nature_bc['type'] == 'fluid_velocity':
+            self.right_hand_side[node_indices] += f / (1j * self.omega)
+          elif nature_bc['type'] == 'analytical_gradient':
+            self.right_hand_side[node_indices] += f / self.omega**2
+          elif nature_bc['type'] == 'total_displacement':
+            self.right_hand_side[node_indices] += f
+          elif nature_bc['type'] == 'solid_stress':
+            self.right_hand_side[node_indices] += f
+          else:
+            print("Nature BC type not supported")
 
 
 def compute_normal_vector(mesh, edge_or_facet):

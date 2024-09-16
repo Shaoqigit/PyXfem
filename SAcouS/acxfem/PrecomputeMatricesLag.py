@@ -17,12 +17,11 @@
 # precompte and store the elementary matrices for 1D Lobatto elements
 
 import numpy as np
-from .Quadratures import GaussLegendre2DTri, GaussLegendre3DTetra
+from .Quadratures import get_quadrature_points_weights
 from .Polynomial import Lagrange2DTri, Lagrange2DQuad, Lagrange3DTetra
 
 lag2d_poly_o1 = Lagrange2DTri(1)
-points_o1, weights_o1 = GaussLegendre2DTri(3).points(), GaussLegendre2DTri(
-    3).weights()
+points_o1, weights_o1 = get_quadrature_points_weights(3, 2)
 # N_o1 = np.array(
 #     [lag2d_poly_o1.get_shape_functions(*point) for point in points_o1])
 # B_o1 = np.array(
@@ -37,8 +36,7 @@ B_tri_o1 = np.array([[[-1., -1.], [1., 0.], [0., 1.]],
                      [[-1., -1.], [1., 0.], [0., 1.]]])
 
 lag3d_poly_o1 = Lagrange3DTetra(1)
-points_tetra_o1, weights_tetra_o1 = GaussLegendre3DTetra(
-    4).points(), GaussLegendre3DTetra(4).weights()
+points_tetra_o1, weights_tetra_o1 = get_quadrature_points_weights(4, 3)
 N_tetra_o1 = np.array(
     [lag3d_poly_o1.get_shape_functions(*point) for point in points_tetra_o1])
 B_tetra_o1 = np.array([

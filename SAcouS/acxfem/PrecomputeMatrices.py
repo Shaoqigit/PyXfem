@@ -17,7 +17,7 @@
 # precompte and store the elementary matrices for 1D Lobatto elements
 
 import numpy as np
-from .Quadratures import GaussLegendreQuadrature
+from .Quadratures import get_quadrature_points_weights
 from .Polynomial import Lobatto, Larange
 
 
@@ -32,8 +32,7 @@ def add_shape_functions2element(element, order):
 
 def compute_matrix(Ke, Me, Ce, order):
   n_pts = order * 2
-  gl_q = GaussLegendreQuadrature(n_pts)
-  gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+  gl_pts, gl_wts = get_quadrature_points_weights(n_pts, 1)
   # gl_pts, gl_wts = leggauss(n_pts)
   l = Lobatto(order)
   B = l.get_der_shape_functions()

@@ -24,7 +24,6 @@ from scipy.sparse.linalg import spsolve, bicg, bicgstab, gmres, SuperLU
 from scipy.sparse.csgraph import reverse_cuthill_mckee
 
 from .Polynomial import Lobatto, Larange
-from .Quadratures import GaussLegendreQuadrature
 
 try:
   from petsc4py import PETSc

@@ -15,7 +15,6 @@
 # copies or substantial portions of the Software.
 
 # assembly the global/partial matrices according to the physic of the components
-from .Quadratures import GaussLegendreQuadrature
 from .Polynomial import Lobatto
 
 import numpy as np
@@ -337,8 +336,6 @@ def assembly_on_edges(mesh, edges, func, integ_deg=3, type='linear'):
   """
     Assembly the linear form on the edges
     """
-  gl_q = GaussLegendreQuadrature(integ_deg)
-  gl_pts, gl_wts = gl_q.points(), gl_q.weights()
   l = Lobatto(1)
   N = l.get_shape_functions()
 

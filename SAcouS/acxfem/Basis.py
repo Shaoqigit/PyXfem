@@ -24,7 +24,7 @@ from functools import cached_property
 from .PrecomputeMatrices import Ke1D, Me1D, Ce1D, add_shape_functions2element
 
 # from .PrecomputeMatricesLag import add_shape_functions2element
-from .Quadratures import GaussLegendre2DTri, GaussLegendreQuadrature, GaussLegendre3DTetra
+from .Quadratures import get_quadrature_points_weights
 
 
 class Base1DElement(metaclass=ABCMeta):
@@ -183,8 +183,7 @@ class Lobbato1DElement(Base1DElement):
       edge_or_facet = self.nodes
     normal = mesh.compute_normal(edge_or_facet)
     N = self._shape_functions
-    gl_q = GaussLegendreQuadrature(integ_order)
-    gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+    gl_pts, gl_wts = get_quadrature_points_weights(integ_order, 1)
     integral = np.zeros((self.order + 1), dtype=vtype)
     for i, gl_pt in enumerate(gl_pts):
       x = N[0](gl_pt) * self.nodes[0] + N[-1](gl_pt) * self.nodes[1]
@@ -437,8 +436,7 @@ class Lagrange2DTriElement(BaseNDElement):
   def weights_and_points(self, integ_order=1):
     if integ_order is None:
       integ_order = 2 * self.order + 1
-    points, weights = GaussLegendre2DTri(
-        integ_order).points(), GaussLegendre2DTri(3).weights()
+    points, weights = get_quadrature_points_weights(integ_order, 2)
     return points, weights
 
   def egde_basis(self, edge):
@@ -504,8 +502,7 @@ class Lagrange2DTriElement(BaseNDElement):
     normal = mesh.compute_normal(edge_or_facet)
     # breakpoint()
     N = self.Nd
-    gl_q = GaussLegendre2DTri(integ_order)
-    gl_pts, gl_wts = gl_q.points(), gl_q.weights()
+    gl_pts, gl_wts = get_quadrature_points_weights(integ_order, 2)
     integral = np.zeros((self.order + 2), dtype=vtype)
     for i, gl_pt in enumerate(gl_pts):
       # breakpoint()
