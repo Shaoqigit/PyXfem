@@ -70,6 +70,7 @@ class ApplyBoundaryConditions:
 
   def apply_source(self, source, bases, var=None):
     elements2node = self.mesh.get_mesh_coordinates()
+    points_o1, weights_o1 = get_quadrature_points_weights(3, 2)
     if var is None:
       dofs_index = self.fe_space.get_global_dofs()
     else:
