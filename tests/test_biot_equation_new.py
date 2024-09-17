@@ -83,7 +83,7 @@ def test_case():
   )    # dict: elements number with nodes coodinates
   # define the mesh.subdomains: domain name (material) and the elements in the domain
   xfm_elements = np.arange(0, num_elem)
-  mesh.subdomains = {xfm: xfm_elements}
+  mesh.set_subdomains({xfm: xfm_elements})
   check_material_compability(mesh.subdomains)
 
   order = 3    # global order of the bases

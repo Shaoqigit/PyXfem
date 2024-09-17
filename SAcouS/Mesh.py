@@ -87,7 +87,14 @@ class Mesh1D(BaseMesh):
     self.elem_connect = elem_connect
     self.dim = 1
     self.node_index = np.arange(self.nb_nodes)
-    self.subdomains = None
+    self._subdomains = None
+
+  def set_subdomains(self, subdomains):
+    self._subdomains = subdomains
+
+  @property
+  def subdomains(self):
+    return self._subdomains
 
   def get_mesh_coordinates(self):
     """dict of element number and nodes coordinates"""
@@ -162,7 +169,14 @@ class Mesh2D(BaseMesh):
     self.exterior_facets = edge_connect    # [node1, node2]
     self.mesh_center = np.mean(self.nodes, axis=0)    # center of the mesh
     self.dim = 2
-    self.subdomains = None
+    self._subdomains = None
+
+  def set_subdomains(self, subdomains):
+    self._subdomains = subdomains
+
+  @property
+  def subdomains(self):
+    return self._subdomains
 
   def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
     """
@@ -315,7 +329,7 @@ class MeshReader:
     subdomains = {}
     for tag, material in physical_tag2material.items():
       subdomains[material] = self.get_elem_by_physical(tag)
-    mesh.subdomains = subdomains
+    mesh.set_subdomains(subdomains)
     return subdomains
 
   def get_elem_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:

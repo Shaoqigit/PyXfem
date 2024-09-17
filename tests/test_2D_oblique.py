@@ -80,7 +80,7 @@ def test_case_2D():
   left_bottom_boundary = mesh_reader.get_facet_by_physical('left_bot')
   right_bottom_boundary = mesh_reader.get_facet_by_physical('right_bot')
   elements2node = mesh.get_mesh_coordinates()
-  mesh.subdomains = {air: air_elements, xfm: foam_elements}
+  mesh.set_subdomains({air: air_elements, xfm: foam_elements})
   xfm.set_frequency(omega)
   Pf_bases = []
   order = 1

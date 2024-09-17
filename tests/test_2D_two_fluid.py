@@ -62,7 +62,7 @@ def test_case_2D():
 
   elements2node = mesh.get_mesh_coordinates()
   xfm.set_frequency(omega)
-  mesh.subdomains = {air: air_elements, xfm: foam_elements}
+  mesh.set_subdomains({air: air_elements, xfm: foam_elements})
   Pf_bases = []
   order = 1
   for mat, elems in mesh.subdomains.items():

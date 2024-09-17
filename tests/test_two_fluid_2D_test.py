@@ -61,7 +61,7 @@ def test_case_1():
   # mesh.plotmesh(withnode=True)
   # define the subdomains: domain name (material) and the elements in the domain
   air_elements = np.arange(0, num_elem)
-  mesh.subdomains = {air: air_elements}
+  mesh.set_subdomains({air: air_elements})
   check_material_compability(mesh.subdomains)
   elements2node = mesh.get_mesh_coordinates(
   )    # dict: elements number with nodes coodinates

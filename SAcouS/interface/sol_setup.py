@@ -50,7 +50,7 @@ class PyAcoustiXSetuper:
       domain_elements = mesh_domains[phy_domain[1]]['domain_elements']
       subdomains[material] = domain_elements
 
-    mesh.subdomains = subdomains
+    mesh.set_subdomains(subdomains)
     check_material_compability(subdomains)
     elements2node = mesh.get_mesh_coordinates()
 

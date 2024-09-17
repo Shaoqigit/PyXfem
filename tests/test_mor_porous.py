@@ -102,7 +102,7 @@ if __name__ == "__main__":
   # define the subdomains: domain name (material) and the elements in the domain
   air_elements = np.arange(0, int(num_elem / 2))
   xfm_elements = np.arange(int(num_elem / 2), num_elem)
-  mesh.subdomains = {air: air_elements, xfm: xfm_elements}
+  mesh.set_subdomains({air: air_elements, xfm: xfm_elements})
   check_material_compability(mesh.subdomains)
 
   order = 2    # global order of the bases
