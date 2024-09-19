@@ -78,8 +78,14 @@ def test_case_3D():
   import time
   start_time = time.time()
   Helmholtz_assember = HelmholtzAssembler(fe_space, dtype=np.complex64)
-  Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
-  left_hand_matrix = Helmholtz_assember.get_global_matrix(omega)
+  try:
+    import petsc4py
+    left_hand_matrix = Helmholtz_assember.get_global_matrix(omega)
+
+  except ImportError:
+    Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
+  left_hand_matrix = Helmholtz_assember.get_global_PETSC_matrix(
+      Pf_bases, omega, 'Pf')
   print("Time taken to assemble the matrix:", time.time() - start_time)
 
   # ====================== Boundary Conditions ======================
@@ -135,5 +141,11 @@ def test_case_3D():
 if __name__ == "__main__":
   import time
   start = time.time()
+  import cProfile
+  # cProfile.run('test_case_3D()', 'restats')
   result = test_case_3D()
+  import pstats
+  # p = pstats.Stats('restats')
+  # p.sort_stats('cumulative')
+  # p.print_stats()
   print("Time taken:", time.time() - start)

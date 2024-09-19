@@ -30,9 +30,9 @@ except ImportError:
 
 def get_indeces(*dofs):
   if len(dofs) == 1:
-    return np.stack(
-        (np.repeat(dofs[0], len(dofs[0])), np.tile(dofs[0], len(dofs[0]))),
-        axis=1)
+    dof_len = len(dofs[0])
+    return np.stack((np.repeat(dofs[0], dof_len), np.tile(dofs[0], dof_len)),
+                    axis=1)
   elif len(dofs) == 2:
     return np.stack(
         (np.repeat(dofs[0], len(dofs[1])), np.tile(dofs[1], len(dofs[0]))),

@@ -84,6 +84,7 @@ Author: Shaoqiwu@outlook.com
 
 ### To do Roadmap
 
+- 3D quadratic element
 - Shell element for thin plate in 3D
 - Parallel computing for frequancy scaning problem
 - MoR for damped systems (RB+EIM algorithme for porous materials)

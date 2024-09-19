@@ -698,9 +698,13 @@ class Lagrange3DTetraElement(BaseNDElement):
         elementary stiffness matrix
     """
     if self.order == 1:
-      Ke = sum(
+      Ke = np.sum(
           self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
           for i, weight in enumerate(self.weights)) * self.det_J
+      # B_inv_J_B_T = np.einsum('ijk,kl,ijl->ijl', self.B, self.inv_J_product,
+      # self.B)
+      # weighted_sum = np.einsum('ijl,i->jl', B_inv_J_B_T, self.weights)
+      # Ke = weighted_sum * self.det_J
 
     else:
       print("quadrtic lagrange not implemented yet")
