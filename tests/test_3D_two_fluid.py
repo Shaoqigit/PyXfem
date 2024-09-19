@@ -80,12 +80,12 @@ def test_case_3D():
   Helmholtz_assember = HelmholtzAssembler(fe_space, dtype=np.complex64)
   try:
     import petsc4py
-    left_hand_matrix = Helmholtz_assember.get_global_matrix(omega)
-
+    left_hand_matrix = Helmholtz_assember.get_global_PETSC_matrix(
+        Pf_bases, omega, 'Pf')
   except ImportError:
     Helmholtz_assember.assembly_global_matrix(Pf_bases, 'Pf')
-  left_hand_matrix = Helmholtz_assember.get_global_PETSC_matrix(
-      Pf_bases, omega, 'Pf')
+    left_hand_matrix = Helmholtz_assember.get_global_matrix(omega)
+
   print("Time taken to assemble the matrix:", time.time() - start_time)
 
   # ====================== Boundary Conditions ======================
