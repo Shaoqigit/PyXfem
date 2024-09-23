@@ -38,6 +38,7 @@ class BaseSolver(metaclass=ABCMeta):
   """base abstract FE solver class
 
     """
+  __slots__ = ['internal_dofs', 'external_dofs', 'nb_dofs', 'u', 'sym']
 
   def __init__(self, fe_space=None, coupling_assember=None, symmetric=True):
     if fe_space is None:

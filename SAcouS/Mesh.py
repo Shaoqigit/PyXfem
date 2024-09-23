@@ -164,6 +164,7 @@ class Mesh2D(BaseMesh):
     self.nodes = nodes
     self.elem_connect = elem_connect
     self.nb_nodes = len(self.nodes)
+    self.nb_elmes = len(self.elem_connect)
     self.node_index = np.arange(self.nb_nodes)
     self.exterior_facets = edge_connect    # [node1, node2]
     self.mesh_center = np.mean(self.nodes, axis=0)    # center of the mesh

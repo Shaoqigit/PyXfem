@@ -35,6 +35,7 @@ class BasePolynomial(metaclass=ABCMeta):
     d_lobatto: ndarray
         value of the Lobatto polynomial first derivative at x
     """
+  __slots__ = ['order']
 
   def __init__(self, order):
     self.order = order
@@ -197,8 +198,12 @@ class Lagrange2DTri:
       ])
     elif self.order == 2:
       lagrange = np.array([
-          1 - 3 * u - 3 * v + 2 * u**2 + 4 * u * v + 2 * v**2, 2 * u**2 - u,
-          2 * v**2 - v, 4 * u * (1 - u - v), 4 * u * v, 4 * v * (1 - u - v)
+          1 - 3 * u - 3 * v + 2 * u**2 + 4 * u * v + 2 * v**2,    # at (0,0)
+          2 * u**2 - u,    # at (1,0)
+          2 * v**2 - v,    # at (0,1)
+          4 * u * (1 - u - v),    # between (0,1)
+          4 * u * v,    # between (1,2)
+          4 * v * (1 - u - v)    # between (0,2)
       ])
     else:
       print("cubic larange not supported yet")
@@ -214,8 +219,8 @@ class Lagrange2DTri:
     elif self.order == 2:
       d_lagrange = np.array([[-3 + 4 * u + 4 * v, -3 + 4 * u + 4 * v],
                              [4 * u - 1, 0], [0, 4 * v - 1],
-                             [-3 + 4 * v + 4 * u, -3 + 4 * u], [4 * v, 4 * u],
-                             [-4 * v, -4 * u]])
+                             [4 - 8 * u - 4 * v, -4 * u], [4 * v, 4 * u],
+                             [-4 * v, 4 - 4 * u - 8 * v]])
     else:
       print("cubic larange not supported yet")
 
@@ -306,9 +311,16 @@ class Lagrange3DTetra:
     elif self.order == 2:
       lagrange = np.array([
           1 - 3 * u - 3 * v - 3 * w + 2 * u**2 + 4 * u * v + 4 * u * w +
-          2 * v**2 + 4 * v * w + 2 * w**2, 2 * u**2 - u, 2 * v**2 - v,
-          2 * w**2 - w, 4 * u * (1 - u - v - w), 4 * u * v, 4 * u * w,
-          4 * v * (1 - u - v - w), 4 * v * w, 4 * w * (1 - u - v - w)
+          2 * v**2 + 4 * v * w + 2 * w**2,    # at (0,0,0)
+          2 * u**2 - u,    # at (1,0,0)
+          2 * v**2 - v,    # at (0,1,0)
+          2 * w**2 - w,    # at (0,0,1)
+          4 * u * (1 - u - v - w),    # between (0,1) 
+          4 * u * v,    # between (1,2)
+          4 * u * w,    # between (1,2) and (1,3)
+          4 * v * (1 - u - v - w),    # between (0,2)
+          4 * v * w,    # between (2,3)
+          4 * w * (1 - u - v - w)    # between (0,3)
       ])
     else:
       print("cubic larange not supported yet")
@@ -326,11 +338,16 @@ class Lagrange3DTetra:
           [
               -3 + 4 * u + 4 * v + 4 * w, -3 + 4 * u + 4 * v + 4 * w,
               -3 + 4 * u + 4 * v + 4 * w
-          ], [4 * u - 1, 0, 0], [0, 4 * v - 1, 0], [0, 0, 4 * w - 1],
-          [-3 + 4 * v + 4 * w + 4 * u, -3 + 4 * u + 4 * v, -3 + 4 * u + 4 * v],
-          [4 * v, 4 * u, 0], [0, 4 * w, 4 * u],
+          ],    # at (0,0,0)
+          [4 * u - 1, 0, 0],    # at (1,0,0)
+          [0, 4 * v - 1, 0],    # at (0,1,0)
+          [0, 0, 4 * w - 1],    # at (0,0,1)
+          [4 - 8 * v - 4 * w - 8 * u, -4 * u, -4 * u],    # between (0,1)
+          [4 * v, 4 * u, 0],    # between (1,2)
+          [0, 4 * w, 4 * u],    # between (1,2) and (1,3)
           [-3 + 4 * w + 4 * u + 4 * v, -3 + 4 * u, -3 + 4 * u],
-          [0, 4 * w, 4 * v], [4 * w, 0, 4 * v]
+          [0, 4 * w, 4 * v],
+          [4 * w, 0, 4 * v]
       ])
     else:
       print("cubic larange not supported yet")

@@ -28,19 +28,35 @@ points_o1, weights_o1 = get_quadrature_points_weights(3, 2)
 #     [lag2d_poly_o1.get_der_shape_functions(*point) for point in points_o1])
 
 #
-N_tri_o1 = np.array([[0.66666667, 0.16666667, 0.16666667],
+N_tri_p1 = np.array([[0.66666667, 0.16666667, 0.16666667],
                      [0.16666667, 0.66666667, 0.16666667],
                      [0.16666667, 0.16666667, 0.66666667]])
-B_tri_o1 = np.array([[[-1., -1.], [1., 0.], [0., 1.]],
+B_tri_p1 = np.array([[[-1., -1.], [1., 0.], [0., 1.]],
                      [[-1., -1.], [1., 0.], [0., 1.]],
                      [[-1., -1.], [1., 0.], [0., 1.]]])
 
 lag3d_poly_o1 = Lagrange3DTetra(1)
 points_tetra_o1, weights_tetra_o1 = get_quadrature_points_weights(4, 3)
-N_tetra_o1 = np.array(
-    [lag3d_poly_o1.get_shape_functions(*point) for point in points_tetra_o1])
-B_tetra_o1 = np.array([
-    lag3d_poly_o1.get_der_shape_functions(*point) for point in points_tetra_o1
+# N_tetra_o1 = np.array(
+#     [lag3d_poly_o1.get_shape_functions(*point) for point in points_tetra_o1])
+# B_tetra_o1 = np.array([
+#     lag3d_poly_o1.get_der_shape_functions(*point) for point in points_tetra_o1
+# ])
+N_tetra_p1 = np.array([[0.1381966, 0.5854102, 0.1381966, 0.1381966],
+                       [0.5854102, 0.1381966, 0.1381966, 0.1381966],
+                       [0.1381966, 0.1381966, 0.1381966, 0.5854102],
+                       [0.1381966, 0.1381966, 0.5854102, 0.1381966]])
+B_tetra_p1 = np.array([[[-1, -1, -1], [1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                       [[-1, -1, -1], [1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                       [[-1, -1, -1], [1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                       [[-1, -1, -1], [1, 0, 0], [0, 1, 0], [0, 0, 1]]])
+
+lag3d_poly_o2 = Lagrange3DTetra(2)
+points_tetra_o2, weights_tetra_o2 = get_quadrature_points_weights(5, 3)
+N_tetra_o2 = np.array(
+    [lag3d_poly_o2.get_shape_functions(*point) for point in points_tetra_o2])
+B_tetra_o2 = np.array([
+    lag3d_poly_o2.get_der_shape_functions(*point) for point in points_tetra_o2
 ])
 
 
@@ -61,9 +77,9 @@ def add_shape_functions2element(element, order):
 
 def get_N_B_p1(dim: int) -> np.ndarray:
   if dim == 2:
-    return N_tri_o1, B_tri_o1
+    return N_tri_p1, B_tri_p1
   elif dim == 3:
-    return N_tetra_o1, B_tetra_o1
+    return N_tetra_p1, B_tetra_p1
   else:
     raise ValueError("Only support 2D and 3D")
 
