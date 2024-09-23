@@ -47,7 +47,7 @@ class BaseSolver(metaclass=ABCMeta):
     else:
       self.internal_dofs = fe_space.nb_internal_dofs
       self.external_dofs = fe_space.nb_external_dofs
-      self.nb_dofs = fe_space.get_nb_dofs()
+      self.nb_dofs = fe_space.nb_dofs
     if fe_space is None and coupling_assember is None:
       raise ValueError(
           "dof_handler and coupling_assember cannot be None at the same time")

@@ -94,7 +94,7 @@ def tutor_case_1():
   # handler the dofs: arange the dofs numbering for current bases
   Helmholtz_dof_handler = GeneralDofHandler1D(
       ['Pf'], Pf_bases)    # args: bases name, bases
-  print(f"The number of global dofs is {Helmholtz_dof_handler.get_nb_dofs()}.")
+  print(f"The number of global dofs is {Helmholtz_dof_handler.nb_dofs}.")
   # initialize the assembler
   # here two fluid-like materials are defined, so the assembler will be initialized with high wraped HelmholtzAssembler (level-wrapped general assembly can be used as well, but more complicated)
   Helmholtz_assember = HelmholtzAssembler(

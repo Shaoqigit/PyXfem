@@ -163,7 +163,6 @@ class Mesh2D(BaseMesh):
   def __init__(self, nodes, elem_connect, edge_connect=None):
     self.nodes = nodes
     self.elem_connect = elem_connect
-    self.nb_elmes = len(self.elem_connect)
     self.nb_nodes = len(self.nodes)
     self.node_index = np.arange(self.nb_nodes)
     self.exterior_facets = edge_connect    # [node1, node2]

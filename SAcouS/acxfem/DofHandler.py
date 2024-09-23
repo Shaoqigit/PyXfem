@@ -34,7 +34,8 @@ class DofHandler1D:
     else:
       raise TypeError("mesh must be 1D mesh")
 
-  def get_nb_dofs(self):
+  @cached_property
+  def nb_dofs(self):
     """return global dof"""
     nb_dofs = 0
     for basis in self.bases:
@@ -77,7 +78,7 @@ class DofHandler1D:
 
   @property
   def nb_internal_dofs(self):
-    return self.get_nb_dofs() - self.nb_external_dofs
+    return self.nb_dofs - self.nb_external_dofs
 
 
 class DofHandler1DMutipleVariable(DofHandler1D):
@@ -97,7 +98,8 @@ class DofHandler1DMutipleVariable(DofHandler1D):
     else:
       raise TypeError("mesh must be 1D mesh")
 
-  def get_nb_dofs(self):
+  @cached_property
+  def nb_dofs(self):
     """return global dof"""
     nb_dofs = 0
     for basis in self.whole_bases:
@@ -165,10 +167,6 @@ class DofHandler1DMutipleVariable(DofHandler1D):
   def nb_external_dofs(self):
     return self.mesh.get_nb_nodes() * self.nb_var
 
-  @property
-  def nb_internal_dofs(self):
-    return self.get_nb_dofs() - self.nb_external_dofs
-
 
 class GeneralDofHandler1D(DofHandler1D):
 
@@ -187,7 +185,8 @@ class GeneralDofHandler1D(DofHandler1D):
     self.nb_elem = len(mbases[0])
     self.num_nodes = self.nb_elem + 1
 
-  def get_nb_dofs(self):
+  @cached_property
+  def nb_dofs(self):
     """return global dof"""
     nb_dofs = 0
     for basis in self.whole_bases:
@@ -259,7 +258,7 @@ class GeneralDofHandler1D(DofHandler1D):
 
   @property
   def num_internal_dofs(self):
-    return self.get_nb_dofs() - self.num_external_dofs
+    return self.nb_dofs - self.num_external_dofs
 
 
 class FESpace:
@@ -278,20 +277,8 @@ class FESpace:
       elem_mat.update({elem: mat for elem in elems})
     return elem_mat
 
-  @property
-  def nb_external_dofs(self):
-    return self.mesh.get_nb_nodes() * self.nb_var
-
-  @property
-  def nb_internal_dofs(self):
-    return self.get_nb_dofs() - self.nb_external_dofs
-
-  def compute_subdomain_start_index(self):
-    self.subdoamin_start_index = {}
-    for mat, elems in self.subdomains.items():
-      self.subdoamin_start_index[mat] = elems[0]
-
-  def get_nb_dofs(self):
+  @cached_property
+  def nb_dofs(self):
     # to be modified to adapet to 2D/3D
     nb_nodes = self.mesh.get_nb_nodes()
     nb_dofs = nb_nodes * self.nb_var
@@ -303,6 +290,19 @@ class FESpace:
       else:
         nb_dofs += basis.nb_internal_dofs
     return nb_dofs
+
+  @property
+  def nb_external_dofs(self):
+    return self.mesh.get_nb_nodes() * self.nb_var
+
+  @property
+  def nb_internal_dofs(self):
+    return self.nb_dofs - self.nb_external_dofs
+
+  def compute_subdomain_start_index(self):
+    self.subdoamin_start_index = {}
+    for mat, elems in self.subdomains.items():
+      self.subdoamin_start_index[mat] = elems[0]
 
   def get_global_dofs(self):
     """return local dof

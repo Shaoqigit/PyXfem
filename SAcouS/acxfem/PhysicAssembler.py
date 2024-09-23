@@ -50,7 +50,7 @@ class BaseAssembler:
         subdomains: dict of subdomains
         dtype: data type of linear system"""
     self.fe_space = fe_space
-    self.nb_global_dofs = fe_space.get_nb_dofs()
+    self.nb_global_dofs = fe_space.nb_dofs
     self.dtype = dtype
 
   def initial_matrix(self):

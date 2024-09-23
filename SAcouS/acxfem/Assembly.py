@@ -25,7 +25,7 @@ class Assembler:
         dtype: data type of linear system"""
 
     self.dof_handler = dof_handler
-    self.nb_dofs = dof_handler.get_nb_dofs()
+    self.nb_dofs = dof_handler.nb_dofs
     self.bases = bases
     self.dtype = dtype
     self.K = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
@@ -196,7 +196,7 @@ class Assembler4Biot:
 
   def __init__(self, dof_handler, subdomains, dtype) -> None:
     self.dof_handler = dof_handler
-    self.nb_dofs = dof_handler.get_nb_dofs()
+    self.nb_dofs = dof_handler.nb_dofs
     self.dtype = dtype
     self.K = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)
     self.M = csr_array((self.nb_dofs, self.nb_dofs), dtype=self.dtype)

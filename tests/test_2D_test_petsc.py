@@ -94,7 +94,7 @@ def test_case_2D():
                                                                 inv_K))
           for elem in elems)
   fe_space = FESpace(mesh, Pf_bases)
-  print("Number of global dofs:", fe_space.get_nb_dofs())
+  print("Number of global dofs:", fe_space.nb_dofs)
   # initialize the assembler
   start_assembly_time = time.time()
   Helmholtz_assember = HelmholtzAssembler(fe_space, dtype=np.complex64)

@@ -14,7 +14,7 @@ class ApplyBoundaryConditions:
     self.fe_space = fe_space
     self.left_hand_side = left_hand_side
     self.right_hand_side = right_hand_side
-    self.nb_dofs = fe_space.get_nb_dofs()
+    self.nb_dofs = fe_space.nb_dofs
     self.omega = omega
     self.dtype = self.right_hand_side.dtype
 
