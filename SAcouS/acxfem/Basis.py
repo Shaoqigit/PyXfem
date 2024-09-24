@@ -271,7 +271,7 @@ class Helmholtz1DElement(Lobbato1DElement):
 
 
 from SAcouS.acxfem.PrecomputeMatricesLag import points_o1, weights_o1
-from SAcouS.acxfem.PrecomputeMatricesLag import get_N_B_p1
+from SAcouS.acxfem.PrecomputeMatricesLag import N_tri_p1, B_tri_p1, N_tri_p2, B_tri_p2, N_tetra_p1, B_tetra_p1, N_tetra_o2, B_tetra_o2
 from .Polynomial import Lagrange2DTri
 
 
@@ -332,6 +332,16 @@ class Lagrange2DTriElement(BaseNDElement):
     |   \
     |    \
     0-----1
+    quadratic element with 6 nodes illustrated as below:
+    2
+    |\
+    | \
+    |  \
+    |   \
+    5    4
+    |     \
+    |      \                 
+    0---3---1
     """
   points = points_o1,
   weights = weights_o1
@@ -340,12 +350,15 @@ class Lagrange2DTriElement(BaseNDElement):
     super().__init__(label, order, vertices)
 
     if order == 1:
-      self.N, self.B = get_N_B_p1(2)
+      self.N, self.B = N_tri_p1, B_tri_p1    # shape functions and derivatives on quadrature points
+    elif order == 2:
+      self.N, self.B = N_tri_p2, B_tri_p2
     else:
-      print("quadrtic lagrange not supported yet")
+      print("cubic lagrange not supported yet")
+
     poly = Lagrange2DTri(order)
-    self.Bd = poly.get_der_shape_functions
-    self.Nd = poly.get_shape_functions
+    self.Bd = poly.get_der_shape_functions    # expression of the derivative
+    self.Nd = poly.get_shape_functions    # expression of the shape function
 
   def Jacobian(self):
     """
@@ -649,6 +662,17 @@ class Lagrange3DTetraElement(BaseNDElement):
        \ | /
         \|/
          0
+
+    element in degree 2 with 10 nodes illustrated as below:
+          3
+         /|\
+        / | \
+       /  |  \
+      6---9---5
+       \  |  /
+        \ | /
+         \|/
+          0---4---1
     
     """
 
@@ -658,7 +682,7 @@ class Lagrange3DTetraElement(BaseNDElement):
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
     if order == 1:
-      self.N, self.B = get_N_B_p1(3)
+      self.N, self.B = N_tetra_p1, B_tetra_p1
     else:
       print("quadrtic lagrange not supported yet")
 

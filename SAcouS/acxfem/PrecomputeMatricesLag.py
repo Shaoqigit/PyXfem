@@ -35,6 +35,13 @@ B_tri_p1 = np.array([[[-1., -1.], [1., 0.], [0., 1.]],
                      [[-1., -1.], [1., 0.], [0., 1.]],
                      [[-1., -1.], [1., 0.], [0., 1.]]])
 
+lag2d_poly_p2 = Lagrange2DTri(2)
+points_p2, weights_p2 = get_quadrature_points_weights(4, 2)
+N_tri_p2 = np.array(
+    [lag2d_poly_p2.get_shape_functions(*point) for point in points_p2])
+B_tri_p2 = np.array(
+    [lag2d_poly_p2.get_der_shape_functions(*point) for point in points_p2])
+
 lag3d_poly_o1 = Lagrange3DTetra(1)
 points_tetra_o1, weights_tetra_o1 = get_quadrature_points_weights(4, 3)
 # N_tetra_o1 = np.array(
@@ -51,12 +58,12 @@ B_tetra_p1 = np.array([[[-1, -1, -1], [1, 0, 0], [0, 1, 0], [0, 0, 1]],
                        [[-1, -1, -1], [1, 0, 0], [0, 1, 0], [0, 0, 1]],
                        [[-1, -1, -1], [1, 0, 0], [0, 1, 0], [0, 0, 1]]])
 
-lag3d_poly_o2 = Lagrange3DTetra(2)
-points_tetra_o2, weights_tetra_o2 = get_quadrature_points_weights(5, 3)
+lag3d_poly_p2 = Lagrange3DTetra(2)
+points_tetra_p2, weights_tetra_o2 = get_quadrature_points_weights(5, 3)
 N_tetra_o2 = np.array(
-    [lag3d_poly_o2.get_shape_functions(*point) for point in points_tetra_o2])
+    [lag3d_poly_p2.get_shape_functions(*point) for point in points_tetra_p2])
 B_tetra_o2 = np.array([
-    lag3d_poly_o2.get_der_shape_functions(*point) for point in points_tetra_o2
+    lag3d_poly_p2.get_der_shape_functions(*point) for point in points_tetra_p2
 ])
 
 
@@ -85,5 +92,5 @@ def get_N_B_p1(dim: int) -> np.ndarray:
 
 
 if __name__ == "__main__":
-  print(N_tetra_o1)
-  print(B_tetra_o1)
+  print(N_tetra_p1)
+  print(B_tetra_p1)
