@@ -152,7 +152,6 @@ class BaseAssembler:
     for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
       local_indices = get_indeces(basis.local_dofs_index)
       global_indices = get_indeces(dofs)
-
       elem_data_M = basis.me[local_indices[:, 0], local_indices[:, 1]]
       elem_data_K = basis.ke[local_indices[:, 0], local_indices[:, 1]]
 

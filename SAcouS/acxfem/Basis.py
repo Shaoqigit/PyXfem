@@ -421,9 +421,8 @@ class Lagrange2DTriElement(BaseNDElement):
     K: ndarray
         elementary stiffness matrix
     """
-    Ke = np.sum(
-        self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
-        for i, weight in enumerate(self.weights)) * self.det_J
+    Ke = (self.B @ self.inv_J_product @ np.transpose(self.B, (0, 2, 1)) *
+          self.weights[:np.newaxis]).sum(axis=0) * self.det_J
 
     return Ke
 
@@ -534,9 +533,9 @@ class Helmholtz2DElement(Lagrange2DTriElement):
         elementary stiffness matrix
     """
     if self.order == 1:
-      Ke = self.mat_coeffs[0] * sum(
-          self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
-          for i, weight in enumerate(self.weights)) * self.det_J
+      Ke = self.mat_coeffs[0] * (self.B @ self.inv_J_product @ np.transpose(
+          self.B,
+          (0, 2, 1)) * self.weights[:np.newaxis]).sum(axis=0) * self.det_J
 
     else:
       print("quadrtic lagrange not implemented yet")
@@ -718,13 +717,8 @@ class Lagrange3DTetraElement(BaseNDElement):
         elementary stiffness matrix
     """
     if self.order == 1:
-      Ke = np.sum(
-          self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
-          for i, weight in enumerate(self.weights)) * self.det_J
-      # B_inv_J_B_T = np.einsum('ijk,kl,ijl->ijl', self.B, self.inv_J_product,
-      # self.B)
-      # weighted_sum = np.einsum('ijl,i->jl', B_inv_J_B_T, self.weights)
-      # Ke = weighted_sum * self.det_J
+      Ke = (self.B @ self.inv_J_product @ np.transpose(self.B, (0, 2, 1)) *
+            self.weights[:np.newaxis]).sum(axis=0) * self.det_J
 
     else:
       print("quadrtic lagrange not implemented yet")
