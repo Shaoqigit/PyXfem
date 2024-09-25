@@ -24,15 +24,13 @@ import sys
 sys.path.append(working_dir)
 
 import numpy as np
-import matplotlib.pyplot as plt
 
-from SAcouS.Materials import Air, Fluid, EquivalentFluid
+from SAcouS.Materials import Air
 from SAcouS.Mesh import Mesh2D, Mesh1D, MeshReader
-from SAcouS.PostProcess import plot_field, save_plot, PostProcessField, read_solution
+from SAcouS.PostProcess import save_plot, PostProcessField, read_solution
 
 from SAcouS.acxfem import Helmholtz2DElement
 from SAcouS.acxfem import FESpace
-from SAcouS.acxfem import check_material_compability, display_matrix_in_array, plot_matrix_partten
 from SAcouS.acxfem import HelmholtzAssembler
 from SAcouS.acxfem import LinearSolver
 from SAcouS.acxfem import ApplyBoundaryConditions
@@ -49,14 +47,14 @@ def test_case_2D():
   slice_points = np.append(slice_points_1, 2)
   # Harmonic Acoustic problem define the frequency
   current_dir = os.path.dirname(os.path.realpath(__file__))
-  mesh_reader = MeshReader(current_dir + "/mesh/unit_tube_2.msh")
+  mesh_reader = MeshReader(current_dir + "/p2_tri.msh")
   mesh = mesh_reader.get_mesh()
-
+  breakpoint()
   air_elements = np.arange(0, mesh.nb_elems)
   elements2node = mesh.get_mesh_coordinates()
   mesh.set_subdomains({air: air_elements})
   Pf_bases = []
-  order = 1
+  order = 2
   for mat, elems in mesh.subdomains.items():
     if mat.TYPE == 'Fluid':
       Pf_bases += [

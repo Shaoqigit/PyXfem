@@ -343,16 +343,16 @@ class Lagrange2DTriElement(BaseNDElement):
     |      \                 
     0---3---1
     """
-  points = points_o1,
-  weights = weights_o1
 
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
 
     if order == 1:
       self.N, self.B = N_tri_p1, B_tri_p1    # shape functions and derivatives on quadrature points
+      self.points, self.weights = get_quadrature_points_weights(3, 2)
     elif order == 2:
       self.N, self.B = N_tri_p2, B_tri_p2
+      self.points, self.weights = get_quadrature_points_weights(4, 2)
     else:
       print("cubic lagrange not supported yet")
 
@@ -421,13 +421,8 @@ class Lagrange2DTriElement(BaseNDElement):
     K: ndarray
         elementary stiffness matrix
     """
-    if self.order == 1:
-      Ke = sum(
-          self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
-          for i, weight in enumerate(self.weights)) * self.det_J
-
-    else:
-      print("quadrtic lagrange not implemented yet")
+    Ke = sum(self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
+             for i, weight in enumerate(self.weights)) * self.det_J
 
     return Ke
 
@@ -438,12 +433,9 @@ class Lagrange2DTriElement(BaseNDElement):
     m: ndarray
         elementary stiffness matrix
     """
-    if self.order == 1:
-      weight = np.diag(
-          np.array([self.weights[0], self.weights[1], self.weights[2]]))
-      Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
-    else:
-      print("quadrtic lagrange not implemented yet")
+    weight = np.diag(
+        np.array([self.weights[0], self.weights[1], self.weights[2]]))
+    Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
     return Me
 
   def weights_and_points(self, integ_order=1):
@@ -497,7 +489,7 @@ class Lagrange2DTriElement(BaseNDElement):
 
   @cached_property
   def local_dofs_index(self):
-    return np.arange(self.order * 2 + 1)
+    return np.arange(3 * self.order)
 
   def integrate(self,
                 f,

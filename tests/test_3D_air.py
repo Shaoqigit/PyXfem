@@ -50,7 +50,7 @@ def test_case_2D():
   mesh_reader = MeshReader(current_dir + "/mesh/unit_tube_3D_ufine.msh", dim=3)
   mesh = mesh_reader.get_mesh()
 
-  air_elements = np.arange(0, mesh.nb_elmes)
+  air_elements = np.arange(0, mesh.nb_elems)
   elements2node = mesh.get_mesh_coordinates()
   mesh.set_subdomains({air: air_elements})
   Pf_bases = []

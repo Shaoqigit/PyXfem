@@ -164,7 +164,7 @@ class Mesh2D(BaseMesh):
     self.nodes = nodes
     self.elem_connect = elem_connect
     self.nb_nodes = len(self.nodes)
-    self.nb_elmes = len(self.elem_connect)
+    self.nb_elems = len(self.elem_connect)
     self.node_index = np.arange(self.nb_nodes)
     self.exterior_facets = edge_connect    # [node1, node2]
     self.mesh_center = np.mean(self.nodes, axis=0)    # center of the mesh
@@ -173,6 +173,14 @@ class Mesh2D(BaseMesh):
 
   def set_subdomains(self, subdomains):
     self._subdomains = subdomains
+
+  def get_mesh_order(self):
+    """return order of mesh"""
+    nb_node_per_elem = len(self.elem_connect[0])
+    if nb_node_per_elem == 3:
+      return 1
+    elif nb_node_per_elem == 6:
+      return 2
 
   @property
   def subdomains(self):
@@ -301,25 +309,27 @@ def mesh_constructor(dim, nodes, elem_connect, edge_connect=None):
     raise ValueError("dimension not supported")
 
 
-GMSH_DIM_FACET_MAP = {2: 'triangle', 3: 'tetra'}
-GMSH_DIM_EDGE_MAP = {2: 'line', 3: 'triangle'}
+# gmsh_type with mesh dimension and order
+GMSH_DIM_FACET_MAP = {(2, 1): 'triangle', (2, 2): 'triangle6', (3, 1): 'tetra'}
+GMSH_DIM_EDGE_MAP = {(2, 1): 'line', (3, 1): 'triangle', (3, 2): 'triangle6'}
 
 
 class MeshReader:
 
-  def __init__(self, mesh_file_name, dim=2):
+  def __init__(self, mesh_file_name, dim=2, order=1):
     self.extension = mesh_file_name.split('.')[-1]
-    self.dim = dim
     self.meshio_object = meshio.read(mesh_file_name)
+    self.dim = dim
+    self.order = order
 
   def get_mesh(self) -> BaseMesh:
     if self.extension == 'msh':
       # version 2.2 without saving all parameters
       nodes = self.meshio_object.points[:, :self.dim]
       for elem in self.meshio_object.cells:
-        if elem.type == GMSH_DIM_FACET_MAP[self.dim]:
+        if elem.type in GMSH_DIM_FACET_MAP[(self.dim, self.order)]:
           elem_connect = elem.data
-        elif elem.type == GMSH_DIM_EDGE_MAP[self.dim]:
+        elif elem.type in GMSH_DIM_EDGE_MAP[(self.dim, self.order)]:
           facet_connect = elem.data
       return mesh_constructor(self.dim, nodes, elem_connect, facet_connect)
 
@@ -337,12 +347,15 @@ class MeshReader:
     3D elements in dim=3
     2D elements in dim=2
     """
+    if not self.extension == 'msh':
+      raise ValueError("this function has not yet support for other mesh file")
     if isinstance(physical_tag, str):
       elem_tag = int(self.meshio_object.field_data[physical_tag][0])
     else:
       elem_tag = physical_tag
-    elem_index = np.where(self.meshio_object.cell_data_dict['gmsh:physical'][
-        GMSH_DIM_FACET_MAP[self.dim]] == elem_tag)
+    elem_index = np.where(
+        self.meshio_object.cell_data_dict['gmsh:physical'][GMSH_DIM_FACET_MAP[(
+            self.dim, self.order)]] == elem_tag)
     return elem_index[0]
 
   def get_facet_by_physical(self, physical_tag: Union[str, int]) -> np.ndarray:
@@ -350,12 +363,15 @@ class MeshReader:
     2D facets in dim=3
     1D facets in dim=2
     """
+    if not self.extension == 'msh':
+      raise ValueError("this function has not yet support for other mesh file")
     if isinstance(physical_tag, str):
       edge_tag = int(self.meshio_object.field_data[physical_tag][0])
     else:
       edge_tag = physical_tag
-    edge_index = np.where(self.meshio_object.cell_data_dict['gmsh:physical'][
-        GMSH_DIM_EDGE_MAP[self.dim]] == edge_tag)
+    edge_index = np.where(
+        self.meshio_object.cell_data_dict['gmsh:physical'][GMSH_DIM_EDGE_MAP[(
+            self.dim, self.order)]] == edge_tag)
     return edge_index[0]
 
   def get_vertices_by_physical(self, physical_tag: Union[str,
