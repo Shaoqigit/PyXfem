@@ -82,9 +82,8 @@ Author: Shaoqiwu@outlook.com
 - Biot UP and Fluid coupling model (implemented but not fully validated)
 - Modal domain reduction method
 
-### To do Roadmap
+### Roadmap
 
-- 3D quadratic element
 - Shell element for thin plate in 3D
 - Parallel computing for frequancy scaning problem
 - MoR for damped systems (RB+EIM algorithme for porous materials)
@@ -94,6 +93,11 @@ Author: Shaoqiwu@outlook.com
 - TMM embeded for multi-layered configuration
 - higher order shape function and integration ($p=10$)
 - Message and log system
+
+### To do list
+
+- Refactoring of 1D Lobatto shape function to be consistent with 2D and 3D
+- 3D quadratic element
 
 ## For development and contribution
 

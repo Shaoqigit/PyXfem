@@ -96,6 +96,9 @@ class Lobbato1DElement(Base1DElement):
   def __init__(self, label, order, vertices):
     super().__init__(label, order, vertices)
     add_shape_functions2element(self, self.order)
+    # poly = Lobatto(order)
+    # self.Bd = poly.get_der_shape_functions    # expression of the derivative
+    # self.Nd = poly.get_shape_functions    # expression of the shape function
 
   @cached_property
   def ke(self):
@@ -186,6 +189,9 @@ class Lobbato1DElement(Base1DElement):
     gl_pts, gl_wts = get_quadrature_points_weights(integ_order, 1)
     integral = np.zeros((self.order + 1), dtype=vtype)
     for i, gl_pt in enumerate(gl_pts):
+      # x = N(*gl_pt) @ self.vertices
+      # f_n = f(x[0], x[1]) @ normal
+      # integral += gl_wts[i] * f_n * N(*gl_pt)
       x = N[0](gl_pt) * self.nodes[0] + N[-1](gl_pt) * self.nodes[1]
       f_n = f(x[0], x[1]) @ normal
       integral += gl_wts[i] * f_n * np.array([N[0](gl_pt), N[-1](gl_pt)])
@@ -532,13 +538,9 @@ class Helmholtz2DElement(Lagrange2DTriElement):
     K: ndarray
         elementary stiffness matrix
     """
-    if self.order == 1:
-      Ke = self.mat_coeffs[0] * (self.B @ self.inv_J_product @ np.transpose(
-          self.B,
-          (0, 2, 1)) * self.weights[:np.newaxis]).sum(axis=0) * self.det_J
-
-    else:
-      print("quadrtic lagrange not implemented yet")
+    Ke = self.mat_coeffs[0] * (self.B @ self.inv_J_product @ np.transpose(
+        self.B,
+        (0, 2, 1)) * self.weights[:np.newaxis]).sum(axis=0) * self.det_J
 
     return Ke
 
@@ -549,13 +551,9 @@ class Helmholtz2DElement(Lagrange2DTriElement):
     m: ndarray
         elementary stiffness matrix
     """
-    if self.order == 1:
-      weight = np.diag(
-          np.array([self.weights[0], self.weights[1], self.weights[2]]))
-      Me = self.mat_coeffs[
-          1] * self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
-    else:
-      print("quadrtic lagrange not implemented yet")
+    weight = np.diag(np.array([self.weights[:self.order * 3]])[0])
+    Me = self.mat_coeffs[
+        1] * self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
     return Me
 
 
@@ -606,13 +604,8 @@ class Lagrange2DQuadElement(BaseNDElement):
     K: ndarray
         elementary stiffness matrix
     """
-    if self.order == 1:
-      Ke = sum(
-          self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
-          for i, weight in enumerate(self.weights)) * self.det_J
-
-    else:
-      print("quadrtic lagrange not implemented yet")
+    Ke = sum(self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
+             for i, weight in enumerate(self.weights)) * self.det_J
 
     return Ke
 
@@ -623,12 +616,9 @@ class Lagrange2DQuadElement(BaseNDElement):
     m: ndarray
         elementary stiffness matrix
     """
-    if self.order == 1:
-      weight = np.diag(
-          np.array([self.weights[0], self.weights[1], self.weights[2]]))
-      Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
-    else:
-      print("quadrtic lagrange not implemented yet")
+    weight = np.diag(
+        np.array([self.weights[0], self.weights[1], self.weights[2]]))
+    Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
     return Me
 
 
@@ -716,12 +706,8 @@ class Lagrange3DTetraElement(BaseNDElement):
     K: ndarray
         elementary stiffness matrix
     """
-    if self.order == 1:
-      Ke = (self.B @ self.inv_J_product @ np.transpose(self.B, (0, 2, 1)) *
-            self.weights[:np.newaxis]).sum(axis=0) * self.det_J
-
-    else:
-      print("quadrtic lagrange not implemented yet")
+    Ke = (self.B @ self.inv_J_product @ np.transpose(self.B, (0, 2, 1)) *
+          self.weights[:np.newaxis]).sum(axis=0) * self.det_J
 
     return Ke
 
@@ -732,15 +718,11 @@ class Lagrange3DTetraElement(BaseNDElement):
     m: ndarray
         elementary stiffness matrix
     """
-    if self.order == 1:
-      weight = np.diag(
-          np.array([
-              self.weights[0], self.weights[1], self.weights[2],
-              self.weights[3]
-          ]))
-      Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
-    else:
-      print("quadrtic lagrange not implemented yet")
+    weight = np.diag(
+        np.array([
+            self.weights[0], self.weights[1], self.weights[2], self.weights[3]
+        ]))
+    Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
     return Me
 
   @cached_property

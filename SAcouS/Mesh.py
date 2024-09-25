@@ -253,7 +253,11 @@ class Mesh2D(BaseMesh):
 
   def compute_normal(self, edge):
     """compute normal of the element"""
-    assert (len(edge) == 2)
+    # breakpoint()
+    if self.get_mesh_order() == 1:
+      assert (len(edge) == 2)
+    elif self.get_mesh_order() == 2:
+      assert (len(edge) == 3)
     edge = edge
     node_1_coord = self.nodes[edge[0]]    # in physical space
     node_2_coord = self.nodes[edge[1]]
@@ -311,7 +315,12 @@ def mesh_constructor(dim, nodes, elem_connect, edge_connect=None):
 
 # gmsh_type with mesh dimension and order
 GMSH_DIM_FACET_MAP = {(2, 1): 'triangle', (2, 2): 'triangle6', (3, 1): 'tetra'}
-GMSH_DIM_EDGE_MAP = {(2, 1): 'line', (3, 1): 'triangle', (3, 2): 'triangle6'}
+GMSH_DIM_EDGE_MAP = {
+    (2, 1): 'line',
+    (2, 2): 'line3',
+    (3, 1): 'triangle',
+    (3, 2): 'triangle6'
+}
 
 
 class MeshReader:

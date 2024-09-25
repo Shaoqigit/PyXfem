@@ -181,15 +181,20 @@ class ApplyBoundaryConditions:
             print("Nature BC type not supported")
       case np.ndarray():
         facets = nature_bc['position']
-        facet_basis = {2: Lobbato1DElement, 3: Lagrange2DTriElement}
+        #number of nodes per facet, dimension of the facet
+        facet_basis = {
+            (2, 2): Lobbato1DElement,
+            (3, 2): Lobbato1DElement,
+            (3, 3): Lagrange2DTriElement,
+            (4, 3): Lagrange2DTriElement
+        }
         facets_connect = self.mesh.exterior_facets[
             facets]    # connectity of the facets
         for node_indices in facets_connect:
           nodes_coord = np.array(
               [self.mesh.nodes[i_node] for i_node in node_indices])
-          basis = facet_basis[len(node_indices)](var,
-                                                 order=1,
-                                                 vertices=nodes_coord)
+          basis = facet_basis[(len(node_indices), self.mesh.dim)](
+              var, order=self.mesh.get_mesh_order(), vertices=nodes_coord)
           f = basis.integrate(nature_bc['value'],
                               self.mesh,
                               node_indices,
