@@ -36,7 +36,7 @@ B_tri_p1 = np.array([[[-1., -1.], [1., 0.], [0., 1.]],
                      [[-1., -1.], [1., 0.], [0., 1.]]])
 
 lag2d_poly_p2 = Lagrange2DTri(2)
-points_p2, weights_p2 = get_quadrature_points_weights(4, 2)
+points_p2, weights_p2 = get_quadrature_points_weights(6, 2)
 N_tri_p2 = np.array(
     [lag2d_poly_p2.get_shape_functions(*point) for point in points_p2])
 B_tri_p2 = np.array(

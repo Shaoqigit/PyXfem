@@ -292,11 +292,6 @@ class BaseNDElement(metaclass=ABCMeta):
     self.vertices = vertices
     self.is_discontinue = False
 
-    self.Jacobian()
-    self.determinant_Jacobian()
-    self.inverse_Jacobian()
-    self.inv_J_product = self.inv_J.T @ self.inv_J
-
   @abstractmethod
   def Jacobian(self):
     """
@@ -352,9 +347,14 @@ class Lagrange2DTriElement(BaseNDElement):
       self.points, self.weights = get_quadrature_points_weights(3, 2)
     elif order == 2:
       self.N, self.B = N_tri_p2, B_tri_p2
-      self.points, self.weights = get_quadrature_points_weights(4, 2)
+      self.points, self.weights = get_quadrature_points_weights(6, 2)
     else:
       print("cubic lagrange not supported yet")
+
+    self.Jacobian()
+    self.determinant_Jacobian()
+    self.inverse_Jacobian()
+    self.inv_J_product = self.inv_J.T @ self.inv_J
 
     poly = Lagrange2DTri(order)
     self.Bd = poly.get_der_shape_functions    # expression of the derivative
@@ -421,20 +421,20 @@ class Lagrange2DTriElement(BaseNDElement):
     K: ndarray
         elementary stiffness matrix
     """
-    Ke = sum(self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
-             for i, weight in enumerate(self.weights)) * self.det_J
+    Ke = np.sum(
+        self.B[i, :, :] @ self.inv_J_product @ self.B[i, :, :].T * weight
+        for i, weight in enumerate(self.weights)) * self.det_J
 
     return Ke
 
   @cached_property
   def me(self):
-    """compute the elementary stiffness matrix
+    """compute the elementary mass matrix
     returns:
     m: ndarray
-        elementary stiffness matrix
+        elementary mass matrix
     """
-    weight = np.diag(
-        np.array([self.weights[0], self.weights[1], self.weights[2]]))
+    weight = np.diag(np.array([self.weights[:self.order * 3]])[0])
     Me = self.N[:, :].T @ weight @ self.N[:, :] * self.det_J
     return Me
 
@@ -677,6 +677,10 @@ class Lagrange3DTetraElement(BaseNDElement):
       self.N, self.B = N_tetra_p1, B_tetra_p1
     else:
       print("quadrtic lagrange not supported yet")
+    self.Jacobian()
+    self.determinant_Jacobian()
+    self.inverse_Jacobian()
+    self.inv_J_product = self.inv_J.T @ self.inv_J
 
   def Jacobian(self):
     """
