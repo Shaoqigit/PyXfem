@@ -96,6 +96,8 @@ Author: Shaoqiwu@outlook.com
 
 ### To do list
 
+- Generator for FE space construction
+- JIT on element matrices computation
 - Refactoring of 1D Lobatto shape function to be consistent with 2D and 3D
 - 3D quadratic element
 
