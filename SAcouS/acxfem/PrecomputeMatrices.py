@@ -24,8 +24,8 @@ from .Polynomial import Lobatto, Larange
 # from numpy.polynomial.legendre import leggauss
 def add_shape_functions2element(element, order):
   l = Lobatto(order)
-  B = l.get_der_shape_functions
-  N = l.get_shape_functions
+  B = l.get_der_shape_functions()
+  N = l.get_shape_functions()
   element._shape_functions = N
   element._der_shape_functions = B
 

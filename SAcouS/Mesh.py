@@ -281,6 +281,14 @@ class Mesh3D(Mesh2D):
 
   def plotmesh(self, withnode=False, withnodeid=False, withedgeid=False):
     raise NotImplementedError("3D mesh plot not implemented yet")
+  
+  def get_mesh_order(self):
+    """return order of mesh"""
+    nb_node_per_elem = len(self.elem_connect[0])
+    if nb_node_per_elem == 4:
+      return 1
+    elif nb_node_per_elem == 10:
+      return 2
 
   def compute_normal(self, facet):
     """compute normal of the element"""

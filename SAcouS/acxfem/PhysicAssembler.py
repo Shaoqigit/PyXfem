@@ -174,7 +174,6 @@ class BaseAssembler:
       dofs_index = self.fe_space.get_global_dofs()
     else:
       dofs_index = self.fe_space.get_global_dofs_by_base(var)
-
     A = PETSc.Mat().createAIJ([self.nb_global_dofs, self.nb_global_dofs])
     A.setUp()
 

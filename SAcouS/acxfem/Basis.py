@@ -510,7 +510,6 @@ class Lagrange2DTriElement(BaseNDElement):
     if edge_or_facet is None:
       edge_or_facet = self.vertices
     normal = mesh.compute_normal(edge_or_facet)
-    # breakpoint()
     N = self.Nd
     gl_pts, gl_wts = get_quadrature_points_weights(integ_order, 2)
     integral = np.zeros((self.order + 2), dtype=vtype)
