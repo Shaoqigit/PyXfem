@@ -150,7 +150,7 @@ def gauss_legendre_1d_weights(n: int):
           6.66713443086879298e-02, 6.66713443086879298e-02
       ])
 
-
+@lru_cache
 def gauss_legendre_2d_tri_points(n: int):
   """Gauss-Legendre quadrature
   args:

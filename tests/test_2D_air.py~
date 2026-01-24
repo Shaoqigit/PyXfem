@@ -51,7 +51,7 @@ def test_case_2D():
   current_dir = os.path.dirname(os.path.realpath(__file__))
   mesh_reader = MeshReader(current_dir + "/mesh/unit_tube_2.msh")
   mesh = mesh_reader.get_mesh()
-  breakpoint()
+
   air_elements = np.arange(0, mesh.nb_elems)
   elements2node = mesh.get_mesh_coordinates()
   mesh.set_subdomains({air: air_elements})
