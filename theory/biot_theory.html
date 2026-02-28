@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biot理论 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="传递矩阵法 (TMM)" href="tmm_theory.html" />
+    <link rel="prev" title="JCA模型" href="jca_model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jca_model.html">JCA模型</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Biot理论</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Biot理论概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">基本假设</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">双相系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">本构关系</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">弹性系数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">运动方程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">波类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">波速公式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">边界条件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">频率特性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyacoustix">PyAcoustiX实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">进一步阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Biot理论</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/theory/biot_theory.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="biot">
+<h1>Biot理论<a class="headerlink" href="#biot" title="Link to this heading"></a></h1>
+<p>Biot理论描述了孔隙弹性材料(可变形骨架)中的波传播，是JCA模型的扩展。</p>
+<section id="id1">
+<h2>Biot理论概述<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>Maurice Biot在1956年提出了描述饱和孔隙介质中波传播的理论。与JCA模型不同，Biot理论:</p>
+<ul class="simple">
+<li><p>考虑固体骨架的弹性变形</p></li>
+<li><p>考虑固体与流体之间的惯性耦合</p></li>
+<li><p>预测两种压缩波和一种剪切波</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>基本假设<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>小变形</strong>: 线弹性理论适用</p></li>
+<li><p><strong>连通孔隙</strong>: 流体可以自由流动</p></li>
+<li><p><strong>可压缩流体</strong>: 流体具有可压缩性</p></li>
+<li><p><strong>统计各向同性</strong>: 材料宏观上各向同性</p></li>
+<li><p><strong>可忽略热效应</strong>: 等温过程</p></li>
+</ol>
+</section>
+<section id="id3">
+<h2>双相系统<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>Biot理论将孔隙弹性材料视为双相系统:</p>
+<ul class="simple">
+<li><p><strong>固相</strong> (骨架): 体积分数 <span class="math notranslate nohighlight">\(1-\phi\)</span></p></li>
+<li><p><strong>液相</strong> (孔隙流体): 体积分数 <span class="math notranslate nohighlight">\(\phi\)</span></p></li>
+</ul>
+<p>定义平均位移:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbf{u}\)</span>: 固体骨架位移</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{U}\)</span>: 流体位移</p></li>
+</ul>
+<p>相对位移:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{w} = \phi (\mathbf{U} - \mathbf{u})\]</div>
+<p>表示流体相对于固体的运动。</p>
+</section>
+<section id="id4">
+<h2>本构关系<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p>应力-应变关系:</p>
+<div class="math notranslate nohighlight">
+\[\sigma_{ij} = (P - 2N) e \delta_{ij} + 2N e_{ij} + Q \epsilon \delta_{ij}\]</div>
+<div class="math notranslate nohighlight">
+\[s = Q e + R \epsilon\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\sigma_{ij}\)</span>: 总应力张量</p></li>
+<li><p><span class="math notranslate nohighlight">\(s\)</span>: 流体压力</p></li>
+<li><p><span class="math notranslate nohighlight">\(e_{ij} = \frac{1}{2}(\partial_i u_j + \partial_j u_i)\)</span>: 固体应变</p></li>
+<li><p><span class="math notranslate nohighlight">\(e = \nabla \cdot \mathbf{u}\)</span>: 固体体积应变</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon = \nabla \cdot \mathbf{U}\)</span>: 流体体积应变</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>弹性系数<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p>Biot弹性系数 <span class="math notranslate nohighlight">\(P, Q, R, N\)</span> 可以用更易测量的参数表示:</p>
+<p><strong>剪切模量</strong>:</p>
+<div class="math notranslate nohighlight">
+\[N = \frac{E_s}{2(1+\nu_s)}\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(E_s\)</span> 和 <span class="math notranslate nohighlight">\(\nu_s\)</span> 是固体骨架的杨氏模量和泊松比。</p>
+<p><strong>其他系数</strong>:</p>
+<div class="math notranslate nohighlight">
+\[P = \frac{4}{3}N + K_b + \frac{(1-\phi)^2}{\phi}K_f\]</div>
+<div class="math notranslate nohighlight">
+\[Q = (1-\phi)K_f\]</div>
+<div class="math notranslate nohighlight">
+\[R = \phi K_f\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(K_b\)</span>: 骨架体积模量</p></li>
+<li><p><span class="math notranslate nohighlight">\(K_f\)</span>: 流体体积模量</p></li>
+<li><p><span class="math notranslate nohighlight">\(K_s\)</span>: 固体颗粒体积模量</p></li>
+</ul>
+</section>
+<section id="id6">
+<h2>运动方程<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<p><strong>固体运动方程</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\rho_{11} \ddot{u}_i + \rho_{12} \ddot{U}_i + b(\dot{u}_i - \dot{U}_i) = \frac{\partial \sigma_{ij}}{\partial x_j}\]</div>
+<p><strong>流体运动方程</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\rho_{12} \ddot{u}_i + \rho_{22} \ddot{U}_i - b(\dot{u}_i - \dot{U}_i) = \frac{\partial s}{\partial x_i}\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\rho_{11} = (1-\phi)\rho_s - \rho_{12}\)</span>: 固体有效密度</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rho_{22} = \phi\rho_f - \rho_{12}\)</span>: 流体有效密度</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rho_{12}\)</span>: 惯性耦合系数</p></li>
+<li><p><span class="math notranslate nohighlight">\(b = \frac{\sigma \phi^2}{\omega}\)</span>: 粘滞耦合系数</p></li>
+</ul>
+</section>
+<section id="id7">
+<h2>波类型<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<p>Biot理论预测三种体波:</p>
+<p><strong>快压缩波 (P1)</strong></p>
+<ul class="simple">
+<li><p>固体和流体同相运动</p></li>
+<li><p>速度接近纯固体中的波速</p></li>
+<li><p>衰减较小</p></li>
+</ul>
+<p><strong>慢压缩波 (P2)</strong></p>
+<ul class="simple">
+<li><p>固体和流体反相运动</p></li>
+<li><p>速度较慢</p></li>
+<li><p>衰减很大，传播距离短</p></li>
+</ul>
+<p><strong>剪切波 (S)</strong></p>
+<ul class="simple">
+<li><p>横波，只有固体骨架参与</p></li>
+<li><p>流体不影响剪切波速</p></li>
+</ul>
+</section>
+<section id="id8">
+<h2>波速公式<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>对于简谐波 <span class="math notranslate nohighlight">\(e^{j(\omega t - kx)}\)</span>，色散关系给出:</p>
+<div class="math notranslate nohighlight">
+\[\delta_{1,2}^2 = \frac{\omega^2}{2} \left[ \frac{\delta_s^2 + \delta_f^2 \pm \sqrt{(\delta_s^2 - \delta_f^2)^2 + 4\gamma^2 \delta_f^2 \delta_s^2}}{1 - \gamma^2} \right]\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\delta_1\)</span>: 快波波数</p></li>
+<li><p><span class="math notranslate nohighlight">\(\delta_2\)</span>: 慢波波数</p></li>
+<li><p><span class="math notranslate nohighlight">\(\delta_s = \omega\sqrt{\rho_s/P}\)</span>: 纯固体波数</p></li>
+<li><p><span class="math notranslate nohighlight">\(\delta_f = \omega\sqrt{\rho_f/K_f}\)</span>: 纯流体波数</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma = \frac{Q}{R}\sqrt{\frac{R}{P}}\)</span>: 耦合系数</p></li>
+</ul>
+</section>
+<section id="id9">
+<h2>边界条件<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<p><strong>开放边界</strong> (流体自由流动):</p>
+<div class="math notranslate nohighlight">
+\[s = 0\]</div>
+<p><strong>封闭边界</strong> (不可渗透):</p>
+<div class="math notranslate nohighlight">
+\[w_n = 0\]</div>
+<p><strong>滑动边界</strong> (无摩擦):</p>
+<div class="math notranslate nohighlight">
+\[\tau_{nt} = 0\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\tau_{nt}\)</span> 是切应力。</p>
+</section>
+<section id="id10">
+<h2>频率特性<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<p><strong>低频极限</strong> (<span class="math notranslate nohighlight">\(\omega \to 0\)</span>)</p>
+<ul class="simple">
+<li><p>流体被锁定，表现为单相材料</p></li>
+<li><p>有效密度: <span class="math notranslate nohighlight">\(\rho_{eq} = (1-\phi)\rho_s + \phi\rho_f\)</span></p></li>
+</ul>
+<p><strong>高频极限</strong> (<span class="math notranslate nohighlight">\(\omega \to \infty\)</span>)</p>
+<ul class="simple">
+<li><p>惯性耦合主导</p></li>
+<li><p>快波和慢波解耦</p></li>
+</ul>
+<p><strong>特征频率</strong></p>
+<ul class="simple">
+<li><p><strong>粘滞特征频率</strong>: <span class="math notranslate nohighlight">\(f_v = \frac{\sigma \phi}{2\pi \rho_f}\)</span></p></li>
+<li><p>在此频率附近，慢波开始出现</p></li>
+</ul>
+</section>
+<section id="id11">
+<h2>应用<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<p>Biot理论应用于:</p>
+<ul class="simple">
+<li><p><strong>地球物理</strong>: 地震波在饱和岩石中的传播</p></li>
+<li><p><strong>生物力学</strong>: 骨组织、软组织的声学特性</p></li>
+<li><p><strong>环境声学</strong>: 饱和土壤中的噪声传播</p></li>
+<li><p><strong>石油工程</strong>: 油藏声学测井</p></li>
+</ul>
+</section>
+<section id="pyacoustix">
+<h2>PyAcoustiX实现<a class="headerlink" href="#pyacoustix" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">PoroElasticMaterial</span>
+
+<span class="c1"># 定义Biot材料</span>
+<span class="n">biot</span> <span class="o">=</span> <span class="n">PoroElasticMaterial</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;saturated_soil&#39;</span><span class="p">,</span>
+    <span class="n">phi</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>            <span class="c1"># 孔隙率</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">1e4</span><span class="p">,</span>          <span class="c1"># 流阻</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>          <span class="c1"># 曲折度</span>
+    <span class="n">Lambda_prime</span><span class="o">=</span><span class="mf">100e-6</span><span class="p">,</span>  <span class="c1"># 热特征长度</span>
+    <span class="n">Lambda</span><span class="o">=</span><span class="mf">50e-6</span><span class="p">,</span>       <span class="c1"># 粘滞特征长度</span>
+    <span class="n">rho_solid</span><span class="o">=</span><span class="mi">2650</span><span class="p">,</span>     <span class="c1"># 固体密度</span>
+    <span class="n">E</span><span class="o">=</span><span class="mf">5e9</span><span class="p">,</span>              <span class="c1"># 杨氏模量</span>
+    <span class="n">nu</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>             <span class="c1"># 泊松比</span>
+    <span class="n">eta</span><span class="o">=</span><span class="mf">0.01</span>            <span class="c1"># 损耗因子</span>
+<span class="p">)</span>
+
+<span class="c1"># 设置频率</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">500</span>
+<span class="n">biot</span><span class="o">.</span><span class="n">set_frequency</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+
+<span class="c1"># 获取波数</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;快波波数: </span><span class="si">{</span><span class="n">biot</span><span class="o">.</span><span class="n">delta_1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;慢波波数: </span><span class="si">{</span><span class="n">biot</span><span class="o">.</span><span class="n">delta_2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;剪切波波数: </span><span class="si">{</span><span class="n">biot</span><span class="o">.</span><span class="n">delta_3</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h2>进一步阅读<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Biot, M.A. &quot;Theory of propagation of elastic waves in a fluid-saturated porous solid&quot;</p></li>
+<li><p>Bourbie, T. et al. &quot;Propagation of elastic waves in porous media&quot;</p></li>
+<li><p>Carcione, J.M. &quot;Wave Fields in Real Media&quot;</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="jca_model.html" class="btn btn-neutral float-left" title="JCA模型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="tmm_theory.html" class="btn btn-neutral float-right" title="传递矩阵法 (TMM)" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

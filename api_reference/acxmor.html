@@ -1,0 +1,471 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>acxmor模块 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="interface模块" href="interface.html" />
+    <link rel="prev" title="acxtmm模块" href="acxtmm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API参考</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mesh.html">Mesh模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html">Materials模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html">PostProcess模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html">acxfem模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html">acxtmm模块</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">acxmor模块</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-SAcouS.acxmor">模态降阶</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxmor.ModalReduction.EigenSolver"><code class="docutils literal notranslate"><span class="pre">EigenSolver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxmor.ModalReduction.ModalReduction"><code class="docutils literal notranslate"><span class="pre">ModalReduction</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">降阶基求解器</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual"><code class="docutils literal notranslate"><span class="pre">RBSolver_fromResidual</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">经验插值方法</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxmor.myEIM.nonIntrusiveEIMV2"><code class="docutils literal notranslate"><span class="pre">nonIntrusiveEIMV2</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">使用示例</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">基本模态降阶</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">频率扫描加速</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">与直接求解对比</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">理论背景</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">模态基的选择</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">适用场景</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">限制</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html">interface模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id1">快速索引</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用示例</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API参考</a></li>
+      <li class="breadcrumb-item active">acxmor模块</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/api_reference/acxmor.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="acxmor">
+<h1>acxmor模块<a class="headerlink" href="#acxmor" title="Link to this heading"></a></h1>
+<p>acxmor模块实现了模态降阶(Modal Order Reduction, MoR)方法，用于加速大规模声学问题的求解。</p>
+<section id="module-SAcouS.acxmor">
+<span id="id1"></span><h2>模态降阶<a class="headerlink" href="#module-SAcouS.acxmor" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.EigenSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxmor.ModalReduction.</span></span><span class="sig-name descname"><span class="pre">EigenSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coupling_assember</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/ModalReduction.html#EigenSolver"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.EigenSolver" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="acxfem.html#SAcouS.acxfem.Solver.BaseSolver" title="SAcouS.acxfem.Solver.BaseSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseSolver</span></code></a></p>
+<p>eigen solver class
+parameters:
+left_hand_side: ndarray</p>
+<blockquote>
+<div><p>left hand side matrix</p>
+</div></blockquote>
+<dl class="simple">
+<dt>right_hand_side: ndarray</dt><dd><p>right hand side vector</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.EigenSolver.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stiffness_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_modes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/ModalReduction.html#EigenSolver.solve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.EigenSolver.solve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.EigenSolver.internal_dofs">
+<span class="sig-name descname"><span class="pre">internal_dofs</span></span><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.EigenSolver.internal_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.EigenSolver.external_dofs">
+<span class="sig-name descname"><span class="pre">external_dofs</span></span><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.EigenSolver.external_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.EigenSolver.nb_dofs">
+<span class="sig-name descname"><span class="pre">nb_dofs</span></span><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.EigenSolver.nb_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.EigenSolver.u">
+<span class="sig-name descname"><span class="pre">u</span></span><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.EigenSolver.u" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.EigenSolver.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.EigenSolver.sym" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.ModalReduction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxmor.ModalReduction.</span></span><span class="sig-name descname"><span class="pre">ModalReduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K_w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/ModalReduction.html#ModalReduction"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.ModalReduction" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>modal reduction class
+parameters:
+K_w: ndarray original stiffness matrix
+M_w: ndarray original mass matrix
+modes: ndarray modal matrix [solution at modes]</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.ModalReduction.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K_w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M_w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/ModalReduction.html#ModalReduction.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.ModalReduction.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.ModalReduction.projection">
+<span class="sig-name descname"><span class="pre">projection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/ModalReduction.html#ModalReduction.projection"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.ModalReduction.projection" title="Link to this definition"></a></dt>
+<dd><p>project original matrix/vector on modal basis to modal space
+parameters:
+original_array: ndarray
+returns:
+array: ndarray</p>
+<blockquote>
+<div><p>projected reducded matrix/vector</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.ModalReduction.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left_hand_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_hand_vector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/ModalReduction.html#ModalReduction.solve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.ModalReduction.solve" title="Link to this definition"></a></dt>
+<dd><p>solve the reduced system
+parameters:
+left_hand_matrix: ndarray</p>
+<blockquote>
+<div><p>left hand matrix</p>
+</div></blockquote>
+<dl class="simple">
+<dt>right_hand_vector: ndarray</dt><dd><p>right hand vector</p>
+</dd>
+</dl>
+<p>returns:
+sol: ndarray</p>
+<blockquote>
+<div><p>solution</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.ModalReduction.ModalReduction.recover_sol">
+<span class="sig-name descname"><span class="pre">recover_sol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reducde_sol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/ModalReduction.html#ModalReduction.recover_sol"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.ModalReduction.ModalReduction.recover_sol" title="Link to this definition"></a></dt>
+<dd><p>recover the physical solution from modal space
+parameters:
+reduced_sol: ndarray/solution vector</p>
+<p>returns:
+sol: recoverd solution in physical space</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id2">
+<h2>降阶基求解器<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myRBSolver.RBSolver_fromResidual">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxmor.myRBSolver.</span></span><span class="sig-name descname"><span class="pre">RBSolver_fromResidual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxmodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operatorModesSpace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operatorModesParam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhsModesSpace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhsModesParam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameterTrainingSpace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype_=&lt;class</span> <span class="pre">'float'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myRBSolver.html#RBSolver_fromResidual"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxmodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operatorModesSpace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operatorModesParam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhsModesSpace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhsModesParam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameterTrainingSpace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype_=&lt;class</span> <span class="pre">'float'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myRBSolver.html#RBSolver_fromResidual.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.computeWorstParameterAndAssociatedData">
+<span class="sig-name descname"><span class="pre">computeWorstParameterAndAssociatedData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeffs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myRBSolver.html#RBSolver_fromResidual.computeWorstParameterAndAssociatedData"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.computeWorstParameterAndAssociatedData" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.solveRomEqn">
+<span class="sig-name descname"><span class="pre">solveRomEqn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myRBSolver.html#RBSolver_fromResidual.solveRomEqn"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.solveRomEqn" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.updateBasis">
+<span class="sig-name descname"><span class="pre">updateBasis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myRBSolver.html#RBSolver_fromResidual.updateBasis"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.updateBasis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.solveGreedyLeblond">
+<span class="sig-name descname"><span class="pre">solveGreedyLeblond</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myRBSolver.html#RBSolver_fromResidual.solveGreedyLeblond"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.solveGreedyLeblond" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.solveGreedy">
+<span class="sig-name descname"><span class="pre">solveGreedy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tol</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myRBSolver.html#RBSolver_fromResidual.solveGreedy"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.solveGreedy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.reconstructHiFiApproximatedSolution">
+<span class="sig-name descname"><span class="pre">reconstructHiFiApproximatedSolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myRBSolver.html#RBSolver_fromResidual.reconstructHiFiApproximatedSolution"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.reconstructHiFiApproximatedSolution" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.reconstructHiFiApproximatedSolutionArbitrary">
+<span class="sig-name descname"><span class="pre">reconstructHiFiApproximatedSolutionArbitrary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myRBSolver.html#RBSolver_fromResidual.reconstructHiFiApproximatedSolutionArbitrary"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.reconstructHiFiApproximatedSolutionArbitrary" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id3">
+<h2>经验插值方法<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myEIM.nonIntrusiveEIMV2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxmor.myEIM.</span></span><span class="sig-name descname"><span class="pre">nonIntrusiveEIMV2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxRank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance=1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalizeBasis=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype_=&lt;class</span> <span class="pre">'float'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myEIM.html#nonIntrusiveEIMV2"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myEIM.nonIntrusiveEIMV2" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myEIM.nonIntrusiveEIMV2.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxRank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance=1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orthogonalizeBasis=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype_=&lt;class</span> <span class="pre">'float'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myEIM.html#nonIntrusiveEIMV2.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myEIM.nonIntrusiveEIMV2.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myEIM.nonIntrusiveEIMV2.vecMax">
+<span class="sig-name descname"><span class="pre">vecMax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myEIM.html#nonIntrusiveEIMV2.vecMax"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myEIM.nonIntrusiveEIMV2.vecMax" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxmor.myEIM.nonIntrusiveEIMV2.interpolate">
+<span class="sig-name descname"><span class="pre">interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intrusive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxmor/myEIM.html#nonIntrusiveEIMV2.interpolate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxmor.myEIM.nonIntrusiveEIMV2.interpolate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id4">
+<h2>使用示例<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<section id="id5">
+<h3>基本模态降阶<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxmor</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModalReduction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="n">HelmholtzAssembler</span>
+
+<span class="c1"># 创建原始FEM模型</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">HelmholtzAssembler</span><span class="p">(</span><span class="n">dof_handler</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">subdomains</span><span class="p">)</span>
+
+<span class="c1"># 创建模态降阶模型</span>
+<span class="n">mor</span> <span class="o">=</span> <span class="n">ModalReduction</span><span class="p">(</span><span class="n">assembler</span><span class="p">)</span>
+
+<span class="c1"># 计算模态基 (前20阶)</span>
+<span class="n">mor</span><span class="o">.</span><span class="n">compute_modes</span><span class="p">(</span><span class="n">n_modes</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="c1"># 在特定频率求解</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">1000</span>
+<span class="n">sol_reduced</span> <span class="o">=</span> <span class="n">mor</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+
+<span class="c1"># 重构完整解</span>
+<span class="n">sol_full</span> <span class="o">=</span> <span class="n">mor</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">sol_reduced</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>频率扫描加速<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># 频率范围</span>
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+<span class="c1"># 使用MoR加速</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">freqs</span><span class="p">:</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq</span>
+    <span class="n">sol_r</span> <span class="o">=</span> <span class="n">mor</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+    <span class="n">sol_f</span> <span class="o">=</span> <span class="n">mor</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">sol_r</span><span class="p">)</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol_f</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>与直接求解对比<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="c1"># 直接求解</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">freqs</span><span class="p">:</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq</span>
+    <span class="n">solver</span> <span class="o">=</span> <span class="n">LinearSolver</span><span class="p">(</span><span class="n">dof_handler</span><span class="o">=</span><span class="n">dof_handler</span><span class="p">)</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
+<span class="n">t_direct</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+<span class="c1"># MoR求解</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">mor</span><span class="o">.</span><span class="n">compute_modes</span><span class="p">(</span><span class="n">n_modes</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">freqs</span><span class="p">:</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq</span>
+    <span class="n">mor</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+<span class="n">t_mor</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;直接求解: </span><span class="si">{</span><span class="n">t_direct</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MoR求解: </span><span class="si">{</span><span class="n">t_mor</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;加速比: </span><span class="si">{</span><span class="n">t_direct</span><span class="o">/</span><span class="n">t_mor</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id8">
+<h2>理论背景<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>模态降阶基于以下思想:</p>
+<ol class="arabic">
+<li><p><strong>模态展开</strong>: 解可以表示为模态基的线性组合</p>
+<div class="math notranslate nohighlight">
+\[u(\omega) \approx \sum_{i=1}^{N} \alpha_i(\omega) \phi_i\]</div>
+</li>
+<li><p><strong>降阶系统</strong>: 将大规模系统投影到低维模态空间</p>
+<div class="math notranslate nohighlight">
+\[\hat{K}(\omega) \alpha = \hat{F}\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\hat{K} = \Phi^T K \Phi\)</span>，<span class="math notranslate nohighlight">\(\Phi = [\phi_1, \phi_2, ..., \phi_N]\)</span></p>
+</li>
+<li><p><strong>快速求解</strong>: 降阶系统规模小，可快速求解</p></li>
+</ol>
+<section id="id9">
+<h3>模态基的选择<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>特征模态</strong>: 系统的固有振型</p></li>
+<li><p><strong>Krylov子空间</strong>: 适用于宽频带问题</p></li>
+<li><p><strong>POD模态</strong>: 基于快照的最优基</p></li>
+</ul>
+</section>
+</section>
+<section id="id10">
+<h2>适用场景<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<p>模态降阶特别适用于:</p>
+<ul class="simple">
+<li><p>大规模频率扫描问题</p></li>
+<li><p>实时仿真需求</p></li>
+<li><p>参数化研究</p></li>
+<li><p>优化设计</p></li>
+</ul>
+</section>
+<section id="id11">
+<h2>限制<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>需要预计算模态基</p></li>
+<li><p>对于强非线性问题效果有限</p></li>
+<li><p>模态数量需要足够以捕捉物理现象</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="acxtmm.html" class="btn btn-neutral float-left" title="acxtmm模块" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="interface.html" class="btn btn-neutral float-right" title="interface模块" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

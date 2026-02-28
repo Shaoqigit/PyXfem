@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mesh模块 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Materials模块" href="materials.html" />
+    <link rel="prev" title="API参考" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API参考</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Mesh模块</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-SAcouS.Mesh">基类</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Mesh.BaseMesh"><code class="docutils literal notranslate"><span class="pre">BaseMesh</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#d">1D网格</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Mesh.Mesh1D"><code class="docutils literal notranslate"><span class="pre">Mesh1D</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">2D网格</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Mesh.Mesh2D"><code class="docutils literal notranslate"><span class="pre">Mesh2D</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">3D网格</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Mesh.Mesh3D"><code class="docutils literal notranslate"><span class="pre">Mesh3D</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">网格读取器</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Mesh.MeshReader"><code class="docutils literal notranslate"><span class="pre">MeshReader</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">工具函数</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Mesh.mesh_constructor"><code class="docutils literal notranslate"><span class="pre">mesh_constructor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">使用示例</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">创建1D网格</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gmsh">读取Gmsh网格</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">网格操作</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html">Materials模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html">PostProcess模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html">acxfem模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html">acxtmm模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html">acxmor模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html">interface模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id1">快速索引</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用示例</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API参考</a></li>
+      <li class="breadcrumb-item active">Mesh模块</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/api_reference/mesh.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mesh">
+<h1>Mesh模块<a class="headerlink" href="#mesh" title="Link to this heading"></a></h1>
+<p>Mesh模块提供了1D、2D和3D网格的创建、读取和操作功能。</p>
+<section id="module-SAcouS.Mesh">
+<span id="id1"></span><h2>基类<a class="headerlink" href="#module-SAcouS.Mesh" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Mesh.</span></span><span class="sig-name descname"><span class="pre">BaseMesh</span></span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#BaseMesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.BaseMesh" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>base abstract mesh class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.parser_mesh">
+<span class="sig-name descname"><span class="pre">parser_mesh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#BaseMesh.parser_mesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.parser_mesh" title="Link to this definition"></a></dt>
+<dd><p>parse mesh file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.get_mesh_coordinates">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_mesh_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#BaseMesh.get_mesh_coordinates"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.get_mesh_coordinates" title="Link to this definition"></a></dt>
+<dd><p>return element to nodes coordinates</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.refine_mesh">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refine_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#BaseMesh.refine_mesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.refine_mesh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.plotmesh">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plotmesh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#BaseMesh.plotmesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.plotmesh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.connectivity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">connectivity</span></span><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.connectivity" title="Link to this definition"></a></dt>
+<dd><p>return connectivity</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.node2elem">
+<span class="sig-name descname"><span class="pre">node2elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#BaseMesh.node2elem"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.node2elem" title="Link to this definition"></a></dt>
+<dd><p>return element number from node number</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.get_nb_nodes">
+<span class="sig-name descname"><span class="pre">get_nb_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#BaseMesh.get_nb_nodes"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.get_nb_nodes" title="Link to this definition"></a></dt>
+<dd><p>return number of nodes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.get_nb_elems">
+<span class="sig-name descname"><span class="pre">get_nb_elems</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#BaseMesh.get_nb_elems"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.get_nb_elems" title="Link to this definition"></a></dt>
+<dd><p>return number of elements</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.get_nodes_from_elem">
+<span class="sig-name descname"><span class="pre">get_nodes_from_elem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elem</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#BaseMesh.get_nodes_from_elem"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.get_nodes_from_elem" title="Link to this definition"></a></dt>
+<dd><p>return nodes of corresoinding element</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.Mesh.BaseMesh.num_node2coord">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_node2coord</span></span><a class="headerlink" href="#SAcouS.Mesh.BaseMesh.num_node2coord" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="d">
+<h2>1D网格<a class="headerlink" href="#d" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh1D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Mesh.</span></span><span class="sig-name descname"><span class="pre">Mesh1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem_connect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh1D"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh1D" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.Mesh.BaseMesh" title="SAcouS.Mesh.BaseMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMesh</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh1D.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem_connect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh1D.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh1D.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh1D.set_subdomains">
+<span class="sig-name descname"><span class="pre">set_subdomains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subdomains</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh1D.set_subdomains"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh1D.set_subdomains" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh1D.subdomains">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subdomains</span></span><a class="headerlink" href="#SAcouS.Mesh.Mesh1D.subdomains" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh1D.get_mesh_coordinates">
+<span class="sig-name descname"><span class="pre">get_mesh_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh1D.get_mesh_coordinates"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh1D.get_mesh_coordinates" title="Link to this definition"></a></dt>
+<dd><p>dict of element number and nodes coordinates</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh1D.get_min_size">
+<span class="sig-name descname"><span class="pre">get_min_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh1D.get_min_size"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh1D.get_min_size" title="Link to this definition"></a></dt>
+<dd><p>return minimum size of elements</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh1D.coord2node_num">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coord2node_num</span></span><a class="headerlink" href="#SAcouS.Mesh.Mesh1D.coord2node_num" title="Link to this definition"></a></dt>
+<dd><p>return element number from node number</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh1D.refine_mesh">
+<span class="sig-name descname"><span class="pre">refine_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh1D.refine_mesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh1D.refine_mesh" title="Link to this definition"></a></dt>
+<dd><p>refine mesh</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh1D.plotmesh">
+<span class="sig-name descname"><span class="pre">plotmesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withnode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">withnodeid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh1D.plotmesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh1D.plotmesh" title="Link to this definition"></a></dt>
+<dd><p>plot the 1d mesh</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>withnode</strong> (<em>boolean</em>) -- True to show the node</p></li>
+<li><p><strong>withnodeid</strong> (<em>boolean</em>) -- True to show the node id</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id2">
+<h2>2D网格<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh2D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Mesh.</span></span><span class="sig-name descname"><span class="pre">Mesh2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem_connect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_connect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh2D"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh2D" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.Mesh.BaseMesh" title="SAcouS.Mesh.BaseMesh"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMesh</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh2D.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem_connect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_connect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh2D.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh2D.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh2D.set_subdomains">
+<span class="sig-name descname"><span class="pre">set_subdomains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subdomains</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh2D.set_subdomains"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh2D.set_subdomains" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh2D.get_mesh_order">
+<span class="sig-name descname"><span class="pre">get_mesh_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh2D.get_mesh_order"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh2D.get_mesh_order" title="Link to this definition"></a></dt>
+<dd><p>return order of mesh</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh2D.subdomains">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subdomains</span></span><a class="headerlink" href="#SAcouS.Mesh.Mesh2D.subdomains" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh2D.plotmesh">
+<span class="sig-name descname"><span class="pre">plotmesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withnode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">withnodeid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">withedgeid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh2D.plotmesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh2D.plotmesh" title="Link to this definition"></a></dt>
+<dd><p>plot the 2d mesh</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>withnode</strong> (<em>boolean</em>) -- True to show the node</p></li>
+<li><p><strong>withnodeid</strong> (<em>boolean</em>) -- True to show the node id</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh2D.get_mesh_coordinates">
+<span class="sig-name descname"><span class="pre">get_mesh_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh2D.get_mesh_coordinates"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh2D.get_mesh_coordinates" title="Link to this definition"></a></dt>
+<dd><p>dict of element number and nodes coordinates</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh2D.refine_mesh">
+<span class="sig-name descname"><span class="pre">refine_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh2D.refine_mesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh2D.refine_mesh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh2D.compute_normal">
+<span class="sig-name descname"><span class="pre">compute_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh2D.compute_normal"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh2D.compute_normal" title="Link to this definition"></a></dt>
+<dd><p>compute normal of the element</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id3">
+<h2>3D网格<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh3D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Mesh.</span></span><span class="sig-name descname"><span class="pre">Mesh3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem_connect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_connect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh3D"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh3D" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.Mesh.Mesh2D" title="SAcouS.Mesh.Mesh2D"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mesh2D</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh3D.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem_connect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface_connect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh3D.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh3D.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh3D.get_mesh_coordinates">
+<span class="sig-name descname"><span class="pre">get_mesh_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh3D.get_mesh_coordinates"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh3D.get_mesh_coordinates" title="Link to this definition"></a></dt>
+<dd><p>dict of element number and nodes coordinates</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh3D.plotmesh">
+<span class="sig-name descname"><span class="pre">plotmesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">withnode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">withnodeid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">withedgeid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh3D.plotmesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh3D.plotmesh" title="Link to this definition"></a></dt>
+<dd><p>plot the 2d mesh</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>withnode</strong> (<em>boolean</em>) -- True to show the node</p></li>
+<li><p><strong>withnodeid</strong> (<em>boolean</em>) -- True to show the node id</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh3D.get_mesh_order">
+<span class="sig-name descname"><span class="pre">get_mesh_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh3D.get_mesh_order"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh3D.get_mesh_order" title="Link to this definition"></a></dt>
+<dd><p>return order of mesh</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.Mesh3D.compute_normal">
+<span class="sig-name descname"><span class="pre">compute_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">facet</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#Mesh3D.compute_normal"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.Mesh3D.compute_normal" title="Link to this definition"></a></dt>
+<dd><p>compute normal of the element</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id4">
+<h2>网格读取器<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Mesh.MeshReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Mesh.</span></span><span class="sig-name descname"><span class="pre">MeshReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#MeshReader"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.MeshReader" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.MeshReader.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh_file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#MeshReader.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.MeshReader.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.MeshReader.get_mesh">
+<span class="sig-name descname"><span class="pre">get_mesh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#SAcouS.Mesh.BaseMesh" title="SAcouS.Mesh.BaseMesh"><span class="pre">BaseMesh</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#MeshReader.get_mesh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.MeshReader.get_mesh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.MeshReader.init_subdomains">
+<span class="sig-name descname"><span class="pre">init_subdomains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#SAcouS.Mesh.BaseMesh" title="SAcouS.Mesh.BaseMesh"><span class="pre">BaseMesh</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">physical_tag2material</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="（在 Python v3.14）"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="（在 Python v3.14）"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#MeshReader.init_subdomains"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.MeshReader.init_subdomains" title="Link to this definition"></a></dt>
+<dd><p>return subdomains</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.MeshReader.get_elem_by_physical">
+<span class="sig-name descname"><span class="pre">get_elem_by_physical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">physical_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="（在 Python v3.14）"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="（在 NumPy v2.4）"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#MeshReader.get_elem_by_physical"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.MeshReader.get_elem_by_physical" title="Link to this definition"></a></dt>
+<dd><p>return element number by physical tag
+3D elements in dim=3
+2D elements in dim=2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.MeshReader.get_facet_by_physical">
+<span class="sig-name descname"><span class="pre">get_facet_by_physical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">physical_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="（在 Python v3.14）"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="（在 NumPy v2.4）"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#MeshReader.get_facet_by_physical"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.MeshReader.get_facet_by_physical" title="Link to this definition"></a></dt>
+<dd><p>return facet number by physical tag
+2D facets in dim=3
+1D facets in dim=2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Mesh.MeshReader.get_vertices_by_physical">
+<span class="sig-name descname"><span class="pre">get_vertices_by_physical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">physical_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="（在 Python v3.14）"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="（在 NumPy v2.4）"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#MeshReader.get_vertices_by_physical"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.MeshReader.get_vertices_by_physical" title="Link to this definition"></a></dt>
+<dd><p>return vertices number by physical tag</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id5">
+<h2>工具函数<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.Mesh.mesh_constructor">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.Mesh.</span></span><span class="sig-name descname"><span class="pre">mesh_constructor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elem_connect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_connect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Mesh.html#mesh_constructor"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Mesh.mesh_constructor" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="id6">
+<h2>使用示例<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<section id="id7">
+<h3>创建1D网格<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Mesh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mesh1D</span>
+
+<span class="c1"># 定义节点</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>  <span class="c1"># 100个单元</span>
+
+<span class="c1"># 定义连接关系</span>
+<span class="n">elem_connect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)])</span>
+
+<span class="c1"># 创建网格</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh1D</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">)</span>
+
+<span class="c1"># 设置子域</span>
+<span class="n">air_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">porous_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">set_subdomains</span><span class="p">({</span>
+    <span class="n">air</span><span class="p">:</span> <span class="n">air_elements</span><span class="p">,</span>
+    <span class="n">porous</span><span class="p">:</span> <span class="n">porous_elements</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</section>
+<section id="gmsh">
+<h3>读取Gmsh网格<a class="headerlink" href="#gmsh" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Mesh</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeshReader</span>
+
+<span class="c1"># 读取2D网格</span>
+<span class="n">reader</span> <span class="o">=</span> <span class="n">MeshReader</span><span class="p">(</span><span class="s1">&#39;mesh.msh&#39;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_mesh</span><span class="p">()</span>
+
+<span class="c1"># 获取物理组</span>
+<span class="n">inlet_edges</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_facet_by_physical</span><span class="p">(</span><span class="s1">&#39;inlet&#39;</span><span class="p">)</span>
+<span class="n">wall_edges</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_facet_by_physical</span><span class="p">(</span><span class="s1">&#39;wall&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3>网格操作<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 获取单元坐标</span>
+<span class="n">elem_coords</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">get_mesh_coordinates</span><span class="p">()</span>
+
+<span class="c1"># 网格细化</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">refine_mesh</span><span class="p">(</span><span class="n">times</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># 绘制网格</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">plotmesh</span><span class="p">(</span><span class="n">withnode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">withnodeid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 计算边界法向量</span>
+<span class="n">normal</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">compute_normal</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="index.html" class="btn btn-neutral float-left" title="API参考" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="materials.html" class="btn btn-neutral float-right" title="Materials模块" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

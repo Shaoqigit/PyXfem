@@ -1,0 +1,529 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAcouS.Materials &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">SAcouS.Materials</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>SAcouS.Materials 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This file is part of PyXfem, a software distributed under the MIT license.</span>
+<span class="c1"># For any question, please contact the authors cited below.</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2023</span>
+<span class="c1"># 	Shaoqi WU &lt;shaoqiwu@outlook.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+
+<span class="c1"># matertials.py common vibro-acoustic materials including fluid, equivalent fluid, limp equivalent fluid, elastic, poroelastic</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.lib.scimath</span><span class="w"> </span><span class="kn">import</span> <span class="n">sqrt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABCMeta</span>
+
+
+<div class="viewcode-block" id="BaseMaterial">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.BaseMaterial">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseMaterial</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;base abstract material class</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;Abstract Mtaterial&#39;</span>
+  <span class="n">MODEL</span> <span class="o">=</span> <span class="s1">&#39;Abstract Model&#39;</span>
+
+<div class="viewcode-block" id="BaseMaterial.__init__">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.BaseMaterial.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
+
+
+<div class="viewcode-block" id="BaseMaterial.set_frequency">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.BaseMaterial.set_frequency">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">TYPE</span><span class="si">}</span><span class="s2">, model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">MODEL</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Air">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.Air">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Air</span><span class="p">(</span><span class="n">BaseMaterial</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;air material class</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;Fluid&#39;</span>
+  <span class="n">MODEL</span> <span class="o">=</span> <span class="s1">&#39;Air Model&#39;</span>
+  <span class="n">COMPATIBLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Fluid&#39;</span><span class="p">,</span> <span class="s1">&#39;Poroelastic&#39;</span><span class="p">]</span>
+
+  <span class="c1"># atmospheric conditions</span>
+  <span class="n">T</span> <span class="o">=</span> <span class="mf">293.15</span>    <span class="c1"># reference temperature [K]</span>
+  <span class="n">P</span> <span class="o">=</span> <span class="mf">1.01325e5</span>    <span class="c1"># atmospheric Pressure [Pa]</span>
+  <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.400</span>    <span class="c1"># polytropic coefficient []</span>
+  <span class="n">lambda_</span> <span class="o">=</span> <span class="mf">0.0262</span>    <span class="c1"># thermal conductivity [W.m^-1.K^-1]</span>
+  <span class="n">mu</span> <span class="o">=</span> <span class="mf">0.1839e-4</span>    <span class="c1"># dynamic viscosity [kg.m^-1.s^-1]</span>
+  <span class="n">Pr</span> <span class="o">=</span> <span class="mf">0.710</span>    <span class="c1"># Prandtl&#39;s number []</span>
+  <span class="n">molar_mass</span> <span class="o">=</span> <span class="mf">0.29e-1</span>    <span class="c1"># molar mass [kg.mol^-1]</span>
+  <span class="n">rho</span> <span class="o">=</span> <span class="mf">1.213</span>    <span class="c1"># density [kg.m^-3]</span>
+  <span class="n">C_p</span> <span class="o">=</span> <span class="mi">1006</span>    <span class="c1"># (mass) specific heat capacity as constant pressure [J.K^-1]</span>
+
+  <span class="n">K</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">P</span>    <span class="c1"># adiabatic bulk modulus</span>
+  <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">K</span> <span class="o">/</span> <span class="n">rho</span><span class="p">)</span>    <span class="c1"># adiabatic sound speed</span>
+  <span class="n">Z</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">c</span>    <span class="c1"># characteristic impedance</span>
+  <span class="n">C_v</span> <span class="o">=</span> <span class="n">C_p</span> <span class="o">/</span> <span class="n">gamma</span>    <span class="c1"># (mass) specific heat capacity as constant volume [J.K^-1]</span>
+  <span class="n">nu</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">/</span> <span class="n">rho</span>    <span class="c1"># kinematic viscosity [m.s^-2]</span>
+  <span class="n">nu_prime</span> <span class="o">=</span> <span class="n">nu</span> <span class="o">/</span> <span class="n">Pr</span>    <span class="c1"># viscothermal losses</span>
+
+<div class="viewcode-block" id="Air.__init__">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.Air.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">Air</span><span class="o">.</span><span class="n">K</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">Air</span><span class="o">.</span><span class="n">c</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">Air</span><span class="o">.</span><span class="n">Z</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">Air</span><span class="o">.</span><span class="n">rho</span>
+
+    <span class="c1"># derived parameters</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Z_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span></div>
+
+
+<div class="viewcode-block" id="Air.set_frequency">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.Air.set_frequency">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Fluid">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.Fluid">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Fluid</span><span class="p">(</span><span class="n">BaseMaterial</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;fluid material class</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;Fluid&#39;</span>
+  <span class="n">MODEL</span> <span class="o">=</span> <span class="s1">&#39;Fluid Model&#39;</span>
+  <span class="n">COMPATIBLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Fluid&#39;</span><span class="p">,</span> <span class="s1">&#39;Poroelastic&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Fluid.__init__">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.Fluid.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Z_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_f</span></div>
+
+
+<div class="viewcode-block" id="Fluid.set_frequency">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.Fluid.set_frequency">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_frequency</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EquivalentFluid">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.EquivalentFluid">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EquivalentFluid</span><span class="p">(</span><span class="n">BaseMaterial</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;equivalent fluid material class</span>
+<span class="sd">    attributes:</span>
+<span class="sd">    phi: porosity -&gt; float</span>
+<span class="sd">    sigma: flow resistivity -&gt; float</span>
+<span class="sd">    alpha: static tortuosity -&gt; float</span>
+<span class="sd">    Lambda_prime: thermal characteristic length -&gt; float</span>
+<span class="sd">    Lambda: viscous characteristic length -&gt; float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;Fluid&#39;</span>
+  <span class="n">MODEL</span> <span class="o">=</span> <span class="s1">&#39;JCAL Equivalent Fluid&#39;</span>
+  <span class="n">COMPATIBLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Fluid&#39;</span><span class="p">,</span> <span class="s1">&#39;Poroelastic&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="EquivalentFluid.__init__">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.EquivalentFluid.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="c1"># assert(len(args) == 5)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Lambda_prime</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="EquivalentFluid.set_frequency">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.EquivalentFluid.set_frequency">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;set frequency&quot;&quot;&quot;</span>
+    <span class="c1">#  Johnson et al model for rho_eq_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">omega_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">/</span> <span class="p">(</span><span class="n">Air</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">omega_infty</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="mi">4</span> <span class="o">*</span> <span class="n">Air</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="n">Air</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">F_JKD</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega_infty</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span> <span class="o">=</span> <span class="p">(</span><span class="n">Air</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">/</span>
+                       <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">omega_0</span> <span class="o">/</span>
+                                         <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_JKD</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">alpha_til</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span> <span class="o">/</span> <span class="n">Air</span><span class="o">.</span><span class="n">rho</span>
+
+    <span class="c1">#  Champoux-Allard model for K_eq_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">omega_prime_infty</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span> <span class="o">*</span> <span class="n">Air</span><span class="o">.</span><span class="n">nu_prime</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Lambda_prime</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">F_prime_CA</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega_prime_infty</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">alpha_prime_til</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">omega_prime_infty</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F_prime_CA</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K_eq_til</span> <span class="o">=</span> <span class="p">(</span><span class="n">Air</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">Air</span><span class="o">.</span><span class="n">P</span> <span class="o">/</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Air</span><span class="o">.</span><span class="n">gamma</span> <span class="o">-</span>
+                                  <span class="p">(</span><span class="n">Air</span><span class="o">.</span><span class="n">gamma</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_prime_til</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">c_eq_til</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K_eq_til</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_eq_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Z_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_f</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_eq_til</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="LimpPorousMaterial">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.LimpPorousMaterial">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LimpPorousMaterial</span><span class="p">(</span><span class="n">EquivalentFluid</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;limp porous material class</span>
+<span class="sd">    derived from equivalent fluid class</span>
+<span class="sd">    take the solid density and inertia into account</span>
+<span class="sd">    additional attributes:</span>
+<span class="sd">    rho_1: solid density -&gt; float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;Fluid&#39;</span>
+  <span class="n">MODEL</span> <span class="o">=</span> <span class="s1">&#39;Limp Equivalent Fluid&#39;</span>
+  <span class="n">COMPATIBLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Fluid&#39;</span><span class="p">,</span> <span class="s1">&#39;Poroelastic&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="LimpPorousMaterial.__init__">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.LimpPorousMaterial.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="c1"># assert(len(args) == 6)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_1</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>    <span class="c1">#</span></div>
+
+
+<div class="viewcode-block" id="LimpPorousMaterial.set_frequency">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.LimpPorousMaterial.set_frequency">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_frequency</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_12</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">*</span> <span class="n">Air</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_11</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_12</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">*</span> <span class="n">Air</span><span class="o">.</span><span class="n">rho</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_22</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_12</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_22_til</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_12_til</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_22_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_11_til</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_12_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_til</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_11_til</span> <span class="o">-</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_12_til</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_22_til</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">gamma_til</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_12_til</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_22_til</span> <span class="o">-</span>
+                                 <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_s_til</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_til</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_til</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_limp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_til</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_til</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_til</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_limp</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_eq_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Z_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_f</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_eq_til</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ElasticMaterial">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.ElasticMaterial">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ElasticMaterial</span><span class="p">(</span><span class="n">BaseMaterial</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;elastic material class</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;Elastic&#39;</span>
+  <span class="n">MODEL</span> <span class="o">=</span> <span class="s1">&#39;Elastic Model&#39;</span>
+  <span class="n">COMPATIBLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Elastic&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ElasticMaterial.__init__">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.ElasticMaterial.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>    <span class="c1"># Young&#39;s modulus</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_1</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>    <span class="c1"># solid density</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>    <span class="c1"># Poisson&#39;s ratio</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">eta</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>    <span class="c1"># loss factor</span></div>
+
+
+<div class="viewcode-block" id="ElasticMaterial.compute_missing">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.ElasticMaterial.compute_missing">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">compute_missing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ElasticMaterial.set_frequency">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.ElasticMaterial.set_frequency">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">omega</span> <span class="o">=</span> <span class="n">omega</span>
+    <span class="n">P_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delta_p</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">/</span> <span class="n">P_mat</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delta_s</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PoroElasticMaterial">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.PoroElasticMaterial">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PoroElasticMaterial</span><span class="p">(</span><span class="n">LimpPorousMaterial</span><span class="p">):</span>
+  <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;Poroelastic&#39;</span>
+  <span class="n">MODEL</span> <span class="o">=</span> <span class="s1">&#39;JCA-Biot Model&#39;</span>
+  <span class="n">COMPATIBLE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Poroelastic&#39;</span><span class="p">,</span> <span class="s1">&#39;Elastic&#39;</span><span class="p">,</span> <span class="s1">&#39;Fluid&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="PoroElasticMaterial.__init__">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.PoroElasticMaterial.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="c1"># assert(len(args) == 8)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">eta</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="PoroElasticMaterial.set_frequency">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.PoroElasticMaterial.set_frequency">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_frequency</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">structural_loss</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta</span>
+    <span class="c1"># self.structural_loss = 1</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">structural_loss</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">A_hat</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">structural_loss</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">P_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A_hat</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>
+
+    <span class="n">K_b</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">)</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_f</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_f</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">+</span> <span class="n">K_b</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_f</span>
+
+    <span class="c1"># Biot 1956 elastic coefficients</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">R_til</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_eq_til</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="o">**</span><span class="mi">2</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Q_til</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">P_til</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">P_hat</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_til</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_til</span>
+
+    <span class="n">delta_eq</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_eq_til</span><span class="p">)</span>
+    <span class="n">delta_s_1</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_til</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">P_hat</span><span class="p">)</span>
+    <span class="n">delta_s_2</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_s_til</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">P_hat</span><span class="p">)</span>
+
+    <span class="n">Psi</span> <span class="o">=</span> <span class="p">((</span><span class="n">delta_s_2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">delta_eq</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">delta_eq</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">delta_s_1</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">sdelta_total</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">Psi</span><span class="p">)</span>
+
+    <span class="n">delta_1</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta_s_2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">delta_eq</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">sdelta_total</span><span class="p">))</span>
+    <span class="n">delta_2</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">delta_s_2</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">delta_eq</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">sdelta_total</span><span class="p">))</span>
+    <span class="n">delta_3</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_til</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="n">mu_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_til</span> <span class="o">*</span> <span class="n">delta_eq</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">delta_1</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">delta_eq</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">mu_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_til</span> <span class="o">*</span> <span class="n">delta_eq</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">delta_2</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">delta_eq</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">mu_3</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_til</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">delta_s_1</span> <span class="o">=</span> <span class="n">delta_s_1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delta_s_2</span> <span class="o">=</span> <span class="n">delta_s_2</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delta_1</span> <span class="o">=</span> <span class="n">delta_1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delta_2</span> <span class="o">=</span> <span class="n">delta_2</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delta_3</span> <span class="o">=</span> <span class="n">delta_3</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">delta_eq</span> <span class="o">=</span> <span class="n">delta_eq</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sdelta_total</span> <span class="o">=</span> <span class="n">sdelta_total</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mu_1</span> <span class="o">=</span> <span class="n">mu_1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mu_2</span> <span class="o">=</span> <span class="n">mu_2</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mu_3</span> <span class="o">=</span> <span class="n">mu_3</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">rho_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_eq_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_eq_til</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Z_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_f</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_f</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K_f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_eq_til</span></div>
+</div>
+
+
+
+<span class="c1"># TODO: correct Limp and BiotMaterial class</span>
+
+
+<span class="c1"># write a class to get differennt material class according to the material type</span>
+<div class="viewcode-block" id="MaterialFactory">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.MaterialFactory">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaterialFactory</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;material factory class</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MaterialFactory.__init__">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.MaterialFactory.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="MaterialFactory.create_material">
+<a class="viewcode-back" href="../../api_reference/materials.html#SAcouS.Materials.MaterialFactory.create_material">[文档]</a>
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_material</span><span class="p">(</span><span class="n">material_type</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">material_type</span> <span class="o">==</span> <span class="s1">&#39;FLUID&#39;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">Fluid</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">material_type</span> <span class="o">==</span> <span class="s1">&#39;AIR&#39;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">Air</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">material_type</span> <span class="o">==</span> <span class="s1">&#39;RIGID_POROUS&#39;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">EquivalentFluid</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">material_type</span> <span class="o">==</span> <span class="s1">&#39;LIMP_POROUS&#39;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">LimpPorousMaterial</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">material_type</span> <span class="o">==</span> <span class="s1">&#39;ELASTIC&#39;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">ElasticMaterial</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">material_type</span> <span class="o">==</span> <span class="s1">&#39;PORO_ELASTIC&#39;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">PoroElasticMaterial</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The material type is not defined&#39;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

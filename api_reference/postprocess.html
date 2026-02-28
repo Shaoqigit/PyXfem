@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PostProcess模块 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="acxfem模块" href="acxfem.html" />
+    <link rel="prev" title="Materials模块" href="materials.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API参考</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mesh.html">Mesh模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html">Materials模块</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">PostProcess模块</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-SAcouS.PostProcess">基类</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.PostProcess.BasePostProcess"><code class="docutils literal notranslate"><span class="pre">BasePostProcess</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">场后处理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.PostProcess.PostProcessField"><code class="docutils literal notranslate"><span class="pre">PostProcessField</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">频率响应后处理</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.PostProcess.PostProcessFRF"><code class="docutils literal notranslate"><span class="pre">PostProcessFRF</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">工具函数</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.PostProcess.plot_field"><code class="docutils literal notranslate"><span class="pre">plot_field()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.PostProcess.save_gmsh"><code class="docutils literal notranslate"><span class="pre">save_gmsh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.PostProcess.save_plot"><code class="docutils literal notranslate"><span class="pre">save_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.PostProcess.read_solution"><code class="docutils literal notranslate"><span class="pre">read_solution()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">使用示例</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#d">1D场可视化</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">频率响应</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#d-3d">2D/3D可视化</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">导出结果</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">误差计算</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html">acxfem模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html">acxtmm模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html">acxmor模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html">interface模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id1">快速索引</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用示例</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API参考</a></li>
+      <li class="breadcrumb-item active">PostProcess模块</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/api_reference/postprocess.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="postprocess">
+<h1>PostProcess模块<a class="headerlink" href="#postprocess" title="Link to this heading"></a></h1>
+<p>PostProcess模块提供了结果可视化和分析工具。</p>
+<section id="module-SAcouS.PostProcess">
+<span id="id1"></span><h2>基类<a class="headerlink" href="#module-SAcouS.PostProcess" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.BasePostProcess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.PostProcess.</span></span><span class="sig-name descname"><span class="pre">BasePostProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#BasePostProcess"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.BasePostProcess" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.BasePostProcess.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#BasePostProcess.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.BasePostProcess.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.BasePostProcess.set_figure">
+<span class="sig-name descname"><span class="pre">set_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xaxis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaxis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#BasePostProcess.set_figure"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.BasePostProcess.set_figure" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.BasePostProcess.compute_error">
+<span class="sig-name descname"><span class="pre">compute_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ana_sol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#BasePostProcess.compute_error"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.BasePostProcess.compute_error" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id2">
+<h2>场后处理<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.PostProcess.</span></span><span class="sig-name descname"><span class="pre">PostProcessField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Pressure'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Pa'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessField"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessField" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.PostProcess.BasePostProcess" title="SAcouS.PostProcess.BasePostProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePostProcess</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessField.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Pressure'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Pa'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessField.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessField.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessField.plot_sol">
+<span class="sig-name descname"><span class="pre">plot_sol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessField.plot_sol"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessField.plot_sol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessField.save_sol">
+<span class="sig-name descname"><span class="pre">save_sol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessField.save_sol"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessField.save_sol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessField.display_layers">
+<span class="sig-name descname"><span class="pre">display_layers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">layers_pos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessField.display_layers"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessField.display_layers" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id3">
+<h2>频率响应后处理<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessFRF">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.PostProcess.</span></span><span class="sig-name descname"><span class="pre">PostProcessFRF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acoustic_indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SPL'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessFRF"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessFRF" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.PostProcess.BasePostProcess" title="SAcouS.PostProcess.BasePostProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePostProcess</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessFRF.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freqs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acoustic_indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SPL'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessFRF.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessFRF.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessFRF.get_operator">
+<span class="sig-name descname"><span class="pre">get_operator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessFRF.get_operator"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessFRF.get_operator" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessFRF.plot_sol">
+<span class="sig-name descname"><span class="pre">plot_sol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessFRF.plot_sol"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessFRF.plot_sol" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.PostProcessFRF.save_sol">
+<span class="sig-name descname"><span class="pre">save_sol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">sols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#PostProcessFRF.save_sol"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.PostProcessFRF.save_sol" title="Link to this definition"></a></dt>
+<dd><p>output result as a txt file, res.txt
+{
+// header, PyacoustiX FRF result file
+// Frequency(Hz) SPL(dB)
+100 20.1
+200 30.7
+300 40.4
+400 50.1
+500 48.7
+}</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id4">
+<h2>工具函数<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.plot_field">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.PostProcess.</span></span><span class="sig-name descname"><span class="pre">plot_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Pressure'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Pa'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#plot_field"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.plot_field" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.save_gmsh">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.PostProcess.</span></span><span class="sig-name descname"><span class="pre">save_gmsh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#save_gmsh"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.save_gmsh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.save_plot">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.PostProcess.</span></span><span class="sig-name descname"><span class="pre">save_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#save_plot"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.save_plot" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.PostProcess.read_solution">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.PostProcess.</span></span><span class="sig-name descname"><span class="pre">read_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_mesh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/PostProcess.html#read_solution"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.PostProcess.read_solution" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="id5">
+<h2>使用示例<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<section id="d">
+<h3>1D场可视化<a class="headerlink" href="#d" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.PostProcess</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostProcessField</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># 创建后处理器</span>
+<span class="n">post</span> <span class="o">=</span> <span class="n">PostProcessField</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="s1">&#39;Pressure Distribution&#39;</span><span class="p">)</span>
+
+<span class="c1"># 绘制实部</span>
+<span class="n">post</span><span class="o">.</span><span class="n">plot_sol</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">sol</span><span class="p">),</span> <span class="s1">&#39;Real part&#39;</span><span class="p">,</span> <span class="s1">&#39;solid&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">sol</span><span class="p">),</span> <span class="s1">&#39;Imaginary part&#39;</span><span class="p">,</span> <span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>频率响应<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.PostProcess</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostProcessFRF</span>
+
+<span class="c1"># 频率扫描结果</span>
+<span class="n">freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>  <span class="c1"># 每个频率的结果</span>
+
+<span class="c1"># 创建FRF后处理器</span>
+<span class="n">post_frf</span> <span class="o">=</span> <span class="n">PostProcessFRF</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="s1">&#39;Frequency Response&#39;</span><span class="p">,</span>
+                          <span class="n">acoustic_indicator</span><span class="o">=</span><span class="s1">&#39;SPL&#39;</span><span class="p">)</span>
+
+<span class="c1"># 绘制声压级</span>
+<span class="n">post_frf</span><span class="o">.</span><span class="n">plot_sol</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="s1">&#39;FEM&#39;</span><span class="p">,</span> <span class="s1">&#39;solid&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="s1">&#39;Reference&#39;</span><span class="p">,</span> <span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># 保存结果</span>
+<span class="n">post_frf</span><span class="o">.</span><span class="n">save_sol</span><span class="p">((</span><span class="n">results</span><span class="p">,</span> <span class="s1">&#39;FEM&#39;</span><span class="p">),</span> <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;frf_results.txt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="d-3d">
+<h3>2D/3D可视化<a class="headerlink" href="#d-3d" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.PostProcess</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_field</span>
+
+<span class="c1"># 2D场可视化</span>
+<span class="n">plot_field</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">sol</span><span class="p">),</span> <span class="s1">&#39;Pressure Field&#39;</span><span class="p">,</span>
+           <span class="n">quantity</span><span class="o">=</span><span class="s1">&#39;Pressure&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;Pa&#39;</span><span class="p">)</span>
+
+<span class="c1"># 计算并绘制SPL</span>
+<span class="n">p_ref</span> <span class="o">=</span> <span class="mf">20e-6</span>
+<span class="n">SPL</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span> <span class="o">/</span> <span class="n">p_ref</span><span class="p">)</span>
+<span class="n">plot_field</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">SPL</span><span class="p">,</span> <span class="s1">&#39;Sound Pressure Level&#39;</span><span class="p">,</span>
+           <span class="n">quantity</span><span class="o">=</span><span class="s1">&#39;SPL&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;dB&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>导出结果<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">meshio</span>
+
+<span class="c1"># 导出到VTK (ParaView)</span>
+<span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;results.vtu&#39;</span><span class="p">,</span> <span class="n">meshio</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span>
+    <span class="n">points</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span>
+    <span class="n">cells</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;triangle&#39;</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">connectivity</span><span class="p">)],</span>
+    <span class="n">point_data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;Pressure&#39;</span><span class="p">:</span> <span class="n">sol</span><span class="p">,</span>
+        <span class="s1">&#39;SPL&#39;</span><span class="p">:</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span> <span class="o">/</span> <span class="mf">20e-6</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">))</span>
+
+<span class="c1"># 导出到Gmsh</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.PostProcess</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_plot</span>
+<span class="n">save_plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="s1">&#39;Pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;results.msh&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;gmsh&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3>误差计算<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 计算与解析解的误差</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">post</span><span class="o">.</span><span class="n">compute_error</span><span class="p">(</span><span class="n">fem_sol</span><span class="p">,</span> <span class="n">analytical_sol</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;相对L2误差: </span><span class="si">{</span><span class="n">error</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="materials.html" class="btn btn-neutral float-left" title="Materials模块" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="acxfem.html" class="btn btn-neutral float-right" title="acxfem模块" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

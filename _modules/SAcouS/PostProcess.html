@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAcouS.PostProcess &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">SAcouS.PostProcess</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>SAcouS.PostProcess 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This file is part of PyXfem, a software distributed under the MIT license.</span>
+<span class="c1"># For any question, please contact the authors cited below.</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2023</span>
+<span class="c1"># 	Shaoqi WU &lt;shaoqiwu@outlook.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+
+<span class="c1"># simple postprocessor for plotting and error computation</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">meshio</span>
+
+
+<div class="viewcode-block" id="BasePostProcess">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.BasePostProcess">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BasePostProcess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BasePostProcess.__init__">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.BasePostProcess.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span></div>
+
+
+<div class="viewcode-block" id="BasePostProcess.set_figure">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.BasePostProcess.set_figure">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xaxis</span><span class="p">,</span> <span class="n">yaxis</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xaxis</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">yaxis</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BasePostProcess.compute_error">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.BasePostProcess.compute_error">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">compute_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">ana_sol</span><span class="p">,</span> <span class="n">remove</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># relative error</span>
+
+    <span class="c1"># Compute the differences between the solutions</span>
+    <span class="n">differences</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ana_sol</span> <span class="o">-</span> <span class="n">sol</span><span class="p">)</span>
+
+    <span class="c1"># Square the differences</span>
+    <span class="n">squared_differences</span> <span class="o">=</span> <span class="n">differences</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="c1"># Sum up the squared differences</span>
+    <span class="n">sum_squared_differences</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">squared_differences</span><span class="p">)</span>
+
+    <span class="c1"># Divide by the number of nodes</span>
+    <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">ana_sol</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">mean_squared_difference</span> <span class="o">=</span> <span class="n">sum_squared_differences</span> <span class="o">/</span> <span class="n">num_nodes</span>
+
+    <span class="c1"># Compute analytical</span>
+    <span class="n">abs_analytical</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ana_sol</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">num_nodes</span>
+
+    <span class="c1"># Relative error</span>
+    <span class="n">l2_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_difference</span> <span class="o">/</span> <span class="n">abs_analytical</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">l2_error</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PostProcessField">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessField">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PostProcessField</span><span class="p">(</span><span class="n">BasePostProcess</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PostProcessField.__init__">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessField.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_nodes</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="s1">&#39;Pressure&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;Pa&#39;</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">x_nodes</span> <span class="o">=</span> <span class="n">x_nodes</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">quantity</span> <span class="o">=</span> <span class="n">quantity</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span></div>
+
+
+<div class="viewcode-block" id="PostProcessField.plot_sol">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessField.plot_sol">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">plot_sol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sols</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_figure</span><span class="p">(</span><span class="s1">&#39;Position(m)&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantity</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">sols</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x_nodes</span><span class="p">,</span> <span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PostProcessField.save_sol">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessField.save_sol">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">save_sol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sols</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">sols</span><span class="p">:</span>
+      <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="PostProcessField.display_layers">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessField.display_layers">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">display_layers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">layers_pos</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">layers_pos</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># frequency response function postprocessor</span>
+<div class="viewcode-block" id="PostProcessFRF">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessFRF">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PostProcessFRF</span><span class="p">(</span><span class="n">BasePostProcess</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PostProcessFRF.__init__">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessFRF.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freqs</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">acoustic_indicator</span><span class="o">=</span><span class="s1">&#39;SPL&#39;</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">freqs</span> <span class="o">=</span> <span class="n">freqs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="n">acoustic_indicator</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">acoustic_indicator</span> <span class="o">==</span> <span class="s1">&#39;SPL&#39;</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;dB&#39;</span></div>
+
+
+<div class="viewcode-block" id="PostProcessFRF.get_operator">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessFRF.get_operator">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;SPL(dB)&#39;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">20</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">==</span> <span class="s1">&#39;SPL(dB) - 2&#39;</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: SPL(dB) - 2 is not implemented yet!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PostProcessFRF.plot_sol">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessFRF.plot_sol">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">plot_sol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sols</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_figure</span><span class="p">(</span><span class="s1">&#39;Frequency(Hz)&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">sols</span><span class="p">:</span>
+      <span class="n">sol_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_operator</span><span class="p">()(</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">freqs</span><span class="p">,</span> <span class="n">sol_r</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">sol</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PostProcessFRF.save_sol">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.PostProcessFRF.save_sol">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">save_sol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">sols</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        output result as a txt file, res.txt</span>
+<span class="sd">        {</span>
+<span class="sd">        // header, PyacoustiX FRF result file</span>
+<span class="sd">        // Frequency(Hz) SPL(dB)</span>
+<span class="sd">        100 20.1</span>
+<span class="sd">        200 30.7</span>
+<span class="sd">        300 40.4</span>
+<span class="sd">        400 50.1</span>
+<span class="sd">        500 48.7</span>
+<span class="sd">        }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+      <span class="c1"># write the header</span>
+      <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;// PyacoustiX FRF result file</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Frequency(Hz) </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">sols</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">sol_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_operator</span><span class="p">()(</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sol_r</span><span class="p">)):</span>
+          <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">freqs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">sol_r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># write a function to plot the results on 2D/3D mesh</span>
+<div class="viewcode-block" id="plot_field">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.plot_field">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_field</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="s1">&#39;Pressure&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;Pa&#39;</span><span class="p">):</span>
+  <span class="c1"># Check if the mesh is 2D or 3D</span>
+  <span class="k">if</span> <span class="n">mesh</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="c1"># Plot the 2D mesh and the solution</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+    <span class="c1"># import pdb</span>
+    <span class="c1"># pdb.set_trace()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">triplot</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">connectivity</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tricontourf</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">sol</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">quantity</span> <span class="o">+</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="n">unit</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+  <span class="k">elif</span> <span class="n">mesh</span><span class="o">.</span><span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="c1"># Plot the 3D mesh and the solution</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_trisurf</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">x_nodes</span><span class="p">,</span>
+                    <span class="n">mesh</span><span class="o">.</span><span class="n">y_nodes</span><span class="p">,</span>
+                    <span class="n">mesh</span><span class="o">.</span><span class="n">z_nodes</span><span class="p">,</span>
+                    <span class="n">triangles</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">triangles</span><span class="p">,</span>
+                    <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">,</span>
+                    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">x_nodes</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">y_nodes</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">z_nodes</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">sol</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;jet&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">quantity</span> <span class="o">+</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="n">unit</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unsupported mesh dimension.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="save_gmsh">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.save_gmsh">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_gmsh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+  <span class="n">mesh</span><span class="o">.</span><span class="n">point_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">quantity</span><span class="p">:</span> <span class="n">sol</span><span class="p">}</span>
+  <span class="n">meshio</span><span class="o">.</span><span class="n">gmsh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="s2">&quot;2.2&quot;</span><span class="p">,</span> <span class="n">binary</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="save_plot">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.save_plot">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="s1">&#39;matplotlib&#39;</span>
+  <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s1">&#39;gmsh&#39;</span><span class="p">:</span>
+    <span class="c1"># write the solution to a .msh file</span>
+    <span class="n">save_gmsh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">binary</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unsupported plotting engine.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="read_solution">
+<a class="viewcode-back" href="../../api_reference/postprocess.html#SAcouS.PostProcess.read_solution">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_solution</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">read_mesh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="s1">&#39;matplotlib&#39;</span>
+  <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s1">&#39;gmsh&#39;</span><span class="p">:</span>
+    <span class="c1"># read the solution from a .msh file</span>
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">meshio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">read_mesh</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">mesh</span><span class="o">.</span><span class="n">point_data</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unsupported plotting engine.&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>教程1: 1D Helmholtz问题 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="教程2: 2D声学问题" href="tutorial_2d.html" />
+    <link rel="prev" title="快速开始" href="quickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速开始</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">教程1: 1D Helmholtz问题</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">问题描述</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">控制方程</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">完整代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">详细解释</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">材料定义</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">网格创建</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">子域设置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">基函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">边界条件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">结果分析</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">下一步</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">教程1: 1D Helmholtz问题</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/user_guide/tutorial_1d.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="d-helmholtz">
+<h1>教程1: 1D Helmholtz问题<a class="headerlink" href="#d-helmholtz" title="Link to this heading"></a></h1>
+<p>本教程将详细介绍如何使用PyAcoustiX求解一维Helmholtz方程。我们将模拟声波在Kundt管中的传播，这是声学中的经典问题。</p>
+<section id="id1">
+<h2>问题描述<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>考虑一个长度为 <span class="math notranslate nohighlight">\(L\)</span> 的管子，其中包含两种材料:</p>
+<ul class="simple">
+<li><p>前半段 (<span class="math notranslate nohighlight">\(0 \leq x \u003c L/2\)</span>): 空气</p></li>
+<li><p>后半段 (<span class="math notranslate nohighlight">\(L/2 \leq x \leq L\)</span>): 多孔吸声材料</p></li>
+</ul>
+<p>在左端 (<span class="math notranslate nohighlight">\(x=0\)</span>) 施加速度边界条件，右端 (<span class="math notranslate nohighlight">\(x=L\)</span>) 为自由出射边界。</p>
+<section id="id2">
+<h3>控制方程<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p>一维Helmholtz方程:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d^2 p}{dx^2} + k^2 p = 0\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(k = \omega/c\)</span> 是波数，<span class="math notranslate nohighlight">\(\omega = 2\pi f\)</span> 是角频率，<span class="math notranslate nohighlight">\(c\)</span> 是声速。</p>
+</section>
+</section>
+<section id="id3">
+<h2>完整代码<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lobbato1DElement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">Air</span><span class="p">,</span> <span class="n">EquivalentFluid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.PostProcess</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostProcessField</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Mesh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mesh1D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneralDofHandler1D</span><span class="p">,</span> <span class="n">FESpace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="n">HelmholtzAssembler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApplyBoundaryConditions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_material_compability</span><span class="p">,</span> <span class="n">plot_matrix_partten</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearSolver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">analytical.fluid_sol</span><span class="w"> </span><span class="kn">import</span> <span class="n">DoubleleLayerKundltTube</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tutor_case_1</span><span class="p">():</span>
+    <span class="c1"># ====================== 物理问题设置 ======================</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;设置物理问题...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 定义材料</span>
+    <span class="n">air</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="s1">&#39;classical air&#39;</span><span class="p">)</span>
+
+    <span class="c1"># JCA多孔材料参数</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="mf">0.98</span>           <span class="c1"># 孔隙率</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="mf">3.75e3</span>       <span class="c1"># 流阻 [Pa·s/m²]</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.17</span>         <span class="c1"># 曲折度</span>
+    <span class="n">Lambda_prime</span> <span class="o">=</span> <span class="mf">742e-6</span>  <span class="c1"># 热特征长度 [m]</span>
+    <span class="n">Lambda</span> <span class="o">=</span> <span class="mf">110e-6</span>      <span class="c1"># 粘滞特征长度 [m]</span>
+
+    <span class="n">xfm</span> <span class="o">=</span> <span class="n">EquivalentFluid</span><span class="p">(</span><span class="s1">&#39;xfm&#39;</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
+                          <span class="n">Lambda_prime</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">)</span>
+
+    <span class="c1"># 频率设置</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="mi">2000</span>          <span class="c1"># 频率 [Hz]</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq</span>
+
+    <span class="c1"># ====================== 网格定义 ======================</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;创建网格...&quot;</span><span class="p">)</span>
+    <span class="n">num_elem</span> <span class="o">=</span> <span class="mi">100</span>       <span class="c1"># 单元数</span>
+    <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">num_elem</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
+
+    <span class="n">elem_connec1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_elem</span><span class="p">)</span>
+    <span class="n">elem_connec2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
+    <span class="n">connectivity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">elem_connec1</span><span class="p">,</span> <span class="n">elem_connec2</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh1D</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">)</span>
+    <span class="n">elements2node</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">get_mesh_coordinates</span><span class="p">()</span>
+
+    <span class="c1"># 设置子域</span>
+    <span class="n">air_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_elem</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">xfm_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num_elem</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">num_elem</span><span class="p">)</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">set_subdomains</span><span class="p">({</span><span class="n">air</span><span class="p">:</span> <span class="n">air_elements</span><span class="p">,</span> <span class="n">xfm</span><span class="p">:</span> <span class="n">xfm_elements</span><span class="p">})</span>
+
+    <span class="c1"># 检查材料兼容性</span>
+    <span class="n">check_material_compability</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">subdomains</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;创建了 </span><span class="si">{</span><span class="n">num_elem</span><span class="si">}</span><span class="s2"> 个单元的网格&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== FEM基函数 ======================</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;设置FEM基函数...&quot;</span><span class="p">)</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="mi">2</span>            <span class="c1"># 全局阶数</span>
+
+    <span class="n">Pf_bases</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">mat</span><span class="p">,</span> <span class="n">elems</span> <span class="ow">in</span> <span class="n">mesh</span><span class="o">.</span><span class="n">subdomains</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">mat</span><span class="o">.</span><span class="n">TYPE</span> <span class="o">==</span> <span class="s1">&#39;Fluid&#39;</span><span class="p">:</span>
+            <span class="n">Pf_bases</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="n">Lobbato1DElement</span><span class="p">(</span><span class="s1">&#39;Pf&#39;</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">elements2node</span><span class="p">[</span><span class="n">elem</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">elems</span>
+            <span class="p">]</span>
+
+    <span class="c1"># ====================== 自由度处理 ======================</span>
+    <span class="n">Helmholtz_dof_handler</span> <span class="o">=</span> <span class="n">GeneralDofHandler1D</span><span class="p">([</span><span class="s1">&#39;Pf&#39;</span><span class="p">],</span> <span class="n">Pf_bases</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;全局自由度数量: </span><span class="si">{</span><span class="n">Helmholtz_dof_handler</span><span class="o">.</span><span class="n">nb_dofs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== 矩阵组装 ======================</span>
+    <span class="n">Helmholtz_assember</span> <span class="o">=</span> <span class="n">HelmholtzAssembler</span><span class="p">(</span>
+        <span class="n">Helmholtz_dof_handler</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">subdomains</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span>
+    <span class="p">)</span>
+    <span class="n">Helmholtz_assember</span><span class="o">.</span><span class="n">assembly_global_matrix</span><span class="p">(</span><span class="n">Pf_bases</span><span class="p">,</span> <span class="s1">&#39;Pf&#39;</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">left_hand_matrix</span> <span class="o">=</span> <span class="n">Helmholtz_assember</span><span class="o">.</span><span class="n">get_global_matrix</span><span class="p">()</span>
+
+    <span class="c1"># 显示矩阵稀疏模式</span>
+    <span class="n">plot_matrix_partten</span><span class="p">(</span><span class="n">left_hand_matrix</span><span class="p">)</span>
+
+    <span class="c1"># ====================== 边界条件 ======================</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;施加边界条件...&quot;</span><span class="p">)</span>
+    <span class="n">fe_space</span> <span class="o">=</span> <span class="n">FESpace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">Pf_bases</span><span class="p">)</span>
+    <span class="n">right_hand_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Helmholtz_assember</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span>
+                              <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+
+    <span class="c1"># 自然边界条件 (速度边界)</span>
+    <span class="n">nature_bcs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;fluid_velocity&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span><span class="p">),</span>
+        <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="p">}</span>
+
+    <span class="n">BCs_applier</span> <span class="o">=</span> <span class="n">ApplyBoundaryConditions</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">fe_space</span><span class="p">,</span>
+                                          <span class="n">left_hand_matrix</span><span class="p">,</span>
+                                          <span class="n">right_hand_vec</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">BCs_applier</span><span class="o">.</span><span class="n">apply_nature_bc</span><span class="p">(</span><span class="n">nature_bcs</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s1">&#39;Pf&#39;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== 求解 ======================</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;求解线性系统...&quot;</span><span class="p">)</span>
+    <span class="n">linear_solver</span> <span class="o">=</span> <span class="n">LinearSolver</span><span class="p">(</span><span class="n">dof_handler</span><span class="o">=</span><span class="n">Helmholtz_dof_handler</span><span class="p">)</span>
+    <span class="n">linear_solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">left_hand_matrix</span><span class="p">,</span> <span class="n">right_hand_vec</span><span class="p">)</span>
+    <span class="n">sol</span> <span class="o">=</span> <span class="n">linear_solver</span><span class="o">.</span><span class="n">u</span>
+
+    <span class="c1"># ====================== 解析解对比 ======================</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;计算解析解...&quot;</span><span class="p">)</span>
+    <span class="n">kundlt_tube</span> <span class="o">=</span> <span class="n">DoubleleLayerKundltTube</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">air</span><span class="p">,</span> <span class="n">xfm</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">nature_bcs</span><span class="p">)</span>
+    <span class="n">ana_sol</span> <span class="o">=</span> <span class="n">kundlt_tube</span><span class="o">.</span><span class="n">sol_on_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">sol_type</span><span class="o">=</span><span class="s1">&#39;pressure&#39;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== 后处理 ======================</span>
+    <span class="n">post_processer</span> <span class="o">=</span> <span class="n">PostProcessField</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;1D Helmholtz (2000Hz)&#39;</span><span class="p">)</span>
+    <span class="n">post_processer</span><span class="o">.</span><span class="n">plot_sol</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">sol</span><span class="p">),</span> <span class="s1">&#39;FEM (p=2)&#39;</span><span class="p">,</span> <span class="s1">&#39;solid&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">ana_sol</span><span class="p">),</span> <span class="s1">&#39;Analytical&#39;</span><span class="p">,</span> <span class="s1">&#39;dashed&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 计算误差</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">post_processer</span><span class="o">.</span><span class="n">compute_error</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">ana_sol</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;相对L2误差: </span><span class="si">{</span><span class="n">error</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">sol</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">tutor_case_1</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>详细解释<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<section id="id5">
+<h3>材料定义<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p><strong>空气材料</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">air</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="s1">&#39;classical air&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Air</span></code> 类预定义了标准大气条件下的空气属性:</p>
+<ul class="simple">
+<li><p>密度 <span class="math notranslate nohighlight">\(\rho = 1.213\)</span> kg/m³</p></li>
+<li><p>声速 <span class="math notranslate nohighlight">\(c = 343\)</span> m/s</p></li>
+<li><p>温度 <span class="math notranslate nohighlight">\(T = 293.15\)</span> K</p></li>
+<li><p>压力 <span class="math notranslate nohighlight">\(P = 101325\)</span> Pa</p></li>
+</ul>
+<p><strong>JCA等效流体</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">xfm</span> <span class="o">=</span> <span class="n">EquivalentFluid</span><span class="p">(</span><span class="s1">&#39;xfm&#39;</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
+                      <span class="n">Lambda_prime</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Johnson-Champoux-Allard (JCA) 模型是描述多孔吸声材料的标准模型。参数含义:</p>
+<ul class="simple">
+<li><p><strong>phi</strong> (<span class="math notranslate nohighlight">\(\phi\)</span>): 孔隙率，材料中孔隙体积与总体积之比</p></li>
+<li><p><strong>sigma</strong> (<span class="math notranslate nohighlight">\(\sigma\)</span>): 流阻，描述流体流经材料时的阻力</p></li>
+<li><p><strong>alpha</strong> (<span class="math notranslate nohighlight">\(\alpha\)</span>): 曲折度，描述孔隙路径的复杂程度</p></li>
+<li><p><strong>Lambda_prime</strong> (<span class="math notranslate nohighlight">\(\Lambda'\)</span>): 热特征长度，影响热损耗</p></li>
+<li><p><strong>Lambda</strong> (<span class="math notranslate nohighlight">\(\Lambda\)</span>): 粘滞特征长度，影响粘滞损耗</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>网格创建<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
+<span class="n">connectivity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">elem_connec1</span><span class="p">,</span> <span class="n">elem_connec2</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh1D</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>对于1D问题:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nodes</span></code>: 节点坐标数组，形状为 <code class="docutils literal notranslate"><span class="pre">(n_nodes,)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">connectivity</span></code>: 单元连接关系，形状为 <code class="docutils literal notranslate"><span class="pre">(n_elements,</span> <span class="pre">2)</span></code></p></li>
+</ul>
+<p>每个单元由两个节点定义，节点编号从0开始。</p>
+</section>
+<section id="id7">
+<h3>子域设置<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span><span class="o">.</span><span class="n">set_subdomains</span><span class="p">({</span><span class="n">air</span><span class="p">:</span> <span class="n">air_elements</span><span class="p">,</span> <span class="n">xfm</span><span class="p">:</span> <span class="n">xfm_elements</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>子域用于定义不同材料占据的区域。<code class="docutils literal notranslate"><span class="pre">air_elements</span></code> 和 <code class="docutils literal notranslate"><span class="pre">xfm_elements</span></code> 是NumPy数组，包含单元编号。</p>
+</section>
+<section id="id8">
+<h3>基函数<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Pf_bases</span> <span class="o">=</span> <span class="p">[</span><span class="n">Lobbato1DElement</span><span class="p">(</span><span class="s1">&#39;Pf&#39;</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">elements2node</span><span class="p">[</span><span class="n">elem</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Lobbato1DElement</span></code> 是高阶谱元法使用的基函数:</p>
+<ul class="simple">
+<li><p><strong>name</strong>: 变量名 ('Pf' 表示声压)</p></li>
+<li><p><strong>order</strong>: 多项式阶数 (1=线性, 2=二次, 3=三次, 4=四次)</p></li>
+<li><p><strong>nodes</strong>: 单元节点坐标</p></li>
+</ul>
+<p>Lobatto多项式的特点是节点包含端点，有利于施加边界条件。</p>
+</section>
+<section id="id9">
+<h3>边界条件<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p><strong>速度边界条件</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nature_bcs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;fluid_velocity&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span><span class="p">),</span>
+    <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>type</strong>: 边界条件类型</p></li>
+<li><p><strong>value</strong>: 边界值 (复数)</p></li>
+<li><p><strong>position</strong>: 边界位置 (-1表示右端)</p></li>
+</ul>
+<p>速度边界条件对应Neumann边界条件:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial p}{\partial n} = -j\omega\rho_0 v_n\]</div>
+</section>
+<section id="id10">
+<h3>结果分析<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>代码计算了FEM解与解析解的相对L2误差:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">error</span> <span class="o">=</span> <span class="n">post_processer</span><span class="o">.</span><span class="n">compute_error</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">ana_sol</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>通常，对于足够细的网格和适当的阶数，误差应小于1%。</p>
+</section>
+</section>
+<section id="id11">
+<h2>练习<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>改变频率</strong>: 修改 <code class="docutils literal notranslate"><span class="pre">freq</span></code> 变量，观察解的变化</p></li>
+<li><p><strong>改变网格密度</strong>: 修改 <code class="docutils literal notranslate"><span class="pre">num_elem</span></code>，观察收敛性</p></li>
+<li><p><strong>改变多项式阶数</strong>: 修改 <code class="docutils literal notranslate"><span class="pre">order</span></code>，比较高阶和低阶的精度</p></li>
+<li><p><strong>改变材料参数</strong>: 调整JCA参数，观察对吸声的影响</p></li>
+</ol>
+</section>
+<section id="id12">
+<h2>下一步<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="tutorial_2d.html"><span class="doc">教程2: 2D声学问题</span></a>: 学习2D声学问题</p></li>
+<li><p><a class="reference internal" href="../theory/helmholtz.html"><span class="doc">Helmholtz方程</span></a>: 深入了解Helmholtz方程理论</p></li>
+<li><p><a class="reference internal" href="../theory/jca_model.html"><span class="doc">JCA模型</span></a>: 学习JCA模型理论</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="quickstart.html" class="btn btn-neutral float-left" title="快速开始" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="tutorial_2d.html" class="btn btn-neutral float-right" title="教程2: 2D声学问题" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

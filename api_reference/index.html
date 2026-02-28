@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API参考 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Mesh模块" href="mesh.html" />
+    <link rel="prev" title="命令行使用" href="../user_guide/cli_usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mesh.html">Mesh模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html">Materials模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html">PostProcess模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html">acxfem模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html">acxtmm模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html">acxmor模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html">interface模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">快速索引</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">核心模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fem">FEM模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">高级功能</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">使用示例</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">导入模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">类型注解</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API参考</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/api_reference/index.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api">
+<h1>API参考<a class="headerlink" href="#api" title="Link to this heading"></a></h1>
+<p>本部分提供PyAcoustiX所有模块的完整API参考。</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mesh.html">Mesh模块</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mesh.html#module-SAcouS.Mesh">基类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh.html#d">1D网格</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh.html#id2">2D网格</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh.html#id3">3D网格</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh.html#id4">网格读取器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh.html#id5">工具函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mesh.html#id6">使用示例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">Materials模块</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="materials.html#module-SAcouS.Materials">基类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html#id2">流体材料</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html#id5">多孔材料</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html#id6">弹性材料</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html#biot">Biot多孔弹性材料</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html#id7">材料工厂</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html#id8">使用示例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="postprocess.html">PostProcess模块</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html#module-SAcouS.PostProcess">基类</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html#id2">场后处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html#id3">频率响应后处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html#id4">工具函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html#id5">使用示例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="acxfem.html">acxfem模块</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html#basis">基函数 (Basis)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html#dofhandler">自由度处理 (DofHandler)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html#assembly">组装 (Assembly)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html#physicassembler">物理组装器 (PhysicAssembler)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html#solver">求解器 (Solver)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html#bcsimpose">边界条件 (BCsImpose)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html#quadratures">数值积分 (Quadratures)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html#id4">工具函数</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="acxtmm.html">acxtmm模块</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html#tmm">TMM核心</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html#id1">导纳组装器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html#id2">导纳基函数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html#id3">使用示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html#id6">理论背景</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html#id7">注意事项</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="acxmor.html">acxmor模块</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html#module-SAcouS.acxmor">模态降阶</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html#id2">降阶基求解器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html#id3">经验插值方法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html#id4">使用示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html#id8">理论背景</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html#id10">适用场景</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html#id11">限制</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">interface模块</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="interface.html#module-SAcouS.interface">输入文件解析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html#id2">求解设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html#id3">使用示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html#id5">输入文件格式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html#id7">命令行接口</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html#id8">编程接口</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="id1">
+<h2>快速索引<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<section id="id2">
+<h3>核心模块<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="mesh.html#module-SAcouS.Mesh" title="SAcouS.Mesh"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.Mesh</span></code></a>: 网格处理 (1D/2D/3D)</p></li>
+<li><p><a class="reference internal" href="materials.html#module-SAcouS.Materials" title="SAcouS.Materials"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.Materials</span></code></a>: 材料模型定义</p></li>
+<li><p><a class="reference internal" href="postprocess.html#module-SAcouS.PostProcess" title="SAcouS.PostProcess"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.PostProcess</span></code></a>: 后处理和可视化</p></li>
+</ul>
+</section>
+<section id="fem">
+<h3>FEM模块<a class="headerlink" href="#fem" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.Basis</span></code>: 基函数实现</p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.Assembly</span></code>: 矩阵组装</p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.Solver</span></code>: 线性求解器</p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.DofHandler</span></code>: 自由度管理</p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.BCsImpose</span></code>: 边界条件</p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.Quadratures</span></code>: 数值积分</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>高级功能<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="acxtmm.html#module-SAcouS.acxtmm" title="SAcouS.acxtmm"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxtmm</span></code></a>: 传递矩阵法 (TMM)</p></li>
+<li><p><a class="reference internal" href="acxmor.html#module-SAcouS.acxmor" title="SAcouS.acxmor"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxmor</span></code></a>: 模态降阶 (MoR)</p></li>
+<li><p><a class="reference internal" href="interface.html#module-SAcouS.interface" title="SAcouS.interface"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.interface</span></code></a>: 输入/输出接口</p></li>
+</ul>
+</section>
+</section>
+<section id="id4">
+<h2>使用示例<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<section id="id5">
+<h3>导入模块<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 导入整个包</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># 或导入特定模块</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Mesh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mesh1D</span><span class="p">,</span> <span class="n">Mesh2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">Air</span><span class="p">,</span> <span class="n">EquivalentFluid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="n">HelmholtzAssembler</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>类型注解<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>PyAcoustiX使用类型注解提高代码可读性:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="n">mesh</span><span class="p">:</span> <span class="n">Mesh2D</span><span class="p">,</span> <span class="n">material</span><span class="p">:</span> <span class="n">BaseMaterial</span><span class="p">,</span> <span class="n">freq</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>常见类型:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>: NumPy数组</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">complex128</span></code>: 复数类型</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Dict[str,</span> <span class="pre">Any]</span></code>: 字典</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Optional[T]</span></code>: 可选类型</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="../user_guide/cli_usage.html" class="btn btn-neutral float-left" title="命令行使用" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="mesh.html" class="btn btn-neutral float-right" title="Mesh模块" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

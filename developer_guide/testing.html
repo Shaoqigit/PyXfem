@@ -1,0 +1,361 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>测试指南 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="prev" title="贡献指南" href="contributing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">贡献指南</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">测试指南</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">测试结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">运行测试</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">运行所有测试</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">运行特定测试</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pytest">使用pytest</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">测试类型</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">单元测试</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">集成测试</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">验证测试</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">编写测试</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">测试模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">测试命名</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">测试数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14">断言方法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">持续集成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id16">测试覆盖率</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id17">调试测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id18">最佳实践</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">测试指南</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/developer_guide/testing.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>测试指南<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<p>本章节介绍PyAcoustiX的测试策略和实践。</p>
+<section id="id2">
+<h2>测试结构<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>测试文件位于 <code class="docutils literal notranslate"><span class="pre">tests/</span></code> 目录:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>tests/
+├── test_2D_air.py          # 2D空气问题
+├── test_biot_equation.py   # Biot方程
+├── test_tmm_biot.py        # TMM测试
+├── test_mor_porous.py      # MoR测试
+└── ...
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>运行测试<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<section id="id4">
+<h3>运行所有测试<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>run_test.py
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>运行特定测试<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tests/test_2D_air.py
+</pre></div>
+</div>
+</section>
+<section id="pytest">
+<h3>使用pytest<a class="headerlink" href="#pytest" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pytest
+pytest<span class="w"> </span>tests/
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id6">
+<h2>测试类型<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<section id="id7">
+<h3>单元测试<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>测试单个函数或类:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_material_creation</span><span class="p">():</span>
+    <span class="n">air</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="s1">&#39;air&#39;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">air</span><span class="o">.</span><span class="n">rho</span> <span class="o">==</span> <span class="mf">1.213</span>
+    <span class="k">assert</span> <span class="n">air</span><span class="o">.</span><span class="n">c</span> <span class="o">==</span> <span class="mf">343.0</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3>集成测试<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p>测试多个组件的协同工作:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_helmholtz_solver</span><span class="p">():</span>
+    <span class="c1"># 创建网格</span>
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh1D</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">)</span>
+
+    <span class="c1"># 设置材料</span>
+    <span class="n">air</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="s1">&#39;air&#39;</span><span class="p">)</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">set_subdomains</span><span class="p">({</span><span class="n">air</span><span class="p">:</span> <span class="n">elements</span><span class="p">})</span>
+
+    <span class="c1"># 组装和求解</span>
+    <span class="n">assembler</span> <span class="o">=</span> <span class="n">HelmholtzAssembler</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">assembler</span><span class="o">.</span><span class="n">assembly_global_matrix</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="c1"># 验证结果</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3>验证测试<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p>与解析解对比:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">test_kundt_tube</span><span class="p">():</span>
+    <span class="c1"># FEM解</span>
+    <span class="n">fem_sol</span> <span class="o">=</span> <span class="n">solve_fem</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="c1"># 解析解</span>
+    <span class="n">ana_sol</span> <span class="o">=</span> <span class="n">analytical_solution</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="c1"># 计算误差</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">compute_error</span><span class="p">(</span><span class="n">fem_sol</span><span class="p">,</span> <span class="n">ana_sol</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">error</span> <span class="o">&lt;</span> <span class="mf">0.01</span>  <span class="c1"># 1%误差容限</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id10">
+<h2>编写测试<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<section id="id11">
+<h3>测试模板<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_feature_name</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;测试功能描述&quot;&quot;&quot;</span>
+    <span class="c1"># 准备</span>
+    <span class="n">input_data</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">expected_output</span> <span class="o">=</span> <span class="o">...</span>
+
+    <span class="c1"># 执行</span>
+    <span class="n">actual_output</span> <span class="o">=</span> <span class="n">function_to_test</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+
+    <span class="c1"># 验证</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">actual_output</span><span class="p">,</span> <span class="n">expected_output</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test passed!&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_feature_name</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h3>测试命名<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>测试文件: <code class="docutils literal notranslate"><span class="pre">test_*.py</span></code></p></li>
+<li><p>测试函数: <code class="docutils literal notranslate"><span class="pre">test_*</span></code></p></li>
+<li><p>描述性名称，说明测试内容</p></li>
+</ul>
+</section>
+<section id="id13">
+<h3>测试数据<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>使用简单、可重现的测试数据</p></li>
+<li><p>避免硬编码大数组</p></li>
+<li><p>使用 <code class="docutils literal notranslate"><span class="pre">np.testing</span></code> 进行数组比较</p></li>
+</ul>
+</section>
+<section id="id14">
+<h3>断言方法<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 数值比较</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+
+<span class="c1"># 数组相等</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+<span class="c1"># 近似相等</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># 引发异常</span>
+<span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="n">invalid_operation</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id15">
+<h2>持续集成<a class="headerlink" href="#id15" title="Link to this heading"></a></h2>
+<p>GitHub Actions配置:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tests</span>
+
+<span class="nt">on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">push</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">pull_request</span><span class="p p-Indicator">]</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v2</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set up Python</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-python@v2</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.9</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dependencies</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">pip install -e .</span>
+<span class="w">          </span><span class="no">pip install pytest</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run tests</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pytest tests/</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h2>测试覆盖率<a class="headerlink" href="#id16" title="Link to this heading"></a></h2>
+<p>生成覆盖率报告:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pytest-cov
+pytest<span class="w"> </span>--cov<span class="o">=</span>SAcouS<span class="w"> </span>tests/
+</pre></div>
+</div>
+<p>目标覆盖率: &gt; 80%</p>
+</section>
+<section id="id17">
+<h2>调试测试<a class="headerlink" href="#id17" title="Link to this heading"></a></h2>
+<p>使用pdb调试:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pdb</span><span class="p">;</span> <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>使用pytest的调试模式:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>--pdb<span class="w"> </span>tests/test_example.py
+</pre></div>
+</div>
+</section>
+<section id="id18">
+<h2>最佳实践<a class="headerlink" href="#id18" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>独立性</strong>: 每个测试应该独立运行</p></li>
+<li><p><strong>可重复性</strong>: 使用固定随机种子</p></li>
+<li><p><strong>快速</strong>: 单个测试应该快速完成</p></li>
+<li><p><strong>清晰</strong>: 测试失败时信息明确</p></li>
+<li><p><strong>覆盖</strong>: 测试正常和异常情况</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="contributing.html" class="btn btn-neutral float-left" title="贡献指南" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helmholtz方程 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="JCA模型" href="jca_model.html" />
+    <link rel="prev" title="有限元方法基础" href="fem_basics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Helmholtz方程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">波动方程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">时谐假设</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">弱形式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">边界条件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-helmholtz">1D Helmholtz方程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-3d-helmholtz">2D/3D Helmholtz方程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">数值求解</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">进一步阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Helmholtz方程</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/theory/helmholtz.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="helmholtz">
+<h1>Helmholtz方程<a class="headerlink" href="#helmholtz" title="Link to this heading"></a></h1>
+<p>Helmholtz方程是声学仿真的核心控制方程，描述了时谐声波的传播。</p>
+<section id="id1">
+<h2>波动方程<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>从基本的流体动力学方程出发，可以得到声波方程:</p>
+<div class="math notranslate nohighlight">
+\[\nabla^2 p - \frac{1}{c^2} \frac{\partial^2 p}{\partial t^2} = 0\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(p\)</span>: 声压 [Pa]</p></li>
+<li><p><span class="math notranslate nohighlight">\(c\)</span>: 声速 [m/s]</p></li>
+<li><p><span class="math notranslate nohighlight">\(t\)</span>: 时间 [s]</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>时谐假设<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>对于简谐振动，声压可以表示为:</p>
+<div class="math notranslate nohighlight">
+\[p(\mathbf{x}, t) = \tilde{p}(\mathbf{x}) e^{j\omega t}\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\tilde{p}\)</span>: 复声压幅值</p></li>
+<li><p><span class="math notranslate nohighlight">\(\omega = 2\pi f\)</span>: 角频率 [rad/s]</p></li>
+<li><p><span class="math notranslate nohighlight">\(j\)</span>: 虚数单位</p></li>
+</ul>
+<p>代入波动方程，得到**Helmholtz方程**:</p>
+<div class="math notranslate nohighlight">
+\[\nabla^2 \tilde{p} + k^2 \tilde{p} = 0\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(k = \omega/c = 2\pi/\lambda\)</span> 是**波数** [rad/m]。</p>
+</section>
+<section id="id3">
+<h2>弱形式<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>Helmholtz方程的弱形式:</p>
+<div class="math notranslate nohighlight">
+\[\int_\Omega \nabla \tilde{p} \cdot \nabla v \, d\Omega - k^2 \int_\Omega \tilde{p} v \, d\Omega = \int_{\Gamma} \frac{\partial \tilde{p}}{\partial n} v \, d\Gamma\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(v\)</span> 是测试函数。</p>
+</section>
+<section id="id4">
+<h2>边界条件<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p><strong>刚性壁 (Neumann)</strong></p>
+<p>法向速度为零:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial p}{\partial n} = 0\]</div>
+<p>对应于固体边界。</p>
+<p><strong>压力边界 (Dirichlet)</strong></p>
+<p>指定声压:</p>
+<div class="math notranslate nohighlight">
+\[p = p_0\]</div>
+<p><strong>速度边界 (Neumann)</strong></p>
+<p>指定法向速度:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial p}{\partial n} = -j\omega\rho_0 v_n\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\rho_0\)</span> 是介质密度，<span class="math notranslate nohighlight">\(v_n\)</span> 是法向速度。</p>
+<p><strong>阻抗边界 (Robin)</strong></p>
+<p>声压与速度的关系:</p>
+<div class="math notranslate nohighlight">
+\[p = Z_s v_n = \frac{Z_s}{j\omega\rho_0} \frac{\partial p}{\partial n}\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(Z_s\)</span> 是表面阻抗。</p>
+<p><strong>完全匹配层 (PML)</strong></p>
+<p>用于模拟无限域，通过在边界添加吸收层实现。</p>
+</section>
+<section id="d-helmholtz">
+<h2>1D Helmholtz方程<a class="headerlink" href="#d-helmholtz" title="Link to this heading"></a></h2>
+<p>简化形式:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d^2 p}{dx^2} + k^2 p = 0\]</div>
+<p>通解:</p>
+<div class="math notranslate nohighlight">
+\[p(x) = A e^{-jkx} + B e^{+jkx}\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(A e^{-jkx}\)</span>: 右行波</p></li>
+<li><p><span class="math notranslate nohighlight">\(B e^{+jkx}\)</span>: 左行波</p></li>
+</ul>
+</section>
+<section id="d-3d-helmholtz">
+<h2>2D/3D Helmholtz方程<a class="headerlink" href="#d-3d-helmholtz" title="Link to this heading"></a></h2>
+<p><strong>平面波解</strong></p>
+<div class="math notranslate nohighlight">
+\[p(\mathbf{x}) = A e^{-j\mathbf{k} \cdot \mathbf{x}}\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\mathbf{k}\)</span> 是波矢量，<span class="math notranslate nohighlight">\(|\mathbf{k}| = k\)</span>。</p>
+<p><strong>球面波解 (3D)</strong></p>
+<div class="math notranslate nohighlight">
+\[p(r) = \frac{A}{r} e^{-jkr}\]</div>
+<p>表示从点源发出的波。</p>
+<p><strong>柱面波解 (2D)</strong></p>
+<div class="math notranslate nohighlight">
+\[p(r) = A H_0^{(2)}(kr)\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(H_0^{(2)}\)</span> 是第二类Hankel函数。</p>
+</section>
+<section id="id5">
+<h2>数值求解<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p><strong>FEM离散</strong></p>
+<p>使用Galerkin方法，得到离散方程:</p>
+<div class="math notranslate nohighlight">
+\[(K - k^2 M) u = F\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><strong>刚度矩阵</strong>: <span class="math notranslate nohighlight">\(K_{ij} = \int_\Omega \nabla \phi_i \cdot \nabla \phi_j \, d\Omega\)</span></p></li>
+<li><p><strong>质量矩阵</strong>: <span class="math notranslate nohighlight">\(M_{ij} = \int_\Omega \phi_i \phi_j \, d\Omega\)</span></p></li>
+<li><p><strong>载荷向量</strong>: <span class="math notranslate nohighlight">\(F_i = \int_\Gamma g \phi_i \, d\Gamma\)</span></p></li>
+</ul>
+<p><strong>波数分辨率</strong></p>
+<p>为了准确捕捉波动现象，需要满足:</p>
+<div class="math notranslate nohighlight">
+\[kh \leq C\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(h\)</span> 是单元尺寸。经验法则:</p>
+<ul class="simple">
+<li><p>线性单元 (<span class="math notranslate nohighlight">\(p=1\)</span>): <span class="math notranslate nohighlight">\(kh \leq 0.2\)</span> (每波长至少10个单元)</p></li>
+<li><p>二次单元 (<span class="math notranslate nohighlight">\(p=2\)</span>): <span class="math notranslate nohighlight">\(kh \leq 0.5\)</span></p></li>
+<li><p>更高阶: 可以使用更大的 <span class="math notranslate nohighlight">\(h\)</span></p></li>
+</ul>
+<p><strong>色散误差</strong></p>
+<p>FEM解存在数值色散，即数值波数 <span class="math notranslate nohighlight">\(k_h\)</span> 与真实波数 <span class="math notranslate nohighlight">\(k\)</span> 不同:</p>
+<div class="math notranslate nohighlight">
+\[k_h \approx k - \frac{k^3 h^2}{24}\]</div>
+<p>高阶单元可以显著减小色散误差。</p>
+</section>
+<section id="id6">
+<h2>应用<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<p>Helmholtz方程应用于:</p>
+<ul class="simple">
+<li><p><strong>室内声学</strong>: 房间声学响应</p></li>
+<li><p><strong>噪声控制</strong>: 消声器、隔声设计</p></li>
+<li><p><strong>超声</strong>: 医学成像、无损检测</p></li>
+<li><p><strong>水下声学</strong>: 声纳、海洋声学</p></li>
+<li><p><strong>地震学</strong>: 波传播分析</p></li>
+</ul>
+</section>
+<section id="id7">
+<h2>进一步阅读<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Ihlenburg, F. &quot;Finite Element Analysis of Acoustic Scattering&quot;</p></li>
+<li><p>Wu, T.W. (Ed.) &quot;Boundary Element Acoustics&quot;</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="fem_basics.html" class="btn btn-neutral float-left" title="有限元方法基础" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="jca_model.html" class="btn btn-neutral float-right" title="JCA模型" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>命令行使用 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="API参考" href="../api_reference/index.html" />
+    <link rel="prev" title="教程3: 3D声学问题" href="tutorial_3d.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">命令行使用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">基本用法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">交互式控制台</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">运行输入文件</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#axi">输入文件格式 (.axi)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id5">示例输入文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">节说明</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">高级用法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">批处理模式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python">与Python脚本集成</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">故障排除</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">命令未找到</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">输入文件错误</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">命令行使用</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/user_guide/cli_usage.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>命令行使用<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<p>PyAcoustiX提供了命令行工具 <code class="docutils literal notranslate"><span class="pre">sacous</span></code>，可以方便地运行仿真和进行交互式计算。</p>
+<section id="id2">
+<h2>基本用法<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>安装完成后，<code class="docutils literal notranslate"><span class="pre">sacous</span></code> 命令会自动添加到系统路径。</p>
+<section id="id3">
+<h3>交互式控制台<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>不带参数运行 <code class="docutils literal notranslate"><span class="pre">sacous</span></code> 会启动交互式Python控制台:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sacous
+Welcome<span class="w"> </span>to<span class="w"> </span>PyAcoustiX<span class="w"> </span>console!
+PyAcoustiX<span class="w"> </span><span class="m">0</span>.9.13
+base<span class="w"> </span>on<span class="w"> </span>python<span class="w"> </span><span class="m">3</span>.10.13<span class="w"> </span><span class="o">(</span>main,<span class="w"> </span>Sep<span class="w"> </span><span class="m">11</span><span class="w"> </span><span class="m">2023</span>,<span class="w"> </span><span class="m">13</span>:44:35<span class="o">)</span><span class="w"> </span><span class="o">[</span>GCC<span class="w"> </span><span class="m">11</span>.2.0<span class="o">]</span><span class="w"> </span>on<span class="w"> </span>linux
+Type<span class="w"> </span><span class="s2">&quot;help&quot;</span>,<span class="w"> </span><span class="s2">&quot;copyright&quot;</span><span class="w"> </span>or<span class="w"> </span><span class="s2">&quot;license&quot;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>more<span class="w"> </span>information.
+Author:<span class="w"> </span>Shaoqiwu@outlook.com
+<span class="o">(</span>PyAcoustiXInteractiveConsole<span class="o">)</span>
+&gt;&gt;&gt;<span class="w"> </span>import<span class="w"> </span>numpy<span class="w"> </span>as<span class="w"> </span>np
+&gt;&gt;&gt;<span class="w"> </span>from<span class="w"> </span>SAcouS<span class="w"> </span>import<span class="w"> </span>*
+</pre></div>
+</div>
+<p>在交互式控制台中，你可以:</p>
+<ul class="simple">
+<li><p>直接导入 <code class="docutils literal notranslate"><span class="pre">SAcouS</span></code> 模块</p></li>
+<li><p>使用NumPy、SciPy等科学计算库</p></li>
+<li><p>使用上下箭头浏览历史命令</p></li>
+<li><p>使用Tab键自动补全</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>运行输入文件<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">-i</span></code> 或 <code class="docutils literal notranslate"><span class="pre">--input_file</span></code> 参数指定输入文件:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sacous<span class="w"> </span>-i<span class="w"> </span>simulation.axi
+</pre></div>
+</div>
+</section>
+</section>
+<section id="axi">
+<h2>输入文件格式 (.axi)<a class="headerlink" href="#axi" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">.axi</span></code> 文件是PyAcoustiX的标准输入文件格式，采用类似INI的语法:</p>
+<section id="id5">
+<h3>示例输入文件<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[Mesh]</span>
+<span class="na">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">mesh.msh</span>
+<span class="na">dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+
+<span class="k">[Materials]</span>
+<span class="na">air</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Air, air_properties</span>
+<span class="na">porous</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">EquivalentFluid, 0.98, 3750, 1.17, 742e-6, 110e-6</span>
+
+<span class="k">[Physics]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Helmholtz</span>
+<span class="na">frequency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1000</span>
+
+<span class="k">[BoundaryConditions]</span>
+<span class="na">inlet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">velocity, 1.0</span>
+<span class="na">outlet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">impedance, 416.5</span>
+
+<span class="k">[Solver]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">direct</span>
+
+<span class="k">[Output]</span>
+<span class="na">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">results.vtk</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>节说明<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p><strong>[Mesh]</strong>
+定义网格文件和维度。</p>
+<p><strong>[Materials]</strong>
+定义材料属性。格式为: <code class="docutils literal notranslate"><span class="pre">名称</span> <span class="pre">=</span> <span class="pre">类型,</span> <span class="pre">参数...</span></code></p>
+<p><strong>[Physics]</strong>
+定义物理问题类型和参数。</p>
+<p><strong>[BoundaryConditions]</strong>
+定义边界条件。</p>
+<p><strong>[Solver]</strong>
+定义求解器设置。</p>
+<p><strong>[Output]</strong>
+定义输出文件。</p>
+</section>
+</section>
+<section id="id7">
+<h2>高级用法<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<section id="id8">
+<h3>批处理模式<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p>可以编写shell脚本批量运行多个频率:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="k">for</span><span class="w"> </span>freq<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="m">500</span><span class="w"> </span><span class="m">1000</span><span class="w"> </span><span class="m">2000</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>sed<span class="w"> </span><span class="s2">&quot;s/frequency = .*/frequency = </span><span class="nv">$freq</span><span class="s2">/&quot;</span><span class="w"> </span>template.axi<span class="w"> </span>&gt;<span class="w"> </span>temp.axi
+<span class="w">    </span>sacous<span class="w"> </span>-i<span class="w"> </span>temp.axi
+<span class="w">    </span>mv<span class="w"> </span>results.vtk<span class="w"> </span>results_<span class="si">${</span><span class="nv">freq</span><span class="si">}</span>Hz.vtk
+<span class="k">done</span>
+</pre></div>
+</div>
+</section>
+<section id="python">
+<h3>与Python脚本集成<a class="headerlink" href="#python" title="Link to this heading"></a></h3>
+<p>也可以在Python脚本中调用 <code class="docutils literal notranslate"><span class="pre">sacous</span></code> 的功能:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.interface.sol_setup</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyAcoustiXSetuper</span>
+
+<span class="n">sol_setuper</span> <span class="o">=</span> <span class="n">PyAcoustiXSetuper</span><span class="p">()</span>
+<span class="n">sol_setuper</span><span class="o">.</span><span class="n">parse_input</span><span class="p">(</span><span class="s1">&#39;input.axi&#39;</span><span class="p">)</span>
+<span class="c1"># ... 进一步处理</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id9">
+<h2>故障排除<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<section id="id10">
+<h3>命令未找到<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<p>如果提示 <code class="docutils literal notranslate"><span class="pre">sacous:</span> <span class="pre">command</span> <span class="pre">not</span> <span class="pre">found</span></code>:</p>
+<ol class="arabic">
+<li><p>确保PyAcoustiX已正确安装</p></li>
+<li><p>检查Python脚本目录是否在PATH中:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>show<span class="w"> </span>pyacoustix<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Location
+</pre></div>
+</div>
+</li>
+<li><p>尝试使用Python模块方式运行:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>SAcouS
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="id11">
+<h3>输入文件错误<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<p>如果输入文件解析失败:</p>
+<ol class="arabic simple">
+<li><p>检查文件语法是否正确</p></li>
+<li><p>确保所有必需的节都存在</p></li>
+<li><p>查看错误信息中的行号提示</p></li>
+</ol>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="tutorial_3d.html" class="btn btn-neutral float-left" title="教程3: 3D声学问题" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="../api_reference/index.html" class="btn btn-neutral float-right" title="API参考" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

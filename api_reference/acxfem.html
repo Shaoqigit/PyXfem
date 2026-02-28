@@ -1,0 +1,1523 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>acxfem模块 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="acxtmm模块" href="acxtmm.html" />
+    <link rel="prev" title="PostProcess模块" href="postprocess.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API参考</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mesh.html">Mesh模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html">Materials模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html">PostProcess模块</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">acxfem模块</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basis">基函数 (Basis)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Basis.Base1DElement"><code class="docutils literal notranslate"><span class="pre">Base1DElement</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#d">1D基函数</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#d-3d">2D/3D基函数</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dofhandler">自由度处理 (DofHandler)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.DofHandler.DofHandler1D"><code class="docutils literal notranslate"><span class="pre">DofHandler1D</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable"><code class="docutils literal notranslate"><span class="pre">DofHandler1DMutipleVariable</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D"><code class="docutils literal notranslate"><span class="pre">GeneralDofHandler1D</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">有限元空间</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#assembly">组装 (Assembly)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Assembly.Assembler"><code class="docutils literal notranslate"><span class="pre">Assembler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Assembly.Assembler4Biot"><code class="docutils literal notranslate"><span class="pre">Assembler4Biot</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#physicassembler">物理组装器 (PhysicAssembler)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.PhysicAssembler.BaseAssembler"><code class="docutils literal notranslate"><span class="pre">BaseAssembler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler"><code class="docutils literal notranslate"><span class="pre">HelmholtzAssembler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.PhysicAssembler.BiotAssembler"><code class="docutils literal notranslate"><span class="pre">BiotAssembler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.PhysicAssembler.CouplingAssember"><code class="docutils literal notranslate"><span class="pre">CouplingAssember</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#solver">求解器 (Solver)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Solver.BaseSolver"><code class="docutils literal notranslate"><span class="pre">BaseSolver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Solver.LinearSolver"><code class="docutils literal notranslate"><span class="pre">LinearSolver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Solver.AdmittanceSolver"><code class="docutils literal notranslate"><span class="pre">AdmittanceSolver</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bcsimpose">边界条件 (BCsImpose)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions"><code class="docutils literal notranslate"><span class="pre">ApplyBoundaryConditions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#quadratures">数值积分 (Quadratures)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Quadratures.gauss_legendre_1d_points"><code class="docutils literal notranslate"><span class="pre">gauss_legendre_1d_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Quadratures.gauss_legendre_1d_weights"><code class="docutils literal notranslate"><span class="pre">gauss_legendre_1d_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Quadratures.gauss_legendre_2d_tri_points"><code class="docutils literal notranslate"><span class="pre">gauss_legendre_2d_tri_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Quadratures.gauss_legendre_2d_tri_weights"><code class="docutils literal notranslate"><span class="pre">gauss_legendre_2d_tri_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Quadratures.gauss_legendre_3d_tetra_points"><code class="docutils literal notranslate"><span class="pre">gauss_legendre_3d_tetra_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Quadratures.gauss_legendre_3d_tetra_weights"><code class="docutils literal notranslate"><span class="pre">gauss_legendre_3d_tetra_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Quadratures.get_quadrature_points_weights"><code class="docutils literal notranslate"><span class="pre">get_quadrature_points_weights()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">工具函数</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Utilities.check_material_compability"><code class="docutils literal notranslate"><span class="pre">check_material_compability()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Utilities.display_matrix_in_array"><code class="docutils literal notranslate"><span class="pre">display_matrix_in_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.acxfem.Utilities.plot_matrix_partten"><code class="docutils literal notranslate"><span class="pre">plot_matrix_partten()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html">acxtmm模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html">acxmor模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html">interface模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id1">快速索引</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用示例</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API参考</a></li>
+      <li class="breadcrumb-item active">acxfem模块</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/api_reference/acxfem.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="acxfem">
+<h1>acxfem模块<a class="headerlink" href="#acxfem" title="Link to this heading"></a></h1>
+<p>acxfem模块是PyAcoustiX的核心FEM实现，提供了基函数、组装、求解等完整功能。</p>
+<section id="basis">
+<span id="module-SAcouS.acxfem"></span><h2>基函数 (Basis)<a class="headerlink" href="#basis" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Base1DElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Basis.</span></span><span class="sig-name descname"><span class="pre">Base1DElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Base1DElement"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Base1DElement" title="Link to this definition"></a></dt>
+<dd><p>base abstract FE elementary matrix class
+precompute the shape function and its derivative on gauss points
+parameters:
+order: int</p>
+<blockquote>
+<div><p>element order</p>
+</div></blockquote>
+<dl class="simple">
+<dt>vertices: ndarray</dt><dd><p>1d: [x1, x2]
+2d: [(x1, y1), (x2, y2)]
+3d: [(x1, y1, z1), (x2, y2, z2)]</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Base1DElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Base1DElement.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Base1DElement.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Base1DElement.Jacobian">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Jacobian</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Base1DElement.Jacobian" title="Link to this definition"></a></dt>
+<dd><p>compute the Jacobian of the element
+returns:
+J:
+J=dx/dxi</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Base1DElement.inverse_Jacobian">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inverse_Jacobian</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Base1DElement.inverse_Jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Base1DElement.interpolate">
+<span class="sig-name descname"><span class="pre">interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Base1DElement.interpolate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Base1DElement.interpolate" title="Link to this definition"></a></dt>
+<dd><p>interpolate the function value at x
+returns:
+f: float</p>
+<blockquote>
+<div><p>function value at x</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<section id="d">
+<h3>1D基函数<a class="headerlink" href="#d" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Basis.</span></span><span class="sig-name descname"><span class="pre">Lobbato1DElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lobbato1DElement"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement" title="Link to this definition"></a></dt>
+<dd><p>FE lobatto 1D basis class
+parameters:
+order: int</p>
+<blockquote>
+<div><p>element order</p>
+</div></blockquote>
+<p>returns:</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lobbato1DElement.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.ke">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ke</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.ke" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+K: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.me">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">me</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.me" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+m: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.ce">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ce</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.ce" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary coupling matrix, N(x)B(x)
+returns:
+c: ndarray</p>
+<blockquote>
+<div><p>elementary coupling matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.add_shape_functions2element">
+<span class="sig-name descname"><span class="pre">add_shape_functions2element</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lobbato1DElement.add_shape_functions2element"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.add_shape_functions2element" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.shape_function">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape_function</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.shape_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.der_shape_function">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">der_shape_function</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.der_shape_function" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.integrate">
+<span class="sig-name descname"><span class="pre">integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_or_facet=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integ_order=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype=&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lobbato1DElement.integrate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.integrate" title="Link to this definition"></a></dt>
+<dd><p>integrate the function f over the element
+returns:
+integral: float</p>
+<blockquote>
+<div><p>integral value</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.get_order">
+<span class="sig-name descname"><span class="pre">get_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lobbato1DElement.get_order"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.get_order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.nb_internal_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_internal_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.nb_internal_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lobbato1DElement.local_dofs_index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">local_dofs_index</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lobbato1DElement.local_dofs_index" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz1DElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Basis.</span></span><span class="sig-name descname"><span class="pre">Helmholtz1DElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat_coeffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Helmholtz1DElement"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz1DElement" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz1DElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat_coeffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Helmholtz1DElement.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz1DElement.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz1DElement.ke">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ke</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz1DElement.ke" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+K: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz1DElement.me">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">me</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz1DElement.me" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+m: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz1DElement.ce">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ce</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz1DElement.ce" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary coupling matrix, N(x)B(x)
+returns:
+c: ndarray</p>
+<blockquote>
+<div><p>elementary coupling matrix</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="d-3d">
+<h3>2D/3D基函数<a class="headerlink" href="#d-3d" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.BaseNDElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Basis.</span></span><span class="sig-name descname"><span class="pre">BaseNDElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#BaseNDElement"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.BaseNDElement" title="Link to this definition"></a></dt>
+<dd><p>base abstract FE elementary matrix class
+precompute the shape function and its derivative on gauss points
+parameters:
+order: int</p>
+<blockquote>
+<div><p>element order</p>
+</div></blockquote>
+<dl class="simple">
+<dt>nodes: ndarray</dt><dd><dl class="simple">
+<dt>2d: [(x1, y1), (x2, y2), (x3, y3)] for triangle</dt><dd><p>[(x1, y1), (x2, y2), (x3, y3), (x4, y4)] for quad</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.BaseNDElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#BaseNDElement.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.BaseNDElement.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.BaseNDElement.Jacobian">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#BaseNDElement.Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.BaseNDElement.Jacobian" title="Link to this definition"></a></dt>
+<dd><p>compute the Jacobian of the element
+returns:
+J:
+J=dx/dxi</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.BaseNDElement.inverse_Jacobian">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inverse_Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#BaseNDElement.inverse_Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.BaseNDElement.inverse_Jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.BaseNDElement.determinant_Jacobian">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">determinant_Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#BaseNDElement.determinant_Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.BaseNDElement.determinant_Jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Basis.</span></span><span class="sig-name descname"><span class="pre">Lagrange2DTriElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement" title="Link to this definition"></a></dt>
+<dd><p>FE lagrange 2D triangle basis class
+parameters:
+order: int</p>
+<blockquote>
+<div><p>element order</p>
+</div></blockquote>
+<dl class="simple">
+<dt>vertices: ndarray</dt><dd><p>[(x1, y1), (x2, y2), (x3, y3)] for triangle</p>
+</dd>
+</dl>
+<p>reference element: [(0, 0), (1, 0), (0, 1)]
+illustrated as below:
+2
+|    |     |      |       |        0-----1
+quadratic element with 6 nodes illustrated as below:
+2
+|    |     |      |       5    4
+|         |      0---3---1</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.Jacobian">
+<span class="sig-name descname"><span class="pre">Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement.Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.Jacobian" title="Link to this definition"></a></dt>
+<dd><p>compute the Jacobian of the element
+returns:
+J:
+J=dx/dxi</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.inverse_Jacobian">
+<span class="sig-name descname"><span class="pre">inverse_Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement.inverse_Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.inverse_Jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.determinant_Jacobian">
+<span class="sig-name descname"><span class="pre">determinant_Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement.determinant_Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.determinant_Jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.ke">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ke</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.ke" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+K: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.me">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">me</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.me" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary mass matrix
+returns:
+m: ndarray</p>
+<blockquote>
+<div><p>elementary mass matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.weights_and_points">
+<span class="sig-name descname"><span class="pre">weights_and_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">integ_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement.weights_and_points"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.weights_and_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.egde_basis">
+<span class="sig-name descname"><span class="pre">egde_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement.egde_basis"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.egde_basis" title="Link to this definition"></a></dt>
+<dd><p>compute the edge basis function
+returns:
+N: ndarray</p>
+<blockquote>
+<div><p>edge basis function</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.edge_jacobian">
+<span class="sig-name descname"><span class="pre">edge_jacobian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement.edge_jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.edge_jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.get_order">
+<span class="sig-name descname"><span class="pre">get_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement.get_order"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.get_order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.nb_internal_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_internal_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.nb_internal_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.nb_edge_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_edge_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.nb_edge_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.local_dofs_index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">local_dofs_index</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.local_dofs_index" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DTriElement.integrate">
+<span class="sig-name descname"><span class="pre">integrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_or_facet=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integ_order=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype=&lt;class</span> <span class="pre">'numpy.float64'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DTriElement.integrate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DTriElement.integrate" title="Link to this definition"></a></dt>
+<dd><p>integrate the function f over the element
+returns:
+integral: float</p>
+<blockquote>
+<div><p>integral value</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz2DElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Basis.</span></span><span class="sig-name descname"><span class="pre">Helmholtz2DElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat_coeffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Helmholtz2DElement"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz2DElement" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz2DElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat_coeffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Helmholtz2DElement.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz2DElement.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz2DElement.ke">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ke</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz2DElement.ke" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+K: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz2DElement.me">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">me</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz2DElement.me" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+m: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DQuadElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Basis.</span></span><span class="sig-name descname"><span class="pre">Lagrange2DQuadElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DQuadElement"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DQuadElement" title="Link to this definition"></a></dt>
+<dd><p>FE lagrange 2D quad basis class
+parameters:
+order: int</p>
+<blockquote>
+<div><p>element order</p>
+</div></blockquote>
+<dl class="simple">
+<dt>vertices: ndarray</dt><dd><p>[(x1, y1), (x2, y2), (x3, y3), (x4, y4)] for quad</p>
+</dd>
+</dl>
+<p>reference element: [(0, 0), (1, 0), (0, 1), (1, 1)]
+illustrated as below:
+3----2
+|    |
+|    |
+0----1</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DQuadElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DQuadElement.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DQuadElement.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DQuadElement.Jacobian">
+<span class="sig-name descname"><span class="pre">Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DQuadElement.Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DQuadElement.Jacobian" title="Link to this definition"></a></dt>
+<dd><p>compute the Jacobian of the element
+returns:
+J:
+J=dx/dxi</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DQuadElement.inverse_Jacobian">
+<span class="sig-name descname"><span class="pre">inverse_Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DQuadElement.inverse_Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DQuadElement.inverse_Jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DQuadElement.determinant_Jacobian">
+<span class="sig-name descname"><span class="pre">determinant_Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange2DQuadElement.determinant_Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DQuadElement.determinant_Jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DQuadElement.ke">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ke</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DQuadElement.ke" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+K: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange2DQuadElement.me">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">me</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange2DQuadElement.me" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+m: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Basis.</span></span><span class="sig-name descname"><span class="pre">Lagrange3DTetraElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange3DTetraElement"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement" title="Link to this definition"></a></dt>
+<dd><p>FE lagrange 3D tetra basis class
+parameters:
+order: int</p>
+<blockquote>
+<div><p>element order</p>
+</div></blockquote>
+<dl class="simple">
+<dt>vertices: ndarray</dt><dd><p>[(x1, y1, z1), (x2, y2, z2), (x3, y3, z3), (x4, y4, z4)] for tetra</p>
+</dd>
+</dl>
+<p>reference element: [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]
+illustrated as below:</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><p>3</p>
+</div></blockquote>
+<p>/|       / |       /  |       2---<a href="#id1"><span class="problematic" id="id2">|</span></a>---1</p>
+</div></blockquote>
+<dl class="simple">
+<dt> |  /</dt><dd><dl class="simple">
+<dt>| /</dt><dd><dl class="simple">
+<dt>|/</dt><dd><p>0</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<dl>
+<dt>element in degree 2 with 10 nodes illustrated as below:</dt><dd><blockquote>
+<div><blockquote>
+<div><p>3</p>
+</div></blockquote>
+<p>/|        / |        /  |        6---9---5</p>
+</div></blockquote>
+<dl class="simple">
+<dt> |  /</dt><dd><dl class="simple">
+<dt>| /</dt><dd><dl class="simple">
+<dt>|/</dt><dd><p>0---4---1</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.points">
+<span class="sig-name descname"><span class="pre">points</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(array([[0.5854102,</span> <span class="pre">0.1381966,</span> <span class="pre">0.1381966],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[0.1381966,</span> <span class="pre">0.1381966,</span> <span class="pre">0.1381966],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[0.1381966,</span> <span class="pre">0.1381966,</span> <span class="pre">0.5854102],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[0.1381966,</span> <span class="pre">0.5854102,</span> <span class="pre">0.1381966]]),)</span></em><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.weights">
+<span class="sig-name descname"><span class="pre">weights</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([0.04166667,</span> <span class="pre">0.04166667,</span> <span class="pre">0.04166667,</span> <span class="pre">0.04166667])</span></em><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.weights" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange3DTetraElement.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.Jacobian">
+<span class="sig-name descname"><span class="pre">Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange3DTetraElement.Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.Jacobian" title="Link to this definition"></a></dt>
+<dd><p>compute the Jacobian of the element
+returns:
+J:
+J=dx/dxi</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.inverse_Jacobian">
+<span class="sig-name descname"><span class="pre">inverse_Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange3DTetraElement.inverse_Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.inverse_Jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.determinant_Jacobian">
+<span class="sig-name descname"><span class="pre">determinant_Jacobian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Lagrange3DTetraElement.determinant_Jacobian"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.determinant_Jacobian" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.ke">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ke</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.ke" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+K: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.me">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">me</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.me" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+m: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.nb_internal_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_internal_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.nb_internal_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.nb_edge_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_edge_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.nb_edge_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Lagrange3DTetraElement.local_dofs_index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">local_dofs_index</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Lagrange3DTetraElement.local_dofs_index" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz3DElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Basis.</span></span><span class="sig-name descname"><span class="pre">Helmholtz3DElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat_coeffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Helmholtz3DElement"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz3DElement" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz3DElement.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat_coeffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Basis.html#Helmholtz3DElement.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz3DElement.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz3DElement.ke">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ke</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz3DElement.ke" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+K: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Basis.Helmholtz3DElement.me">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">me</span></span><a class="headerlink" href="#SAcouS.acxfem.Basis.Helmholtz3DElement.me" title="Link to this definition"></a></dt>
+<dd><p>compute the elementary stiffness matrix
+returns:
+m: ndarray</p>
+<blockquote>
+<div><p>elementary stiffness matrix</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="dofhandler">
+<h2>自由度处理 (DofHandler)<a class="headerlink" href="#dofhandler" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.DofHandler.</span></span><span class="sig-name descname"><span class="pre">DofHandler1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#DofHandler1D"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1D" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1D.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#DofHandler1D.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1D.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1D.nb_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1D.nb_dofs" title="Link to this definition"></a></dt>
+<dd><p>return global dof</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1D.get_global_dofs">
+<span class="sig-name descname"><span class="pre">get_global_dofs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#DofHandler1D.get_global_dofs"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1D.get_global_dofs" title="Link to this definition"></a></dt>
+<dd><p>return local dof
+return: global dof index
+[node_1_index, node_2_index, internal_dof_index],
+[.....],
+[.....]]</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1D.nb_external_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_external_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1D.nb_external_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1D.nb_internal_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_internal_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1D.nb_internal_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.DofHandler.</span></span><span class="sig-name descname"><span class="pre">DofHandler1DMutipleVariable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">mbases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#DofHandler1DMutipleVariable"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">mbases</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#DofHandler1DMutipleVariable.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.nb_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.nb_dofs" title="Link to this definition"></a></dt>
+<dd><p>return global dof</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.get_global_dofs">
+<span class="sig-name descname"><span class="pre">get_global_dofs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#DofHandler1DMutipleVariable.get_global_dofs"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.get_global_dofs" title="Link to this definition"></a></dt>
+<dd><p>return local dof
+return: global dof index
+[node_1_index, node_2_index, internal_dof_index],
+[.....],
+[.....]]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.base4global_dofs">
+<span class="sig-name descname"><span class="pre">base4global_dofs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#DofHandler1DMutipleVariable.base4global_dofs"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.base4global_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.get_global_dofs_by_base">
+<span class="sig-name descname"><span class="pre">get_global_dofs_by_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#DofHandler1DMutipleVariable.get_global_dofs_by_base"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.get_global_dofs_by_base" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.mesh2dof">
+<span class="sig-name descname"><span class="pre">mesh2dof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#DofHandler1DMutipleVariable.mesh2dof"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.mesh2dof" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.nb_external_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_external_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.DofHandler1DMutipleVariable.nb_external_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.GeneralDofHandler1D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.DofHandler.</span></span><span class="sig-name descname"><span class="pre">GeneralDofHandler1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">mbases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#GeneralDofHandler1D"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.GeneralDofHandler1D.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">mbases</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#GeneralDofHandler1D.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.GeneralDofHandler1D.nb_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D.nb_dofs" title="Link to this definition"></a></dt>
+<dd><p>return global dof</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.GeneralDofHandler1D.get_global_dofs">
+<span class="sig-name descname"><span class="pre">get_global_dofs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#GeneralDofHandler1D.get_global_dofs"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D.get_global_dofs" title="Link to this definition"></a></dt>
+<dd><p>return local dof
+return: global dof index
+[node_1_index, node_2_index, internal_dof_index],
+[.....],
+[.....]]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.GeneralDofHandler1D.base4global_dofs">
+<span class="sig-name descname"><span class="pre">base4global_dofs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#GeneralDofHandler1D.base4global_dofs"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D.base4global_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.GeneralDofHandler1D.get_global_dofs_by_base">
+<span class="sig-name descname"><span class="pre">get_global_dofs_by_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#GeneralDofHandler1D.get_global_dofs_by_base"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D.get_global_dofs_by_base" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.GeneralDofHandler1D.mesh2dof">
+<span class="sig-name descname"><span class="pre">mesh2dof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#GeneralDofHandler1D.mesh2dof"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D.mesh2dof" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.GeneralDofHandler1D.num_external_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_external_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D.num_external_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.GeneralDofHandler1D.num_internal_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_internal_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.GeneralDofHandler1D.num_internal_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<section id="id3">
+<h3>有限元空间<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.DofHandler.</span></span><span class="sig-name descname"><span class="pre">FESpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">all_bases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#FESpace"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">all_bases</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#FESpace.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.element_index2material">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_index2material</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.element_index2material" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.nb_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.nb_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.nb_external_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_external_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.nb_external_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.nb_internal_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_internal_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.nb_internal_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.compute_subdomain_start_index">
+<span class="sig-name descname"><span class="pre">compute_subdomain_start_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#FESpace.compute_subdomain_start_index"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.compute_subdomain_start_index" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.get_global_dofs">
+<span class="sig-name descname"><span class="pre">get_global_dofs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#FESpace.get_global_dofs"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.get_global_dofs" title="Link to this definition"></a></dt>
+<dd><p>return local dof
+return: global dof index
+[node_1_index, node_2_index, internal_dof_index],
+[.....],
+[.....]]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.base4global_dofs">
+<span class="sig-name descname"><span class="pre">base4global_dofs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#FESpace.base4global_dofs"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.base4global_dofs" title="Link to this definition"></a></dt>
+<dd><p>return the global dofs for each base</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.get_global_dofs_by_base">
+<span class="sig-name descname"><span class="pre">get_global_dofs_by_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#FESpace.get_global_dofs_by_base"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.get_global_dofs_by_base" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.get_dofs_from_var_coord">
+<span class="sig-name descname"><span class="pre">get_dofs_from_var_coord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coord</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#FESpace.get_dofs_from_var_coord"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.get_dofs_from_var_coord" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.DofHandler.FESpace.mesh2dof">
+<span class="sig-name descname"><span class="pre">mesh2dof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/DofHandler.html#FESpace.mesh2dof"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.DofHandler.FESpace.mesh2dof" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="assembly">
+<h2>组装 (Assembly)<a class="headerlink" href="#assembly" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Assembly.</span></span><span class="sig-name descname"><span class="pre">Assembler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dof_handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdomains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dof_handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdomains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.__init__" title="Link to this definition"></a></dt>
+<dd><p>dof_handler: DofHandler1D
+bases: list of basis
+subdomains: dict of subdomains
+dtype: data type of linear system</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.initial_matrix">
+<span class="sig-name descname"><span class="pre">initial_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.initial_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.initial_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.assemble_K">
+<span class="sig-name descname"><span class="pre">assemble_K</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.assemble_K"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.assemble_K" title="Link to this definition"></a></dt>
+<dd><p>get the global stiffness matrix without material property</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.assemble_M">
+<span class="sig-name descname"><span class="pre">assemble_M</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.assemble_M"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.assemble_M" title="Link to this definition"></a></dt>
+<dd><p>get the global mass matrix without material property</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.assemble_material_K">
+<span class="sig-name descname"><span class="pre">assemble_material_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.assemble_material_K"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.assemble_material_K" title="Link to this definition"></a></dt>
+<dd><p>get the global stiffness matrix with material property (frequency dependent material)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.assemble_material_M">
+<span class="sig-name descname"><span class="pre">assemble_material_M</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.assemble_material_M"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.assemble_material_M" title="Link to this definition"></a></dt>
+<dd><p>get the global mass matrix with material property (frequency dependent material)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.assemble_material_C">
+<span class="sig-name descname"><span class="pre">assemble_material_C</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.assemble_material_C"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.assemble_material_C" title="Link to this definition"></a></dt>
+<dd><p>get the global coupling matrix with material property (frequency dependent material)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.assemble_impedance_bc">
+<span class="sig-name descname"><span class="pre">assemble_impedance_bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impedence_bcs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.assemble_impedance_bc"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.assemble_impedance_bc" title="Link to this definition"></a></dt>
+<dd><p>impedence_bcs: dict of impedence boundary conditions
+return the global matrix contributed from impedence boundary conditions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.assemble_nature_bc">
+<span class="sig-name descname"><span class="pre">assemble_nature_bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nature_bc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.assemble_nature_bc"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.assemble_nature_bc" title="Link to this definition"></a></dt>
+<dd><p>nature_bc: dict of nature boundary conditions
+return the global vector contributed from nature boundary conditions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler.get_dim">
+<span class="sig-name descname"><span class="pre">get_dim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler.get_dim"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler.get_dim" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Assembly.</span></span><span class="sig-name descname"><span class="pre">Assembler4Biot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dof_handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdomains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot" title="Link to this definition"></a></dt>
+<dd><p>Assembler for Biot's equation (only for Biot UP coupling equations)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dof_handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdomains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.assemble_K">
+<span class="sig-name descname"><span class="pre">assemble_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.assemble_K"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.assemble_K" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.assemble_M">
+<span class="sig-name descname"><span class="pre">assemble_M</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.assemble_M"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.assemble_M" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.initial_matrix">
+<span class="sig-name descname"><span class="pre">initial_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.initial_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.initial_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.assemble_material_K">
+<span class="sig-name descname"><span class="pre">assemble_material_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.assemble_material_K"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.assemble_material_K" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.assemble_material_M">
+<span class="sig-name descname"><span class="pre">assemble_material_M</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.assemble_material_M"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.assemble_material_M" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.assemble_material_C">
+<span class="sig-name descname"><span class="pre">assemble_material_C</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.assemble_material_C"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.assemble_material_C" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.apply_essential_bc">
+<span class="sig-name descname"><span class="pre">apply_essential_bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left_hand_side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">essential_bcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bctype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'strong'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.apply_essential_bc"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.apply_essential_bc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.apply_impedance_bc">
+<span class="sig-name descname"><span class="pre">apply_impedance_bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impedence_bcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.apply_impedance_bc"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.apply_impedance_bc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.apply_nature_bc">
+<span class="sig-name descname"><span class="pre">apply_nature_bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nature_bc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.apply_nature_bc"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.apply_nature_bc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Assembly.Assembler4Biot.get_dim">
+<span class="sig-name descname"><span class="pre">get_dim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Assembly.html#Assembler4Biot.get_dim"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Assembly.Assembler4Biot.get_dim" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="physicassembler">
+<h2>物理组装器 (PhysicAssembler)<a class="headerlink" href="#physicassembler" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BaseAssembler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.PhysicAssembler.</span></span><span class="sig-name descname"><span class="pre">BaseAssembler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BaseAssembler"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BaseAssembler" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BaseAssembler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BaseAssembler.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BaseAssembler.__init__" title="Link to this definition"></a></dt>
+<dd><p>General assembler for Helmholtz equation
+bases: list of basis
+subdomains: dict of subdomains
+dtype: data type of linear system</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BaseAssembler.initial_matrix">
+<span class="sig-name descname"><span class="pre">initial_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BaseAssembler.initial_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BaseAssembler.initial_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BaseAssembler.assemble_material_K">
+<span class="sig-name descname"><span class="pre">assemble_material_K</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BaseAssembler.assemble_material_K"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BaseAssembler.assemble_material_K" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BaseAssembler.assemble_material_M">
+<span class="sig-name descname"><span class="pre">assemble_material_M</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BaseAssembler.assemble_material_M"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BaseAssembler.assemble_material_M" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BaseAssembler.assemble_global_material_matrix">
+<span class="sig-name descname"><span class="pre">assemble_global_material_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BaseAssembler.assemble_global_material_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BaseAssembler.assemble_global_material_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BaseAssembler.fast_assemble_global_material_matrix">
+<span class="sig-name descname"><span class="pre">fast_assemble_global_material_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BaseAssembler.fast_assemble_global_material_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BaseAssembler.fast_assemble_global_material_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BaseAssembler.super_fast_assemble_global_material_matrix">
+<span class="sig-name descname"><span class="pre">super_fast_assemble_global_material_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BaseAssembler.super_fast_assemble_global_material_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BaseAssembler.super_fast_assemble_global_material_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.PhysicAssembler.</span></span><span class="sig-name descname"><span class="pre">HelmholtzAssembler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#HelmholtzAssembler"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#HelmholtzAssembler.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.__init__" title="Link to this definition"></a></dt>
+<dd><p>General assembler for Helmholtz equation
+bases: list of basis
+subdomains: dict of subdomains
+dtype: data type of linear system</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.assembly_global_matrix">
+<span class="sig-name descname"><span class="pre">assembly_global_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#HelmholtzAssembler.assembly_global_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.assembly_global_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.get_global_matrix">
+<span class="sig-name descname"><span class="pre">get_global_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#HelmholtzAssembler.get_global_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.get_global_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.get_global_PETSC_matrix">
+<span class="sig-name descname"><span class="pre">get_global_PETSC_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#HelmholtzAssembler.get_global_PETSC_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.get_global_PETSC_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BiotAssembler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.PhysicAssembler.</span></span><span class="sig-name descname"><span class="pre">BiotAssembler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BiotAssembler"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BiotAssembler" title="Link to this definition"></a></dt>
+<dd><p>Assembler for Biot's equation (only for Biot UP coupling equations)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BiotAssembler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BiotAssembler.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BiotAssembler.__init__" title="Link to this definition"></a></dt>
+<dd><p>General assembler for Helmholtz equation
+bases: list of basis
+subdomains: dict of subdomains
+dtype: data type of linear system</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BiotAssembler.initial_matrix">
+<span class="sig-name descname"><span class="pre">initial_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BiotAssembler.initial_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BiotAssembler.initial_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BiotAssembler.assemble_material_C">
+<span class="sig-name descname"><span class="pre">assemble_material_C</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BiotAssembler.assemble_material_C"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BiotAssembler.assemble_material_C" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BiotAssembler.assembly_global_matrix">
+<span class="sig-name descname"><span class="pre">assembly_global_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BiotAssembler.assembly_global_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BiotAssembler.assembly_global_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.BiotAssembler.get_global_matrix">
+<span class="sig-name descname"><span class="pre">get_global_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#BiotAssembler.get_global_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.BiotAssembler.get_global_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.CouplingAssember">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.PhysicAssembler.</span></span><span class="sig-name descname"><span class="pre">CouplingAssember</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdomains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coupling_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'continue'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#CouplingAssember"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.CouplingAssember" title="Link to this definition"></a></dt>
+<dd><p>Assembly (combine) the (global) matrices of each component (Helmholz, elastic and Biot, etc)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.CouplingAssember.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdomains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coupling_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'continue'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="（在 Python v3.14）"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#CouplingAssember.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.CouplingAssember.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.PhysicAssembler.CouplingAssember.assembly_gloabl_matrix">
+<span class="sig-name descname"><span class="pre">assembly_gloabl_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/PhysicAssembler.html#CouplingAssember.assembly_gloabl_matrix"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.PhysicAssembler.CouplingAssember.assembly_gloabl_matrix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="solver">
+<h2>求解器 (Solver)<a class="headerlink" href="#solver" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.BaseSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Solver.</span></span><span class="sig-name descname"><span class="pre">BaseSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coupling_assember</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#BaseSolver"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.BaseSolver" title="Link to this definition"></a></dt>
+<dd><p>base abstract FE solver class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.BaseSolver.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coupling_assember</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#BaseSolver.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.BaseSolver.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.BaseSolver.internal_dofs">
+<span class="sig-name descname"><span class="pre">internal_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.BaseSolver.internal_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.BaseSolver.external_dofs">
+<span class="sig-name descname"><span class="pre">external_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.BaseSolver.external_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.BaseSolver.nb_dofs">
+<span class="sig-name descname"><span class="pre">nb_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.BaseSolver.nb_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.BaseSolver.u">
+<span class="sig-name descname"><span class="pre">u</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.BaseSolver.u" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.BaseSolver.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.BaseSolver.sym" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.BaseSolver.solve">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#BaseSolver.solve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.BaseSolver.solve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Solver.</span></span><span class="sig-name descname"><span class="pre">LinearSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fe_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coupling_assember</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symmetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#LinearSolver"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver" title="Link to this definition"></a></dt>
+<dd><p>linear solver class
+parameters:
+left_hand_side: ndarray</p>
+<blockquote>
+<div><p>left hand side matrix</p>
+</div></blockquote>
+<dl class="simple">
+<dt>right_hand_side: ndarray</dt><dd><p>right hand side vector</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left_hand_side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_hand_side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spsolve'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#LinearSolver.solve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver.solve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver.condition_number">
+<span class="sig-name descname"><span class="pre">condition_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left_hand_side</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#LinearSolver.condition_number"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver.condition_number" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver.optimize_matrix_pattern">
+<span class="sig-name descname"><span class="pre">optimize_matrix_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">left_hand_side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_hand_side</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#LinearSolver.optimize_matrix_pattern"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver.optimize_matrix_pattern" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver.static_condensation">
+<span class="sig-name descname"><span class="pre">static_condensation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#LinearSolver.static_condensation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver.static_condensation" title="Link to this definition"></a></dt>
+<dd><p>condensation of linear system
+parameters:
+internal_dofs: ndarray</p>
+<blockquote>
+<div><p>internal dofs</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver.internal_dofs">
+<span class="sig-name descname"><span class="pre">internal_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver.internal_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver.external_dofs">
+<span class="sig-name descname"><span class="pre">external_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver.external_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver.nb_dofs">
+<span class="sig-name descname"><span class="pre">nb_dofs</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver.nb_dofs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver.u">
+<span class="sig-name descname"><span class="pre">u</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver.u" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.LinearSolver.sym">
+<span class="sig-name descname"><span class="pre">sym</span></span><a class="headerlink" href="#SAcouS.acxfem.Solver.LinearSolver.sym" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.AdmittanceSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Solver.</span></span><span class="sig-name descname"><span class="pre">AdmittanceSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">admittance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_hand_side</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#AdmittanceSolver"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.AdmittanceSolver" title="Link to this definition"></a></dt>
+<dd><p>admittance solver class
+parameters:
+admittance: ndarray</p>
+<blockquote>
+<div><p>admittance matrix</p>
+</div></blockquote>
+<dl class="simple">
+<dt>right_hand_side: ndarray</dt><dd><p>right hand side vector</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.AdmittanceSolver.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">admittance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_hand_side</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#AdmittanceSolver.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.AdmittanceSolver.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Solver.AdmittanceSolver.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Solver.html#AdmittanceSolver.solve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Solver.AdmittanceSolver.solve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="bcsimpose">
+<h2>边界条件 (BCsImpose)<a class="headerlink" href="#bcsimpose" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.BCsImpose.</span></span><span class="sig-name descname"><span class="pre">ApplyBoundaryConditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fe_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left_hand_side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_hand_side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/BCsImpose.html#ApplyBoundaryConditions"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fe_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left_hand_side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_hand_side</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/BCsImpose.html#ApplyBoundaryConditions.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.mesh2dof">
+<span class="sig-name descname"><span class="pre">mesh2dof</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/BCsImpose.html#ApplyBoundaryConditions.mesh2dof"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.mesh2dof" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.apply_essential_bc">
+<span class="sig-name descname"><span class="pre">apply_essential_bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">essential_bcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bctype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'strong'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/BCsImpose.html#ApplyBoundaryConditions.apply_essential_bc"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.apply_essential_bc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.apply_source">
+<span class="sig-name descname"><span class="pre">apply_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bases</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/BCsImpose.html#ApplyBoundaryConditions.apply_source"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.apply_source" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.apply_impedance_bc">
+<span class="sig-name descname"><span class="pre">apply_impedance_bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impedence_bcs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/BCsImpose.html#ApplyBoundaryConditions.apply_impedance_bc"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.apply_impedance_bc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.apply_nature_bc">
+<span class="sig-name descname"><span class="pre">apply_nature_bc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nature_bc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integr_order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/BCsImpose.html#ApplyBoundaryConditions.apply_nature_bc"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.BCsImpose.ApplyBoundaryConditions.apply_nature_bc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="quadratures">
+<h2>数值积分 (Quadratures)<a class="headerlink" href="#quadratures" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Quadratures.gauss_legendre_1d_points">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Quadratures.</span></span><span class="sig-name descname"><span class="pre">gauss_legendre_1d_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Quadratures.html#gauss_legendre_1d_points"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Quadratures.gauss_legendre_1d_points" title="Link to this definition"></a></dt>
+<dd><p>Gauss-Legendre quadrature
+:param n: int, number of quadrature points</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Quadratures.gauss_legendre_1d_weights">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Quadratures.</span></span><span class="sig-name descname"><span class="pre">gauss_legendre_1d_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Quadratures.html#gauss_legendre_1d_weights"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Quadratures.gauss_legendre_1d_weights" title="Link to this definition"></a></dt>
+<dd><p>Gauss-Legendre quadrature
+:param n: int, number of quadrature points</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Quadratures.gauss_legendre_2d_tri_points">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Quadratures.</span></span><span class="sig-name descname"><span class="pre">gauss_legendre_2d_tri_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Quadratures.html#gauss_legendre_2d_tri_points"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Quadratures.gauss_legendre_2d_tri_points" title="Link to this definition"></a></dt>
+<dd><p>Gauss-Legendre quadrature
+:param n: int, number of quadrature points</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Quadratures.gauss_legendre_2d_tri_weights">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Quadratures.</span></span><span class="sig-name descname"><span class="pre">gauss_legendre_2d_tri_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Quadratures.html#gauss_legendre_2d_tri_weights"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Quadratures.gauss_legendre_2d_tri_weights" title="Link to this definition"></a></dt>
+<dd><p>Gauss-Legendre quadrature
+:param n: int, number of quadrature points</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Quadratures.gauss_legendre_3d_tetra_points">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Quadratures.</span></span><span class="sig-name descname"><span class="pre">gauss_legendre_3d_tetra_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Quadratures.html#gauss_legendre_3d_tetra_points"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Quadratures.gauss_legendre_3d_tetra_points" title="Link to this definition"></a></dt>
+<dd><p>Gauss-Legendre quadrature
+:param n: int, number of quadrature points</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Quadratures.gauss_legendre_3d_tetra_weights">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Quadratures.</span></span><span class="sig-name descname"><span class="pre">gauss_legendre_3d_tetra_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Quadratures.html#gauss_legendre_3d_tetra_weights"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Quadratures.gauss_legendre_3d_tetra_weights" title="Link to this definition"></a></dt>
+<dd><p>Gauss-Legendre quadrature
+:param n: int, number of quadrature points</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Quadratures.get_quadrature_points_weights">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Quadratures.</span></span><span class="sig-name descname"><span class="pre">get_quadrature_points_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Quadratures.html#get_quadrature_points_weights"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Quadratures.get_quadrature_points_weights" title="Link to this definition"></a></dt>
+<dd><p>Get quadrature points and weights
+:param n: int, number of quadrature points
+:param dim: int, dimension of the quadrature points</p>
+</dd></dl>
+
+</section>
+<section id="id4">
+<h2>工具函数<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Utilities.check_material_compability">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Utilities.</span></span><span class="sig-name descname"><span class="pre">check_material_compability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subdomains</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Utilities.html#check_material_compability"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Utilities.check_material_compability" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Utilities.display_matrix_in_array">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Utilities.</span></span><span class="sig-name descname"><span class="pre">display_matrix_in_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">csr_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Utilities.html#display_matrix_in_array"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Utilities.display_matrix_in_array" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="SAcouS.acxfem.Utilities.plot_matrix_partten">
+<span class="sig-prename descclassname"><span class="pre">SAcouS.acxfem.Utilities.</span></span><span class="sig-name descname"><span class="pre">plot_matrix_partten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">csr_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/acxfem/Utilities.html#plot_matrix_partten"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.acxfem.Utilities.plot_matrix_partten" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="postprocess.html" class="btn btn-neutral float-left" title="PostProcess模块" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="acxtmm.html" class="btn btn-neutral float-right" title="acxtmm模块" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

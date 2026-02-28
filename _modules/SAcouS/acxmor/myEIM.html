@@ -1,0 +1,225 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAcouS.acxmor.myEIM &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">SAcouS.acxmor.myEIM</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>SAcouS.acxmor.myEIM 源代码</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">unravel_index</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">inv</span>
+
+
+<div class="viewcode-block" id="nonIntrusiveEIMV2">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myEIM.nonIntrusiveEIMV2">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">nonIntrusiveEIMV2</span><span class="p">:</span>
+<div class="viewcode-block" id="nonIntrusiveEIMV2.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myEIM.nonIntrusiveEIMV2.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshots</span><span class="p">,</span> <span class="n">maxRank</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="n">orthogonalizeBasis</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype_</span><span class="o">=</span><span class="nb">float</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="o">=</span> <span class="n">snapshots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxRank</span> <span class="o">=</span> <span class="n">maxRank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">=</span> <span class="n">tolerance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orthogonalizeBasis</span> <span class="o">=</span> <span class="n">orthogonalizeBasis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indXi</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indX</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype_</span></div>
+
+
+<div class="viewcode-block" id="nonIntrusiveEIMV2.vecMax">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myEIM.nonIntrusiveEIMV2.vecMax">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vecMax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">arr</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="nonIntrusiveEIMV2.interpolate">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myEIM.nonIntrusiveEIMV2.interpolate">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intrusive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxRank</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">indXi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxRank</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">indX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxRank</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="n">fullApprox</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="o">-</span> <span class="n">fullApprox</span>
+        <span class="n">normResidual</span><span class="p">,</span> <span class="n">indXi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vecMax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="n">residual</span><span class="p">))</span>
+        <span class="n">trash</span><span class="p">,</span> <span class="n">indX</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vecMax</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">[:,</span> <span class="n">indXi</span><span class="p">[</span><span class="mi">0</span><span class="p">]]))</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">display</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Iteration </span><span class="si">%3d</span><span class="s1"> - Residual </span><span class="si">%e</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">normResidual</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">indXi</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxRank</span> <span class="o">&gt;</span> <span class="n">l</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">normResidual</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">):</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">residual</span><span class="p">[:,</span> <span class="n">indXi</span><span class="p">[</span><span class="n">l</span><span class="p">]]</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">/</span> <span class="n">v</span><span class="p">[</span><span class="n">indX</span><span class="p">[</span><span class="n">l</span><span class="p">]]</span>
+
+            <span class="n">V</span><span class="p">[:,</span> <span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[:]</span>
+            <span class="n">Vl</span> <span class="o">=</span> <span class="n">V</span><span class="p">[:,</span> <span class="p">:</span><span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">lambda_</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">Vl</span><span class="p">[</span><span class="n">indX</span><span class="p">[:</span><span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">[</span><span class="n">indX</span><span class="p">[:</span><span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="p">:])</span>  <span class="c1"># gamma</span>
+
+            <span class="n">fullApprox</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Vl</span><span class="p">,</span> <span class="n">lambda_</span><span class="p">)</span>
+            <span class="n">lastResidual</span> <span class="o">=</span> <span class="n">residual</span>
+            <span class="n">residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span> <span class="o">-</span> <span class="n">fullApprox</span>
+
+            <span class="n">l</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Pour le dernier mode, on ne fait que calculer le residu car in n&#39;ira pas plus loin dans l&#39;algo</span>
+            <span class="k">if</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxRank</span><span class="p">:</span>
+                <span class="n">normResidual</span><span class="p">,</span> <span class="n">indXi</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vecMax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="n">residual</span><span class="p">))</span>
+                <span class="n">trash</span><span class="p">,</span> <span class="n">indX</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vecMax</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">[:,</span> <span class="n">indXi</span><span class="p">[</span><span class="n">l</span><span class="p">]]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">normResidual</span><span class="p">,</span> <span class="n">trash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vecMax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="n">residual</span><span class="p">))</span>
+            <span class="c1">#                aaa</span>
+            <span class="c1">#            print(indXi)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">display</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Iteration </span><span class="si">%3d</span><span class="s1"> - Residual </span><span class="si">%e</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">normResidual</span><span class="p">))</span>
+                <span class="c1"># print(indXi)</span>
+
+        <span class="k">if</span> <span class="n">intrusive</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indXi</span> <span class="o">=</span> <span class="n">indXi</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indX</span> <span class="o">=</span> <span class="n">indX</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="n">l</span>
+            <span class="k">return</span> <span class="n">V</span><span class="p">[:,</span> <span class="p">:</span><span class="n">l</span><span class="p">],</span> <span class="n">lambda_</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indXi</span> <span class="o">=</span> <span class="n">indXi</span><span class="p">[:</span><span class="n">l</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indX</span> <span class="o">=</span> <span class="n">indX</span><span class="p">[:</span><span class="n">l</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="n">l</span>
+            <span class="n">lambda_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">[:,</span> <span class="n">indXi</span><span class="p">[:</span><span class="n">l</span><span class="p">]];</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">[:,</span> <span class="n">indXi</span><span class="p">[:</span><span class="n">l</span><span class="p">]];</span>
+            <span class="n">lambda_</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">lambda_</span><span class="p">[</span><span class="n">indX</span><span class="p">[:</span><span class="n">l</span><span class="p">],</span> <span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">snapshots</span><span class="p">[</span><span class="n">indX</span><span class="p">[:</span><span class="n">l</span><span class="p">],</span> <span class="p">:]);</span>
+	    <span class="c1"># R basis, lambda is the parametric dependence function</span>
+            <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">.</span><span class="n">T</span></div>
+</div>
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

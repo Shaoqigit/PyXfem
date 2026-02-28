@@ -1,0 +1,540 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAcouS.acxfem.PhysicAssembler &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">SAcouS.acxfem.PhysicAssembler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>SAcouS.acxfem.PhysicAssembler 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This file is part of PyXfem, a software distributed under the MIT license.</span>
+<span class="c1"># For any question, please contact the authors cited below.</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2023</span>
+<span class="c1"># 	Shaoqi WU &lt;shaoqiwu@outlook.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+
+<span class="c1"># assembly the global/partial matrices according to the physic of the components</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.Polynomial</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lobatto</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csr_array</span><span class="p">,</span> <span class="n">coo_matrix</span><span class="p">,</span> <span class="n">lil_array</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">csr_matrix</span>
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">petsc4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">PETSc</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">petsc4py.PETSc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">Vec</span>
+  <span class="n">PETSC_on</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="k">pass</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_indeces</span><span class="p">(</span><span class="o">*</span><span class="n">dofs</span><span class="p">):</span>
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dofs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">dof_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dofs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">dofs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dof_len</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">dofs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dof_len</span><span class="p">)),</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dofs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">dofs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">dofs</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">dofs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">dofs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))),</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;the number of dofs must be one or two&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BaseAssembler">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BaseAssembler">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseAssembler</span><span class="p">:</span>
+
+<div class="viewcode-block" id="BaseAssembler.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BaseAssembler.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fe_space</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        General assembler for Helmholtz equation</span>
+<span class="sd">        bases: list of basis</span>
+<span class="sd">        subdomains: dict of subdomains</span>
+<span class="sd">        dtype: data type of linear system&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span> <span class="o">=</span> <span class="n">fe_space</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span> <span class="o">=</span> <span class="n">fe_space</span><span class="o">.</span><span class="n">nb_dofs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span></div>
+
+
+<div class="viewcode-block" id="BaseAssembler.initial_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BaseAssembler.initial_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">initial_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="mf">0.</span></div>
+
+
+<div class="viewcode-block" id="BaseAssembler.assemble_material_K">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BaseAssembler.assemble_material_K">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">assemble_material_K</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs_by_base</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">dofs</span><span class="p">,</span> <span class="n">basis</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dofs_index</span><span class="p">,</span> <span class="n">bases</span><span class="p">)):</span>
+      <span class="n">local_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">basis</span><span class="o">.</span><span class="n">local_dofs_index</span><span class="p">)</span>
+      <span class="n">global_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">dofs</span><span class="p">)</span>
+      <span class="n">row</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+      <span class="n">col</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+      <span class="n">elem_data</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">ke</span><span class="p">[</span><span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+      <span class="n">rows</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+      <span class="n">cols</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+      <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">elem_data</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">coo_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span></div>
+
+
+<div class="viewcode-block" id="BaseAssembler.assemble_material_M">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BaseAssembler.assemble_material_M">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">assemble_material_M</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs_by_base</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">dofs</span><span class="p">,</span> <span class="n">basis</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dofs_index</span><span class="p">,</span> <span class="n">bases</span><span class="p">)):</span>
+      <span class="n">local_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">basis</span><span class="o">.</span><span class="n">local_dofs_index</span><span class="p">)</span>
+      <span class="n">global_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">dofs</span><span class="p">)</span>
+      <span class="n">row</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+      <span class="n">col</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+      <span class="n">elem_data</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">me</span><span class="p">[</span><span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+      <span class="n">rows</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+      <span class="n">cols</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+      <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">elem_data</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">coo_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span></div>
+
+
+<div class="viewcode-block" id="BaseAssembler.assemble_global_material_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BaseAssembler.assemble_global_material_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">assemble_global_material_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs_by_base</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">data_K</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">data_M</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">dofs</span><span class="p">,</span> <span class="n">basis</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dofs_index</span><span class="p">,</span> <span class="n">bases</span><span class="p">)):</span>
+      <span class="n">local_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">basis</span><span class="o">.</span><span class="n">local_dofs_index</span><span class="p">)</span>
+      <span class="n">global_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">dofs</span><span class="p">)</span>
+      <span class="n">row</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+      <span class="n">col</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+      <span class="n">elem_data_M</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">me</span><span class="p">[</span><span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+      <span class="n">elem_data_K</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">ke</span><span class="p">[</span><span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+      <span class="n">rows</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+      <span class="n">cols</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+      <span class="n">data_K</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">elem_data_K</span><span class="p">)</span>
+      <span class="n">data_M</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">elem_data_M</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">coo_matrix</span><span class="p">((</span><span class="n">data_M</span><span class="p">,</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">coo_matrix</span><span class="p">((</span><span class="n">data_K</span><span class="p">,</span> <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span></div>
+
+
+<span class="c1"># ===================================== parallel assembly ==========================</span>
+
+<div class="viewcode-block" id="BaseAssembler.fast_assemble_global_material_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BaseAssembler.fast_assemble_global_material_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">fast_assemble_global_material_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs_by_base</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+    <span class="n">max_entries</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dofs_index</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">dofs_index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">dofs_index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">max_entries</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">max_entries</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">data_K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">max_entries</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">data_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">max_entries</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">dofs</span><span class="p">,</span> <span class="n">basis</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dofs_index</span><span class="p">,</span> <span class="n">bases</span><span class="p">)):</span>
+      <span class="n">local_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">basis</span><span class="o">.</span><span class="n">local_dofs_index</span><span class="p">)</span>
+      <span class="n">global_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">dofs</span><span class="p">)</span>
+      <span class="n">elem_data_M</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">me</span><span class="p">[</span><span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+      <span class="n">elem_data_K</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">ke</span><span class="p">[</span><span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+
+      <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">global_indices</span><span class="p">)</span>
+      <span class="n">rows</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+      <span class="n">cols</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+      <span class="n">data_K</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem_data_K</span>
+      <span class="n">data_M</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem_data_M</span>
+      <span class="n">idx</span> <span class="o">+=</span> <span class="n">size</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">data_M</span><span class="p">[:</span><span class="n">idx</span><span class="p">],</span> <span class="p">(</span><span class="n">rows</span><span class="p">[:</span><span class="n">idx</span><span class="p">],</span> <span class="n">cols</span><span class="p">[:</span><span class="n">idx</span><span class="p">])),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">csr_matrix</span><span class="p">((</span><span class="n">data_K</span><span class="p">[:</span><span class="n">idx</span><span class="p">],</span> <span class="p">(</span><span class="n">rows</span><span class="p">[:</span><span class="n">idx</span><span class="p">],</span> <span class="n">cols</span><span class="p">[:</span><span class="n">idx</span><span class="p">])),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseAssembler.super_fast_assemble_global_material_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BaseAssembler.super_fast_assemble_global_material_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">super_fast_assemble_global_material_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">dofs_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs_by_base</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">PETSc</span><span class="o">.</span><span class="n">Mat</span><span class="p">()</span><span class="o">.</span><span class="n">createAIJ</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">])</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+
+    <span class="c1"># Assemble the global matrix directly in PETSc</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">assemblyBegin</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">dofs</span><span class="p">,</span> <span class="n">basis</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dofs_index</span><span class="p">,</span> <span class="n">bases</span><span class="p">)):</span>
+      <span class="c1"># breakpoint()</span>
+      <span class="c1"># global_indices = get_indeces(dofs)</span>
+      <span class="n">local_matrix</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">omega</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">basis</span><span class="o">.</span><span class="n">ke</span> <span class="o">-</span> <span class="n">basis</span><span class="o">.</span><span class="n">me</span>
+      <span class="n">A</span><span class="o">.</span><span class="n">setValues</span><span class="p">(</span><span class="n">dofs</span><span class="p">,</span> <span class="n">dofs</span><span class="p">,</span> <span class="n">local_matrix</span><span class="p">,</span> <span class="n">addv</span><span class="o">=</span><span class="n">PETSc</span><span class="o">.</span><span class="n">InsertMode</span><span class="o">.</span><span class="n">ADD_VALUES</span><span class="p">)</span>
+    <span class="n">A</span><span class="o">.</span><span class="n">assemblyEnd</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PETSc matrix assembled&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">A</span></div>
+</div>
+
+
+
+<span class="c1"># ===================================== end parallel assembly ==========================</span>
+<div class="viewcode-block" id="HelmholtzAssembler">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HelmholtzAssembler</span><span class="p">(</span><span class="n">BaseAssembler</span><span class="p">):</span>
+
+<div class="viewcode-block" id="HelmholtzAssembler.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fe_space</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        General assembler for Helmholtz equation</span>
+<span class="sd">        bases: list of basis</span>
+<span class="sd">        subdomains: dict of subdomains</span>
+<span class="sd">        dtype: data type of linear system&quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fe_space</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HelmholtzAssembler.assembly_global_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.assembly_global_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">assembly_global_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">initial_matrix</span><span class="p">()</span>
+    <span class="c1"># self.assemble_material_K(bases, var)</span>
+    <span class="c1"># self.assemble_material_M(bases, var)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">assemble_global_material_matrix</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">fast_assemble_global_material_matrix</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span></div>
+
+      <span class="c1"># self.super_fast_assemble_global_material_matrix(bases, omega, var)</span>
+
+<div class="viewcode-block" id="HelmholtzAssembler.get_global_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.get_global_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_global_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">omega</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span></div>
+
+
+<div class="viewcode-block" id="HelmholtzAssembler.get_global_PETSC_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.HelmholtzAssembler.get_global_PETSC_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_global_PETSC_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">super_fast_assemble_global_material_matrix</span><span class="p">(</span><span class="n">bases</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="BiotAssembler">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BiotAssembler">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BiotAssembler</span><span class="p">(</span><span class="n">BaseAssembler</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assembler for Biot&#39;s equation (only for Biot UP coupling equations)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BiotAssembler.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BiotAssembler.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fe_space</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fe_space</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">=</span> <span class="n">csr_array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                       <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BiotAssembler.initial_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BiotAssembler.initial_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">initial_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">csr_array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                       <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">csr_array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                       <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">=</span> <span class="n">csr_array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                       <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BiotAssembler.assemble_material_C">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BiotAssembler.assemble_material_C">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">assemble_material_C</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">var_1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">var_2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">var_1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">dofs_index_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">dofs_index_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs_by_base</span><span class="p">(</span><span class="n">var_1</span><span class="p">)</span>
+      <span class="n">dofs_index_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fe_space</span><span class="o">.</span><span class="n">get_global_dofs_by_base</span><span class="p">(</span><span class="n">var_2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">dofs_1</span><span class="p">,</span> <span class="n">dofs_2</span><span class="p">,</span>
+            <span class="n">basis</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">dofs_index_1</span><span class="p">,</span> <span class="n">dofs_index_2</span><span class="p">,</span> <span class="n">bases</span><span class="p">)):</span>
+      <span class="n">local_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">basis</span><span class="o">.</span><span class="n">local_dofs_index</span><span class="p">)</span>
+      <span class="n">global_indices</span> <span class="o">=</span> <span class="n">get_indeces</span><span class="p">(</span><span class="n">dofs_1</span><span class="p">,</span> <span class="n">dofs_2</span><span class="p">)</span>
+      <span class="n">row</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+      <span class="n">col</span> <span class="o">=</span> <span class="n">global_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+      <span class="n">data</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">ce</span><span class="p">[</span><span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">local_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">+=</span> <span class="n">csr_array</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)),</span>
+                          <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                          <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span></div>
+
+
+<div class="viewcode-block" id="BiotAssembler.assembly_global_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BiotAssembler.assembly_global_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">assembly_global_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="nb">vars</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bases</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">vars</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;the number of bases and variables have to be two&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">initial_matrix</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_material_K</span><span class="p">(</span><span class="n">bases</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">M_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_material_M</span><span class="p">(</span><span class="n">bases</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">initial_matrix</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">K_u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_material_K</span><span class="p">(</span><span class="n">bases</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">M_u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_material_M</span><span class="p">(</span><span class="n">bases</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">C_pu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_material_C</span><span class="p">(</span><span class="n">bases</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">vars</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">C_up</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">C_pu</span><span class="o">.</span><span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="BiotAssembler.get_global_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.BiotAssembler.get_global_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_global_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omega</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">omega</span><span class="o">**</span><span class="mi">2</span>
+    <span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_p</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">K_u</span> <span class="o">-</span> <span class="n">omega</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">M_u</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">M_p</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">C_pu</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">C_up</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CouplingAssember">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.CouplingAssember">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CouplingAssember</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assembly (combine) the (global) matrices of each component (Helmholz, elastic and Biot, etc)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CouplingAssember.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.CouplingAssember.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+               <span class="n">mesh</span><span class="p">,</span>
+               <span class="n">subdomains</span><span class="p">,</span>
+               <span class="n">components</span><span class="p">,</span>
+               <span class="n">coupling_type</span><span class="o">=</span><span class="s2">&quot;continue&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mesh</span> <span class="o">=</span> <span class="n">mesh</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">subdomains</span> <span class="o">=</span> <span class="n">subdomains</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="n">components</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">coupling_type</span> <span class="o">=</span> <span class="n">coupling_type</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nb_external_dofs</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span>
+    <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span> <span class="o">+=</span> <span class="n">comp</span><span class="o">.</span><span class="n">nb_global_dofs</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">nb_external_dofs</span> <span class="o">+=</span> <span class="n">comp</span><span class="o">.</span><span class="n">dof_handler</span><span class="o">.</span><span class="n">nb_external_dofs</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">dtype</span>
+
+    <span class="k">if</span> <span class="s2">&quot;continue&quot;</span> <span class="ow">in</span> <span class="n">coupling_type</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span> <span class="o">-=</span> <span class="mi">1</span>    <span class="c1"># minus the duplicated continueous dofs</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">nb_external_dofs</span> <span class="o">-=</span> <span class="mi">1</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">nb_internal_dofs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_external_dofs</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">global_matrix</span> <span class="o">=</span> <span class="n">lil_array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">),</span>
+                                   <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CouplingAssember.assembly_gloabl_matrix">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.PhysicAssembler.CouplingAssember.assembly_gloabl_matrix">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">assembly_gloabl_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># import pdb;pdb.set_trace()</span>
+    <span class="c1"># first assembly the external dofs</span>
+    <span class="n">index_external_start</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">index_internal_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_external_dofs</span>
+    <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+      <span class="n">local_external_index</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">dof_handler</span><span class="o">.</span><span class="n">nb_external_dofs</span>
+      <span class="n">index_external_end</span> <span class="o">=</span> <span class="n">index_external_start</span> <span class="o">+</span> <span class="n">comp</span><span class="o">.</span><span class="n">dof_handler</span><span class="o">.</span><span class="n">nb_external_dofs</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">global_matrix</span><span class="p">[</span>
+          <span class="n">index_external_start</span><span class="p">:</span><span class="n">index_external_end</span><span class="p">,</span>
+          <span class="n">index_external_start</span><span class="p">:</span><span class="n">index_external_end</span><span class="p">]</span> <span class="o">+=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_global_matrix</span><span class="p">(</span>
+          <span class="p">)</span><span class="o">.</span><span class="n">tolil</span><span class="p">()[:</span><span class="n">local_external_index</span><span class="p">,</span> <span class="p">:</span><span class="n">local_external_index</span><span class="p">]</span>
+
+      <span class="n">local_internal_index</span> <span class="o">=</span> <span class="n">local_external_index</span> <span class="o">+</span> <span class="n">comp</span><span class="o">.</span><span class="n">dof_handler</span><span class="o">.</span><span class="n">nb_internal_dofs</span>
+      <span class="n">index_internal_end</span> <span class="o">=</span> <span class="n">index_internal_start</span> <span class="o">+</span> <span class="n">comp</span><span class="o">.</span><span class="n">dof_handler</span><span class="o">.</span><span class="n">nb_internal_dofs</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">global_matrix</span><span class="p">[</span>
+          <span class="n">index_internal_start</span><span class="p">:</span><span class="n">index_internal_end</span><span class="p">,</span>
+          <span class="n">index_internal_start</span><span class="p">:</span><span class="n">index_internal_end</span><span class="p">]</span> <span class="o">+=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_global_matrix</span><span class="p">(</span>
+          <span class="p">)</span><span class="o">.</span><span class="n">tolil</span><span class="p">()[</span><span class="n">local_external_index</span><span class="p">:</span><span class="n">local_internal_index</span><span class="p">,</span>
+                    <span class="n">local_external_index</span><span class="p">:</span><span class="n">local_internal_index</span><span class="p">]</span>
+
+      <span class="n">index_external_start</span> <span class="o">=</span> <span class="n">index_external_end</span> <span class="o">-</span> <span class="mi">1</span>
+      <span class="n">index_internal_start</span> <span class="o">=</span> <span class="n">index_internal_end</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_matrix</span><span class="o">.</span><span class="n">tocsr</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">assembly_on_edges</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">integ_deg</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assembly the linear form on the edges</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">l</span> <span class="o">=</span> <span class="n">Lobatto</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">N</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">get_shape_functions</span><span class="p">()</span>
+
+  <span class="n">lines</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">exterior_facets</span><span class="p">[</span><span class="n">edges</span><span class="p">]</span>
+  <span class="k">for</span> <span class="n">line_index</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+    <span class="n">node_1_coord</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">line_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">node_2_coord</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">line_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">jac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">node_1_coord</span> <span class="o">-</span> <span class="n">node_2_coord</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

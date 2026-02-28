@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PyAcoustiX / SAcouS 文档 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="安装指南" href="user_guide/installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">PyAcoustiX / SAcouS 文档</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/index.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pyacoustix-sacous">
+<h1>PyAcoustiX / SAcouS 文档<a class="headerlink" href="#pyacoustix-sacous" title="Link to this heading"></a></h1>
+<p><strong>PyAcoustiX</strong> (Simple Acoustic Simulator - SAcouS) 是一个基于纯Python实现的有限元方法(FEM)声学仿真库。</p>
+<p>该库主要用于声学/振动声学仿真，但也可扩展用于其他物理场问题。它旨在为研究、教育或工业原型开发提供最简单、清晰且易于理解的FEM工具。</p>
+<section id="id1">
+<h2>主要特性<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>高阶形函数</strong>: 除经典的线性/二次Lagrange多项式外，还支持高阶Lobatto形函数 (最高p=4)</p></li>
+<li><p><strong>变阶单元</strong>: 每个单元可以独立设置插值阶数</p></li>
+<li><p><strong>扩展单元技术</strong>: 使用双节点技术处理不连续性问题</p></li>
+<li><p><strong>丰富的材料模型</strong>: 支持多种声学材料，包括刚性多孔材料、Limp模型和Biot-UP模型</p></li>
+<li><p><strong>FEM-TMM耦合</strong>: 支持传递矩阵法(TMM)与FEM耦合，用于复杂几何中的多层结构建模</p></li>
+<li><p><strong>模态降阶</strong>: 支持模态域降阶方法(MoR)加速计算</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>快速开始<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<section id="id3">
+<h3>安装<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pyacoustix
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>基本使用<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># 定义材料</span>
+<span class="n">air</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="s1">&#39;air&#39;</span><span class="p">)</span>
+
+<span class="c1"># 创建网格</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh1D</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">)</span>
+
+<span class="c1"># 求解...</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>命令行工具<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 使用输入文件运行仿真</span>
+sacous<span class="w"> </span>-i<span class="w"> </span>input_file.axi
+
+<span class="c1"># 进入交互式控制台</span>
+sacous
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id6">
+<h2>文档目录<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/installation.html">安装指南</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/installation.html#id2">系统要求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/installation.html#pip">通过pip安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/installation.html#id3">从源码安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/installation.html#docker">Docker安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/installation.html#id4">依赖项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/installation.html#id7">验证安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/installation.html#id8">常见问题</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/quickstart.html">快速开始</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/quickstart.html#d-helmholtz">示例：1D Helmholtz问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/quickstart.html#id3">分步解释</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/quickstart.html#id11">下一步</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_1d.html#id1">问题描述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_1d.html#id3">完整代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_1d.html#id4">详细解释</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_1d.html#id11">练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_1d.html#id12">下一步</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/tutorial_2d.html">教程2: 2D声学问题</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_2d.html#id1">问题描述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_2d.html#id4">完整代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_2d.html#gmsh">使用Gmsh网格</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_2d.html#id6">高阶单元</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_2d.html#id7">边界条件类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_2d.html#id8">可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_2d.html#id9">练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_2d.html#id10">下一步</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/tutorial_3d.html">教程3: 3D声学问题</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_3d.html#id1">问题描述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_3d.html#id3">完整代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_3d.html#gmsh">Gmsh网格生成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_3d.html#id4">计算资源考虑</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_3d.html#id5">并行计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_3d.html#id6">后处理与可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_3d.html#id7">实际应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_3d.html#id8">练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/tutorial_3d.html#id9">下一步</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide/cli_usage.html">命令行使用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/cli_usage.html#id2">基本用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/cli_usage.html#axi">输入文件格式 (.axi)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/cli_usage.html#id7">高级用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide/cli_usage.html#id9">故障排除</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api_reference/index.html">API参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/mesh.html">Mesh模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/materials.html">Materials模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/postprocess.html">PostProcess模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/acxfem.html">acxfem模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/acxtmm.html">acxtmm模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/acxmor.html">acxmor模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/interface.html">interface模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/index.html#id1">快速索引</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_reference/index.html#id4">使用示例</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="theory/fem_basics.html">有限元方法基础</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id2">什么是有限元方法？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id3">基本流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id4">弱形式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id5">离散化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id6">单元方程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id8">全局组装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id9">边界条件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id10">线性求解</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id11">误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#pyacoustix">PyAcoustiX中的实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/fem_basics.html#id12">进一步阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="theory/helmholtz.html">Helmholtz方程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="theory/helmholtz.html#id1">波动方程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/helmholtz.html#id2">时谐假设</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/helmholtz.html#id3">弱形式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/helmholtz.html#id4">边界条件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/helmholtz.html#d-helmholtz">1D Helmholtz方程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/helmholtz.html#d-3d-helmholtz">2D/3D Helmholtz方程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/helmholtz.html#id5">数值求解</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/helmholtz.html#id6">应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/helmholtz.html#id7">进一步阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="theory/jca_model.html">JCA模型</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id1">多孔材料简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id2">等效流体假设</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id3">等效密度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id4">等效体积模量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id5">等效声速和阻抗</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id6">物理意义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id7">频率特性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id8">吸声系数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id9">参数测量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#pyacoustix">PyAcoustiX实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/jca_model.html#id10">进一步阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="theory/biot_theory.html">Biot理论</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id1">Biot理论概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id2">基本假设</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id3">双相系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id4">本构关系</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id5">弹性系数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id6">运动方程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id7">波类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id8">波速公式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id9">边界条件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id10">频率特性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id11">应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#pyacoustix">PyAcoustiX实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biot_theory.html#id12">进一步阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="theory/tmm_theory.html">传递矩阵法 (TMM)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id1">基本原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id2">单层传递矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id3">多层结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id4">边界条件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id5">声学性能指标</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id6">表面阻抗</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id7">材料模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id8">斜入射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id10">频率特性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#tmm-vs-fem">TMM vs FEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#pyacoustix">PyAcoustiX实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="theory/tmm_theory.html#id11">进一步阅读</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/index.html">示例</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/gallery.html">示例画廊</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/index.html#id2">示例列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/index.html#id6">运行示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/index.html#id7">示例输出</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/index.html#id8">自定义示例</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide/architecture.html">架构设计</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/architecture.html#id2">整体架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/architecture.html#id3">模块职责</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/architecture.html#id4">设计原则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/architecture.html#id5">扩展开发</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/architecture.html#id9">代码风格</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide/contributing.html">贡献指南</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/contributing.html#id2">如何贡献</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/contributing.html#id5">开发环境设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/contributing.html#id6">代码规范</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/contributing.html#pull-request">Pull Request流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/contributing.html#id11">行为准则</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/contributing.html#id12">许可证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/contributing.html#id13">联系方式</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide/testing.html">测试指南</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/testing.html#id2">测试结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/testing.html#id3">运行测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/testing.html#id6">测试类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/testing.html#id10">编写测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/testing.html#id15">持续集成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/testing.html#id16">测试覆盖率</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/testing.html#id17">调试测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer_guide/testing.html#id18">最佳实践</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="id7">
+<h2>索引<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">索引</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">模块索引</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">搜索页面</span></a></p></li>
+</ul>
+</section>
+<section id="id8">
+<h2>项目链接<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/Shaoqigit/PyXfem">GitHub仓库</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/PyAcoustiX/">PyPI页面</a></p></li>
+<li><p><a class="reference external" href="https://hub.docker.com/r/shaoqiwu/pyacoustix">Docker镜像</a></p></li>
+</ul>
+</section>
+<section id="id9">
+<h2>许可证<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<p>本项目采用 MIT 许可证。详见 <a class="reference external" href="https://github.com/Shaoqigit/PyXfem/blob/main/LICENSE">LICENSE</a> 文件。</p>
+</section>
+<section id="id10">
+<h2>作者<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Shaoqi WU</strong> - <a class="reference external" href="mailto:shaoqiwu&#37;&#52;&#48;outlook&#46;com">shaoqiwu<span>&#64;</span>outlook<span>&#46;</span>com</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="user_guide/installation.html" class="btn btn-neutral float-right" title="安装指南" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1038 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAcouS.acxfem.Basis &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">SAcouS.acxfem.Basis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>SAcouS.acxfem.Basis 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This file is part of PyXfem, a software distributed under the MIT license.</span>
+<span class="c1"># For any question, please contact the authors cited below.</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2023</span>
+<span class="c1"># 	Shaoqi WU &lt;shaoqiwu@outlook.com</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+
+<span class="c1"># basis.py mutiple element types</span>
+<span class="c1"># Lobatto element are recommended to use</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.PrecomputeMatrices</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ke1D</span><span class="p">,</span> <span class="n">Me1D</span><span class="p">,</span> <span class="n">Ce1D</span><span class="p">,</span> <span class="n">add_shape_functions2element</span>
+
+<span class="c1"># from .PrecomputeMatricesLag import add_shape_functions2element</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.Quadratures</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_quadrature_points_weights</span>
+
+
+<div class="viewcode-block" id="Base1DElement">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Base1DElement">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Base1DElement</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;base abstract FE elementary matrix class</span>
+<span class="sd">    precompute the shape function and its derivative on gauss points</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    order: int</span>
+<span class="sd">        element order</span>
+<span class="sd">    vertices: ndarray</span>
+<span class="sd">        1d: [x1, x2]</span>
+<span class="sd">        2d: [(x1, y1), (x2, y2)]</span>
+<span class="sd">        3d: [(x1, y1, z1), (x2, y2, z2)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Base1DElement.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Base1DElement.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">vertices</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">is_discontinue</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    compute the Jacobian of the element</span>
+<span class="sd">    returns:</span>
+<span class="sd">    J: </span>
+<span class="sd">    J=dx/dxi&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
+                     <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">inverse_Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
+                         <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Base1DElement.interpolate">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Base1DElement.interpolate">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;interpolate the function value at x</span>
+<span class="sd">    returns:</span>
+<span class="sd">    f: float</span>
+<span class="sd">        function value at x</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[</span>
+          <span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;quadrtic lagrange not supported yet&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Lobbato1DElement">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lobbato1DElement">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lobbato1DElement</span><span class="p">(</span><span class="n">Base1DElement</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;FE lobatto 1D basis class</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    order: int</span>
+<span class="sd">        element order</span>
+
+<span class="sd">    returns:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Lobbato1DElement.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lobbato1DElement.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">)</span>
+    <span class="n">add_shape_functions2element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span></div>
+
+    <span class="c1"># poly = Lobatto(order)</span>
+    <span class="c1"># self.Bd = poly.get_der_shape_functions    # expression of the derivative</span>
+    <span class="c1"># self.Nd = poly.get_shape_functions    # expression of the shape function</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">ke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    K: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Ke</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">Ke</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span> <span class="o">*</span> <span class="n">Ke1D</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="n">Ke</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span> <span class="o">*</span> <span class="n">Ke1D</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="n">Ke</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span> <span class="o">*</span> <span class="n">Ke1D</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="n">Ke</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span> <span class="o">*</span> <span class="n">Ke1D</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;quadrtic lobatto not supported yet&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Ke</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">me</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    m: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span> <span class="o">*</span> <span class="n">Me1D</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span> <span class="o">*</span> <span class="n">Me1D</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span> <span class="o">*</span> <span class="n">Me1D</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span> <span class="o">*</span> <span class="n">Me1D</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;quadrtic lobatto not supported yet&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Me</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">ce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary coupling matrix, N(x)B(x)</span>
+<span class="sd">    returns:</span>
+<span class="sd">    c: ndarray</span>
+<span class="sd">        elementary coupling matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">Ce</span> <span class="o">=</span> <span class="n">Ce1D</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="n">Ce</span> <span class="o">=</span> <span class="n">Ce1D</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="n">Ce</span> <span class="o">=</span> <span class="n">Ce1D</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="n">Ce</span> <span class="o">=</span> <span class="n">Ce1D</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;quadrtic lobatto not supported yet&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Ce</span>
+
+<div class="viewcode-block" id="Lobbato1DElement.add_shape_functions2element">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lobbato1DElement.add_shape_functions2element">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">add_shape_functions2element</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">add_shape_functions2element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span></div>
+
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">shape_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">add_shape_functions2element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape_functions</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">der_shape_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">add_shape_functions2element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_der_shape_functions</span>
+
+<div class="viewcode-block" id="Lobbato1DElement.integrate">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lobbato1DElement.integrate">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">f</span><span class="p">,</span>
+                <span class="n">mesh</span><span class="p">,</span>
+                <span class="n">edge_or_facet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">integ_order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">vtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;integrate the function f over the element</span>
+<span class="sd">    returns:</span>
+<span class="sd">    integral: float</span>
+<span class="sd">        integral value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">edge_or_facet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">edge_or_facet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span>
+    <span class="n">normal</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">compute_normal</span><span class="p">(</span><span class="n">edge_or_facet</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape_functions</span>
+    <span class="n">gl_pts</span><span class="p">,</span> <span class="n">gl_wts</span> <span class="o">=</span> <span class="n">get_quadrature_points_weights</span><span class="p">(</span><span class="n">integ_order</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">vtype</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gl_pt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gl_pts</span><span class="p">):</span>
+      <span class="c1"># x = N(*gl_pt) @ self.vertices</span>
+      <span class="c1"># f_n = f(x[0], x[1]) @ normal</span>
+      <span class="c1"># integral += gl_wts[i] * f_n * N(*gl_pt)</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="n">N</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">gl_pt</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">](</span><span class="n">gl_pt</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">f_n</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">@</span> <span class="n">normal</span>
+      <span class="n">integral</span> <span class="o">+=</span> <span class="n">gl_wts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">f_n</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">N</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">gl_pt</span><span class="p">),</span> <span class="n">N</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">](</span><span class="n">gl_pt</span><span class="p">)])</span>
+    <span class="n">integral</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span>
+
+    <span class="k">return</span> <span class="n">integral</span></div>
+
+
+<div class="viewcode-block" id="Lobbato1DElement.get_order">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lobbato1DElement.get_order">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span></div>
+
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">nb_internal_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">-</span> <span class="mi">1</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">local_dofs_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Helmholtz1DElement">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Helmholtz1DElement">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Helmholtz1DElement</span><span class="p">(</span><span class="n">Lobbato1DElement</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Helmholtz1DElement.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Helmholtz1DElement.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">mat_coeffs</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span> <span class="o">=</span> <span class="n">mat_coeffs</span></div>
+
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">ke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    K: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Ke</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">Ke</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ke1D</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="n">Ke</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ke1D</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="n">Ke</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ke1D</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="n">Ke</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ke1D</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;quadrtic lobatto not supported yet&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Ke</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">me</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    m: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Me1D</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Me1D</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Me1D</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Me1D</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;quadrtic lobatto not supported yet&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Me</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">ce</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary coupling matrix, N(x)B(x)</span>
+<span class="sd">    returns:</span>
+<span class="sd">    c: ndarray</span>
+<span class="sd">        elementary coupling matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">Ce</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ce1D</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="n">Ce</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ce1D</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="n">Ce</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ce1D</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="n">Ce</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ce1D</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;quadrtic lobatto not supported yet&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Ce</span></div>
+
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem.PrecomputeMatricesLag</span><span class="w"> </span><span class="kn">import</span> <span class="n">points_o1</span><span class="p">,</span> <span class="n">weights_o1</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem.PrecomputeMatricesLag</span><span class="w"> </span><span class="kn">import</span> <span class="n">N_tri_p1</span><span class="p">,</span> <span class="n">B_tri_p1</span><span class="p">,</span> <span class="n">N_tri_p2</span><span class="p">,</span> <span class="n">B_tri_p2</span><span class="p">,</span> <span class="n">N_tetra_p1</span><span class="p">,</span> <span class="n">B_tetra_p1</span><span class="p">,</span> <span class="n">N_tetra_o2</span><span class="p">,</span> <span class="n">B_tetra_o2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.Polynomial</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lagrange2DTri</span>
+
+
+<div class="viewcode-block" id="BaseNDElement">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.BaseNDElement">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseNDElement</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;base abstract FE elementary matrix class</span>
+<span class="sd">    precompute the shape function and its derivative on gauss points</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    order: int</span>
+<span class="sd">        element order</span>
+<span class="sd">    nodes: ndarray</span>
+<span class="sd">        2d: [(x1, y1), (x2, y2), (x3, y3)] for triangle</span>
+<span class="sd">            [(x1, y1), (x2, y2), (x3, y3), (x4, y4)] for quad</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BaseNDElement.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.BaseNDElement.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">vertices</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">is_discontinue</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="BaseNDElement.Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.BaseNDElement.Jacobian">[文档]</a>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    compute the Jacobian of the element</span>
+<span class="sd">    returns:</span>
+<span class="sd">    J: </span>
+<span class="sd">    J=dx/dxi&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="BaseNDElement.inverse_Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.BaseNDElement.inverse_Jacobian">[文档]</a>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">inverse_Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="BaseNDElement.determinant_Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.BaseNDElement.determinant_Jacobian">[文档]</a>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">determinant_Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Lagrange2DTriElement">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lagrange2DTriElement</span><span class="p">(</span><span class="n">BaseNDElement</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;FE lagrange 2D triangle basis class</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    order: int</span>
+<span class="sd">        element order</span>
+<span class="sd">    vertices: ndarray</span>
+<span class="sd">        [(x1, y1), (x2, y2), (x3, y3)] for triangle</span>
+<span class="sd">    reference element: [(0, 0), (1, 0), (0, 1)]</span>
+<span class="sd">    illustrated as below:</span>
+<span class="sd">    2</span>
+<span class="sd">    |\</span>
+<span class="sd">    | \</span>
+<span class="sd">    |  \</span>
+<span class="sd">    |   \</span>
+<span class="sd">    |    \</span>
+<span class="sd">    0-----1</span>
+<span class="sd">    quadratic element with 6 nodes illustrated as below:</span>
+<span class="sd">    2</span>
+<span class="sd">    |\</span>
+<span class="sd">    | \</span>
+<span class="sd">    |  \</span>
+<span class="sd">    |   \</span>
+<span class="sd">    5    4</span>
+<span class="sd">    |     \</span>
+<span class="sd">    |      \                 </span>
+<span class="sd">    0---3---1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Lagrange2DTriElement.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">N_tri_p1</span><span class="p">,</span> <span class="n">B_tri_p1</span>    <span class="c1"># shape functions and derivatives on quadrature points</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">get_quadrature_points_weights</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">N_tri_p2</span><span class="p">,</span> <span class="n">B_tri_p2</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">get_quadrature_points_weights</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cubic lagrange not supported yet&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">determinant_Jacobian</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inv_J_product</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_J</span>
+
+    <span class="n">poly</span> <span class="o">=</span> <span class="n">Lagrange2DTri</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Bd</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">get_der_shape_functions</span>    <span class="c1"># expression of the derivative</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Nd</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">get_shape_functions</span>    <span class="c1"># expression of the shape function</span></div>
+
+
+<div class="viewcode-block" id="Lagrange2DTriElement.Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement.Jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    compute the Jacobian of the element</span>
+<span class="sd">    returns:</span>
+<span class="sd">    J: </span>
+<span class="sd">    J=dx/dxi&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+      <span class="p">],</span>
+                         <span class="p">[</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                         <span class="p">]])</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+      <span class="p">],</span>
+                         <span class="p">[</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+                         <span class="p">],</span>
+                         <span class="p">[</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+                         <span class="p">]])</span></div>
+
+
+<div class="viewcode-block" id="Lagrange2DTriElement.inverse_Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement.inverse_Jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">inverse_Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">inv_J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+                             <span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]])</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">inv_J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="o">.</span><span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="Lagrange2DTriElement.determinant_Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement.determinant_Jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">determinant_Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+          <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">-</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">*</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
+          <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="o">*</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">-</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
+          <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">*</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span></div>
+
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">ke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    K: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Ke</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_J_product</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[:</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+
+    <span class="k">return</span> <span class="n">Ke</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">me</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary mass matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    m: ndarray</span>
+<span class="sd">        elementary mass matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">*</span> <span class="mi">3</span><span class="p">]])[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">weight</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+    <span class="k">return</span> <span class="n">Me</span>
+
+<div class="viewcode-block" id="Lagrange2DTriElement.weights_and_points">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement.weights_and_points">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">weights_and_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">integ_order</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">integ_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">integ_order</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">points</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">get_quadrature_points_weights</span><span class="p">(</span><span class="n">integ_order</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">points</span><span class="p">,</span> <span class="n">weights</span></div>
+
+
+<div class="viewcode-block" id="Lagrange2DTriElement.egde_basis">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement.egde_basis">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">egde_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the edge basis function</span>
+<span class="sd">    returns:</span>
+<span class="sd">    N: ndarray</span>
+<span class="sd">        edge basis function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">edge</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">N</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+      <span class="k">elif</span> <span class="n">edge</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">N</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+      <span class="k">elif</span> <span class="n">edge</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">N</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;quadrtic lagrange not implemented yet&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">N</span></div>
+
+
+<div class="viewcode-block" id="Lagrange2DTriElement.edge_jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement.edge_jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">edge_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">]])</span></div>
+
+
+<div class="viewcode-block" id="Lagrange2DTriElement.get_order">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement.get_order">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span></div>
+
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">nb_internal_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">1</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">nb_edge_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">3</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">6</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">local_dofs_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Lagrange2DTriElement.integrate">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DTriElement.integrate">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">f</span><span class="p">,</span>
+                <span class="n">mesh</span><span class="p">,</span>
+                <span class="n">edge_or_facet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">integ_order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">vtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;integrate the function f over the element</span>
+<span class="sd">    returns:</span>
+<span class="sd">    integral: float</span>
+<span class="sd">        integral value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">edge_or_facet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">edge_or_facet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span>
+    <span class="n">normal</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">compute_normal</span><span class="p">(</span><span class="n">edge_or_facet</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nd</span>
+    <span class="n">gl_pts</span><span class="p">,</span> <span class="n">gl_wts</span> <span class="o">=</span> <span class="n">get_quadrature_points_weights</span><span class="p">(</span><span class="n">integ_order</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">vtype</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gl_pt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gl_pts</span><span class="p">):</span>
+      <span class="c1"># breakpoint()</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="n">N</span><span class="p">(</span><span class="o">*</span><span class="n">gl_pt</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span>
+      <span class="n">f_n</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">@</span> <span class="n">normal</span>
+      <span class="n">integral</span> <span class="o">+=</span> <span class="n">gl_wts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">f_n</span> <span class="o">*</span> <span class="n">N</span><span class="p">(</span><span class="o">*</span><span class="n">gl_pt</span><span class="p">)</span>
+    <span class="n">integral</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+
+    <span class="k">return</span> <span class="n">integral</span></div>
+</div>
+
+
+
+<span class="c1"># consider material properties: ease the matrix assembly</span>
+<div class="viewcode-block" id="Helmholtz2DElement">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Helmholtz2DElement">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Helmholtz2DElement</span><span class="p">(</span><span class="n">Lagrange2DTriElement</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Helmholtz2DElement.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Helmholtz2DElement.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">mat_coeffs</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span> <span class="o">=</span> <span class="n">mat_coeffs</span></div>
+
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">ke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    K: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Ke</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_J_product</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[:</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+
+    <span class="k">return</span> <span class="n">Ke</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">me</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    m: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">*</span> <span class="mi">3</span><span class="p">]])[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span>
+        <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">weight</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+    <span class="k">return</span> <span class="n">Me</span></div>
+
+
+
+<div class="viewcode-block" id="Lagrange2DQuadElement">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DQuadElement">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lagrange2DQuadElement</span><span class="p">(</span><span class="n">BaseNDElement</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;FE lagrange 2D quad basis class</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    order: int</span>
+<span class="sd">        element order</span>
+<span class="sd">    vertices: ndarray</span>
+<span class="sd">        [(x1, y1), (x2, y2), (x3, y3), (x4, y4)] for quad</span>
+<span class="sd">    reference element: [(0, 0), (1, 0), (0, 1), (1, 1)]</span>
+<span class="sd">    illustrated as below:</span>
+<span class="sd">    3----2</span>
+<span class="sd">    |    |</span>
+<span class="sd">    |    |</span>
+<span class="sd">    0----1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Lagrange2DQuadElement.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DQuadElement.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Lagrange2DQuadElement.Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DQuadElement.Jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    compute the Jacobian of the element</span>
+<span class="sd">    returns:</span>
+<span class="sd">    J: </span>
+<span class="sd">    J=dx/dxi&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">],</span>
+                       <span class="p">[</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                       <span class="p">]])</span></div>
+
+
+<div class="viewcode-block" id="Lagrange2DQuadElement.inverse_Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DQuadElement.inverse_Jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">inverse_Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inv_J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+                           <span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]])</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span></div>
+
+
+<div class="viewcode-block" id="Lagrange2DQuadElement.determinant_Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange2DQuadElement.determinant_Jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">determinant_Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span></div>
+
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">ke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    K: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Ke</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_J_product</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">weight</span>
+             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+
+    <span class="k">return</span> <span class="n">Ke</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">me</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    m: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="mi">2</span><span class="p">]]))</span>
+    <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">weight</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+    <span class="k">return</span> <span class="n">Me</span></div>
+
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem.PrecomputeMatricesLag</span><span class="w"> </span><span class="kn">import</span> <span class="n">points_tetra_o1</span><span class="p">,</span> <span class="n">weights_tetra_o1</span>
+
+
+<div class="viewcode-block" id="Lagrange3DTetraElement">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange3DTetraElement">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Lagrange3DTetraElement</span><span class="p">(</span><span class="n">BaseNDElement</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;FE lagrange 3D tetra basis class</span>
+<span class="sd">    parameters:</span>
+<span class="sd">    order: int</span>
+<span class="sd">        element order</span>
+<span class="sd">    vertices: ndarray</span>
+<span class="sd">        [(x1, y1, z1), (x2, y2, z2), (x3, y3, z3), (x4, y4, z4)] for tetra</span>
+<span class="sd">    reference element: [(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)]</span>
+<span class="sd">    illustrated as below:</span>
+<span class="sd">         3</span>
+<span class="sd">        /|\</span>
+<span class="sd">       / | \</span>
+<span class="sd">      /  |  \</span>
+<span class="sd">     2---|---1</span>
+<span class="sd">      \  |  /</span>
+<span class="sd">       \ | /</span>
+<span class="sd">        \|/</span>
+<span class="sd">         0</span>
+
+<span class="sd">    element in degree 2 with 10 nodes illustrated as below:</span>
+<span class="sd">          3</span>
+<span class="sd">         /|\</span>
+<span class="sd">        / | \</span>
+<span class="sd">       /  |  \</span>
+<span class="sd">      6---9---5</span>
+<span class="sd">       \  |  /</span>
+<span class="sd">        \ | /</span>
+<span class="sd">         \|/</span>
+<span class="sd">          0---4---1</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+  <span class="n">points</span> <span class="o">=</span> <span class="n">points_tetra_o1</span><span class="p">,</span>
+  <span class="n">weights</span> <span class="o">=</span> <span class="n">weights_tetra_o1</span>
+
+<div class="viewcode-block" id="Lagrange3DTetraElement.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange3DTetraElement.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">N_tetra_p1</span><span class="p">,</span> <span class="n">B_tetra_p1</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;quadrtic lagrange not supported yet&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Jacobian</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">determinant_Jacobian</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inverse_Jacobian</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inv_J_product</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_J</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_J</span></div>
+
+
+<div class="viewcode-block" id="Lagrange3DTetraElement.Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange3DTetraElement.Jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    compute the Jacobian of the element</span>
+<span class="sd">    returns:</span>
+<span class="sd">    J: </span>
+<span class="sd">    J=dx/dxi&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+    <span class="p">],</span>
+                       <span class="p">[</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+                       <span class="p">],</span>
+                       <span class="p">[</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+                       <span class="p">]])</span></div>
+
+
+<div class="viewcode-block" id="Lagrange3DTetraElement.inverse_Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange3DTetraElement.inverse_Jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">inverse_Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">inv_J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Lagrange3DTetraElement.determinant_Jacobian">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Lagrange3DTetraElement.determinant_Jacobian">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">determinant_Jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">)</span></div>
+
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">ke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    K: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Ke</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_J_product</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[:</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+
+    <span class="k">return</span> <span class="n">Ke</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">me</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    m: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="p">]))</span>
+    <span class="n">Me</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">weight</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">det_J</span>
+    <span class="k">return</span> <span class="n">Me</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">nb_internal_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">1</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">nb_edge_dofs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">3</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">6</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">local_dofs_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Helmholtz3DElement">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Helmholtz3DElement">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Helmholtz3DElement</span><span class="p">(</span><span class="n">Lagrange3DTetraElement</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Helmholtz3DElement.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxfem.html#SAcouS.acxfem.Basis.Helmholtz3DElement.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">mat_coeffs</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">vertices</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span> <span class="o">=</span> <span class="n">mat_coeffs</span></div>
+
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">ke</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    K: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">ke</span>
+
+  <span class="nd">@cached_property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">me</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute the elementary stiffness matrix</span>
+<span class="sd">    returns:</span>
+<span class="sd">    m: ndarray</span>
+<span class="sd">        elementary stiffness matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat_coeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">me</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+  <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;fluid&quot;</span>
+  <span class="n">order</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="c1"># nodes = np.array([[0, 0], [2, -1], [1, 0.5]])</span>
+  <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+  <span class="c1"># plot the nodes</span>
+  <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+  <span class="c1"># plt.figure()</span>
+  <span class="c1"># plt.plot(nodes[:, 0], nodes[:, 1], &#39;o&#39;)</span>
+  <span class="c1"># plot the nodes in 3d</span>
+  <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+  <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+  <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">nodes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">nodes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">nodes</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">])</span>
+  <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+  <span class="n">lag_3d_tetra</span> <span class="o">=</span> <span class="n">Lagrange3DTetraElement</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">nodes</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">lag_3d_tetra</span><span class="o">.</span><span class="n">ke</span><span class="p">)</span>
+  <span class="c1"># lag_2d_tri = Lagrange2DTriElement(1, order, nodes)</span>
+  <span class="c1"># print(lag_2d_tri.ke)</span>
+  <span class="c1"># print(lag_2d_tri.me)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

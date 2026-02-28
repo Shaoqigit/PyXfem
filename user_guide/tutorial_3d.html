@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>教程3: 3D声学问题 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="命令行使用" href="cli_usage.html" />
+    <link rel="prev" title="教程2: 2D声学问题" href="tutorial_2d.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">教程3: 3D声学问题</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">问题描述</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">控制方程</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">完整代码</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gmsh">Gmsh网格生成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">计算资源考虑</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">并行计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">后处理与可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">实际应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">练习</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">下一步</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">教程3: 3D声学问题</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/user_guide/tutorial_3d.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="d">
+<h1>教程3: 3D声学问题<a class="headerlink" href="#d" title="Link to this heading"></a></h1>
+<p>本教程介绍如何使用PyAcoustiX求解三维声学问题。3D仿真适用于真实世界的复杂声学场景。</p>
+<section id="id1">
+<h2>问题描述<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>考虑一个三维立方体腔体，尺寸为 <span class="math notranslate nohighlight">\(L_x \times L_y \times L_z\)</span>。我们将求解其中的声场分布。</p>
+<section id="id2">
+<h3>控制方程<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p>三维Helmholtz方程:</p>
+<div class="math notranslate nohighlight">
+\[\nabla^2 p + k^2 p = 0\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\nabla^2 = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}\)</span></p>
+</section>
+</section>
+<section id="id3">
+<h2>完整代码<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">meshio</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Mesh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mesh3D</span><span class="p">,</span> <span class="n">MeshReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">Air</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Lobbato3DElement</span><span class="p">,</span> <span class="n">GeneralDofHandler3D</span><span class="p">,</span>
+    <span class="n">HelmholtzAssembler3D</span><span class="p">,</span> <span class="n">ApplyBoundaryConditions3D</span><span class="p">,</span>
+    <span class="n">LinearSolver</span><span class="p">,</span> <span class="n">FESpace3D</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">solve_3d_helmholtz</span><span class="p">():</span>
+    <span class="c1"># ====================== 物理参数 ======================</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="mi">500</span>  <span class="c1"># Hz (低频，适合粗网格)</span>
+    <span class="n">omega</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq</span>
+
+    <span class="n">air</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="s1">&#39;air&#39;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== 网格 (使用Gmsh) ======================</span>
+    <span class="c1"># 建议：对于3D问题，使用Gmsh生成网格</span>
+    <span class="n">mesh_reader</span> <span class="o">=</span> <span class="n">MeshReader</span><span class="p">(</span><span class="s1">&#39;cube.msh&#39;</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">mesh</span> <span class="o">=</span> <span class="n">mesh_reader</span><span class="o">.</span><span class="n">get_mesh</span><span class="p">()</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">set_subdomains</span><span class="p">({</span><span class="n">air</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nb_elems</span><span class="p">)})</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;3D网格: </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">nb_nodes</span><span class="si">}</span><span class="s2"> 节点, </span><span class="si">{</span><span class="n">mesh</span><span class="o">.</span><span class="n">nb_elems</span><span class="si">}</span><span class="s2"> 单元&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== FEM设置 ======================</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># 3D问题通常使用线性单元以控制计算量</span>
+    <span class="n">elements2node</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">get_mesh_coordinates</span><span class="p">()</span>
+
+    <span class="n">Pf_bases</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Lobbato3DElement</span><span class="p">(</span><span class="s1">&#39;Pf&#39;</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">elements2node</span><span class="p">[</span><span class="n">elem</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">nb_elems</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">dof_handler</span> <span class="o">=</span> <span class="n">GeneralDofHandler3D</span><span class="p">([</span><span class="s1">&#39;Pf&#39;</span><span class="p">],</span> <span class="n">Pf_bases</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;自由度数量: </span><span class="si">{</span><span class="n">dof_handler</span><span class="o">.</span><span class="n">nb_dofs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== 组装 ======================</span>
+    <span class="n">assembler</span> <span class="o">=</span> <span class="n">HelmholtzAssembler3D</span><span class="p">(</span>
+        <span class="n">dof_handler</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">subdomains</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span>
+    <span class="p">)</span>
+    <span class="n">assembler</span><span class="o">.</span><span class="n">assembly_global_matrix</span><span class="p">(</span><span class="n">Pf_bases</span><span class="p">,</span> <span class="s1">&#39;Pf&#39;</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">get_global_matrix</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;矩阵大小: </span><span class="si">{</span><span class="n">K</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;非零元素: </span><span class="si">{</span><span class="n">K</span><span class="o">.</span><span class="n">nnz</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== 边界条件 ======================</span>
+    <span class="n">fe_space</span> <span class="o">=</span> <span class="n">FESpace3D</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">Pf_bases</span><span class="p">)</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">assembler</span><span class="o">.</span><span class="n">nb_global_dofs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+
+    <span class="c1"># 获取边界表面</span>
+    <span class="n">inlet_surface</span> <span class="o">=</span> <span class="n">mesh_reader</span><span class="o">.</span><span class="n">get_facet_by_physical</span><span class="p">(</span><span class="s1">&#39;inlet&#39;</span><span class="p">)</span>
+
+    <span class="c1"># 速度边界条件</span>
+    <span class="n">velocity_bc</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;fluid_velocity&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">&#39;facets&#39;</span><span class="p">:</span> <span class="n">inlet_surface</span>
+    <span class="p">}</span>
+
+    <span class="n">bc_applier</span> <span class="o">=</span> <span class="n">ApplyBoundaryConditions3D</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">fe_space</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">bc_applier</span><span class="o">.</span><span class="n">apply_nature_bc</span><span class="p">(</span><span class="n">velocity_bc</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s1">&#39;Pf&#39;</span><span class="p">)</span>
+
+    <span class="c1"># ====================== 求解 ======================</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;求解中...&quot;</span><span class="p">)</span>
+    <span class="n">solver</span> <span class="o">=</span> <span class="n">LinearSolver</span><span class="p">(</span><span class="n">dof_handler</span><span class="o">=</span><span class="n">dof_handler</span><span class="p">)</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
+    <span class="n">sol</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">u</span>
+
+    <span class="c1"># ====================== 后处理 ======================</span>
+    <span class="c1"># 导出到VTK格式 (可用ParaView打开)</span>
+    <span class="n">meshio</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;results_3d.vtu&#39;</span><span class="p">,</span> <span class="n">meshio</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span>
+        <span class="n">points</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span>
+        <span class="n">cells</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;tetra&#39;</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">connectivity</span><span class="p">)],</span>
+        <span class="n">point_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Pressure&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sol</span><span class="p">),</span>
+                   <span class="s1">&#39;Phase&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">sol</span><span class="p">)}</span>
+    <span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;结果已保存到 results_3d.vtu&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;压力幅值范围: [</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sol</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">solution</span> <span class="o">=</span> <span class="n">solve_3d_helmholtz</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="gmsh">
+<h2>Gmsh网格生成<a class="headerlink" href="#gmsh" title="Link to this heading"></a></h2>
+<p>对于3D问题，建议使用Gmsh生成四面体网格:</p>
+<p><strong>cube.geo</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 3D立方体腔体</span>
+<span class="n">L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w">  </span><span class="c1">// 边长</span>
+
+<span class="c1">// 定义点</span>
+<span class="n">Point</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
+<span class="n">Point</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
+<span class="n">Point</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
+<span class="n">Point</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span>
+<span class="n">Point</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">};</span>
+<span class="n">Point</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">};</span>
+<span class="n">Point</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">};</span>
+<span class="n">Point</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="p">};</span>
+
+<span class="c1">// 定义线</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">};</span>
+<span class="n">Line</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">};</span>
+
+<span class="c1">// 定义面</span>
+<span class="n">Line</span><span class="w"> </span><span class="nf">Loop</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">};</span>
+<span class="n">Plane</span><span class="w"> </span><span class="nf">Surface</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+<span class="n">Line</span><span class="w"> </span><span class="nf">Loop</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">};</span>
+<span class="n">Plane</span><span class="w"> </span><span class="nf">Surface</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">};</span>
+<span class="n">Line</span><span class="w"> </span><span class="nf">Loop</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">-5</span><span class="p">,</span><span class="w"> </span><span class="mi">-9</span><span class="p">};</span>
+<span class="n">Plane</span><span class="w"> </span><span class="nf">Surface</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">3</span><span class="p">};</span>
+<span class="n">Line</span><span class="w"> </span><span class="nf">Loop</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span><span class="w"> </span><span class="mi">-6</span><span class="p">,</span><span class="w"> </span><span class="mi">-10</span><span class="p">};</span>
+<span class="n">Plane</span><span class="w"> </span><span class="nf">Surface</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">4</span><span class="p">};</span>
+<span class="n">Line</span><span class="w"> </span><span class="nf">Loop</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">-7</span><span class="p">,</span><span class="w"> </span><span class="mi">-11</span><span class="p">};</span>
+<span class="n">Plane</span><span class="w"> </span><span class="nf">Surface</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">5</span><span class="p">};</span>
+<span class="n">Line</span><span class="w"> </span><span class="nf">Loop</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="mi">-8</span><span class="p">,</span><span class="w"> </span><span class="mi">-12</span><span class="p">};</span>
+<span class="n">Plane</span><span class="w"> </span><span class="nf">Surface</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">6</span><span class="p">};</span>
+
+<span class="c1">// 定义体</span>
+<span class="n">Surface</span><span class="w"> </span><span class="nf">Loop</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">};</span>
+<span class="n">Volume</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+
+<span class="c1">// 物理组</span>
+<span class="n">Physical</span><span class="w"> </span><span class="n">Volume</span><span class="p">(</span><span class="s">&quot;domain&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+<span class="n">Physical</span><span class="w"> </span><span class="n">Surface</span><span class="p">(</span><span class="s">&quot;inlet&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">6</span><span class="p">};</span><span class="w">   </span><span class="c1">// x=0面</span>
+<span class="n">Physical</span><span class="w"> </span><span class="n">Surface</span><span class="p">(</span><span class="s">&quot;outlet&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">4</span><span class="p">};</span><span class="w">  </span><span class="c1">// x=L面</span>
+<span class="n">Physical</span><span class="w"> </span><span class="n">Surface</span><span class="p">(</span><span class="s">&quot;walls&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">};</span>
+
+<span class="c1">// 网格尺寸</span>
+<span class="n">Mesh</span><span class="p">.</span><span class="n">CharacteristicLengthMax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.1</span><span class="p">;</span>
+<span class="n">Mesh</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="n">Save</span><span class="w"> </span><span class="s">&quot;cube.msh&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>计算资源考虑<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p>3D问题的计算成本显著高于2D:</p>
+<p><strong>网格密度</strong></p>
+<ul class="simple">
+<li><p>每波长至少6-10个线性单元</p></li>
+<li><p>或使用高阶单元减少网格数</p></li>
+</ul>
+<p><strong>内存需求</strong></p>
+<p>自由度数量估计:</p>
+<div class="math notranslate nohighlight">
+\[N_{dof} \approx N_{nodes} \times N_{variables}\]</div>
+<p>对于3D四面体网格:</p>
+<div class="math notranslate nohighlight">
+\[N_{nodes} \approx \frac{N_{elements}}{5}\]</div>
+<p><strong>求解时间</strong></p>
+<ul class="simple">
+<li><p>直接求解器: 适用于 &lt; 100,000 DOF</p></li>
+<li><p>迭代求解器: 适用于更大规模问题</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>并行计算<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p>对于大规模3D问题，可以使用并行计算:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxfem</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParallelSolver</span>
+
+<span class="n">solver</span> <span class="o">=</span> <span class="n">ParallelSolver</span><span class="p">(</span><span class="n">dof_handler</span><span class="o">=</span><span class="n">dof_handler</span><span class="p">,</span> <span class="n">n_processes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">F</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2>后处理与可视化<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<p><strong>ParaView</strong></p>
+<p>推荐使用 <a class="reference external" href="https://www.paraview.org/">ParaView</a> 可视化3D结果:</p>
+<ol class="arabic simple">
+<li><p>打开 <code class="docutils literal notranslate"><span class="pre">results_3d.vtu</span></code> 文件</p></li>
+<li><p>选择变量 (Pressure, Phase)</p></li>
+<li><p>使用切片、等值面等工具分析</p></li>
+</ol>
+<p><strong>Gmsh</strong></p>
+<p>也可以直接在Gmsh中查看:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.PostProcess</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_plot</span>
+<span class="n">save_plot</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="s1">&#39;Pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;results.msh&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;gmsh&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2>实际应用<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<p>3D声学仿真的典型应用:</p>
+<ol class="arabic simple">
+<li><p><strong>汽车内部噪声</strong>: 发动机噪声在车厢内的传播</p></li>
+<li><p><strong>建筑声学</strong>: 音乐厅、会议室的声学设计</p></li>
+<li><p><strong>消声器设计</strong>: 排气系统的降噪优化</p></li>
+<li><p><strong>扬声器设计</strong>: 音箱腔体的声学特性</p></li>
+</ol>
+</section>
+<section id="id8">
+<h2>练习<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>网格收敛性</strong>: 使用不同密度的网格，观察结果变化</p></li>
+<li><p><strong>频率扫描</strong>: 在多个频率下求解，分析共振频率</p></li>
+<li><p><strong>添加吸声材料</strong>: 在腔体壁面添加多孔材料</p></li>
+<li><p><strong>复杂几何</strong>: 尝试非规则几何形状</p></li>
+</ol>
+</section>
+<section id="id9">
+<h2>下一步<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../examples/index.html"><span class="doc">示例</span></a>: 查看更多示例</p></li>
+<li><p><a class="reference internal" href="../theory/helmholtz.html"><span class="doc">Helmholtz方程</span></a>: 深入学习声学理论</p></li>
+<li><p><a class="reference internal" href="../api_reference/index.html"><span class="doc">API参考</span></a>: 查看完整API文档</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="tutorial_2d.html" class="btn btn-neutral float-left" title="教程2: 2D声学问题" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="cli_usage.html" class="btn btn-neutral float-right" title="命令行使用" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

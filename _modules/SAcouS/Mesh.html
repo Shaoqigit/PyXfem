@@ -1,0 +1,647 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAcouS.Mesh &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">SAcouS.Mesh</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>SAcouS.Mesh 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This file is part of PyXfem, a software distributed under the MIT license.</span>
+<span class="c1"># For any question, please contact the authors cited below.</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2023</span>
+<span class="c1"># 	Shaoqi WU &lt;shaoqiwu@outlook.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+
+<span class="c1"># mesh.py: generate mesh data dictionsary and refine mesh function</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<div class="viewcode-block" id="BaseMesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.BaseMesh">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseMesh</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;base abstract mesh class&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BaseMesh.parser_mesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.BaseMesh.parser_mesh">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">parser_mesh</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;parse mesh file&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mesh_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+      <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">lines</span></div>
+
+
+<div class="viewcode-block" id="BaseMesh.get_mesh_coordinates">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.BaseMesh.get_mesh_coordinates">[文档]</a>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return element to nodes coordinates&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="BaseMesh.refine_mesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.BaseMesh.refine_mesh">[文档]</a>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">refine_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="BaseMesh.plotmesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.BaseMesh.plotmesh">[文档]</a>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">plotmesh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">connectivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return connectivity&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span>
+
+<div class="viewcode-block" id="BaseMesh.node2elem">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.BaseMesh.node2elem">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">node2elem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return element number from node number&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">)):</span>
+      <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">i</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;node not in mesh&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseMesh.get_nb_nodes">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.BaseMesh.get_nb_nodes">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_nb_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return number of nodes&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseMesh.get_nb_elems">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.BaseMesh.get_nb_elems">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_nb_elems</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return number of elements&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseMesh.get_nodes_from_elem">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.BaseMesh.get_nodes_from_elem">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_nodes_from_elem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return nodes of corresoinding element&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_coordinates</span><span class="p">()[</span><span class="n">elem</span><span class="p">]</span></div>
+
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">num_node2coord</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">num_node2coord2</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return node number from coordinate&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>    <span class="c1"># for 2/3D mesh</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+      <span class="n">num_node2coord2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord</span>
+    <span class="k">return</span> <span class="n">num_node2coord2</span></div>
+
+
+
+<div class="viewcode-block" id="Mesh1D">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh1D">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mesh1D</span><span class="p">(</span><span class="n">BaseMesh</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Mesh1D.__init__">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh1D.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nb_nodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span> <span class="o">=</span> <span class="n">elem_connect</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">node_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_nodes</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_subdomains</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Mesh1D.set_subdomains">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh1D.set_subdomains">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_subdomains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subdomains</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_subdomains</span> <span class="o">=</span> <span class="n">subdomains</span></div>
+
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">subdomains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subdomains</span>
+
+<div class="viewcode-block" id="Mesh1D.get_mesh_coordinates">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh1D.get_mesh_coordinates">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;dict of element number and nodes coordinates&quot;&quot;&quot;</span>
+    <span class="n">elems</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">)):</span>
+      <span class="n">elems</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span>
+    <span class="k">return</span> <span class="n">elems</span></div>
+
+
+<div class="viewcode-block" id="Mesh1D.get_min_size">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh1D.get_min_size">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return minimum size of elements&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span></div>
+
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">coord2node_num</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return element number from node number&quot;&quot;&quot;</span>
+    <span class="n">coord2node_num</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+      <span class="n">coord2node_num</span><span class="p">[</span><span class="n">coord</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="n">coord2node_num</span>
+
+<div class="viewcode-block" id="Mesh1D.refine_mesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh1D.refine_mesh">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">refine_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;refine mesh&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
+      <span class="n">new_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="n">new_elem_connect</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">)):</span>
+        <span class="n">new_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">new_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="n">new_elem_connect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="n">new_elem_connect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]))</span>
+      <span class="n">new_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_elem_connect</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">nb_nodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mesh1D.plotmesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh1D.plotmesh">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">plotmesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">withnode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">withnodeid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot the 1d mesh</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    withnode : boolean</span>
+<span class="sd">        True to show the node</span>
+<span class="sd">    withnodeid : boolean</span>
+<span class="sd">        True to show the node id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">withnode</span><span class="p">:</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;r*&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">withnodeid</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">meshio</span>
+
+
+<div class="viewcode-block" id="Mesh2D">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh2D">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mesh2D</span><span class="p">(</span><span class="n">BaseMesh</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Mesh2D.__init__">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh2D.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">,</span> <span class="n">edge_connect</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span> <span class="o">=</span> <span class="n">elem_connect</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nb_nodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nb_elems</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">node_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nb_nodes</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">exterior_facets</span> <span class="o">=</span> <span class="n">edge_connect</span>    <span class="c1"># [node1, node2]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mesh_center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>    <span class="c1"># center of the mesh</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_subdomains</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Mesh2D.set_subdomains">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh2D.set_subdomains">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_subdomains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subdomains</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_subdomains</span> <span class="o">=</span> <span class="n">subdomains</span></div>
+
+
+<div class="viewcode-block" id="Mesh2D.get_mesh_order">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh2D.get_mesh_order">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return order of mesh&quot;&quot;&quot;</span>
+    <span class="n">nb_node_per_elem</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">nb_node_per_elem</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">nb_node_per_elem</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">2</span></div>
+
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">subdomains</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subdomains</span>
+
+<div class="viewcode-block" id="Mesh2D.plotmesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh2D.plotmesh">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">plotmesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">withnode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">withnodeid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">withedgeid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot the 2d mesh</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    withnode : boolean</span>
+<span class="sd">        True to show the node</span>
+<span class="sd">    withnodeid : boolean</span>
+<span class="sd">        True to show the node id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">:</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">elem</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span>
+      <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">elem</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">withnode</span><span class="p">:</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;r*&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">withnodeid</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">withedgeid</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">edge</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exterior_facets</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">x1</span><span class="p">),</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">y1</span><span class="p">),</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Mesh2D.get_mesh_coordinates">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh2D.get_mesh_coordinates">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;dict of element number and nodes coordinates&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">conn</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">conn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="Mesh2D.refine_mesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh2D.refine_mesh">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">refine_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">times</span><span class="p">):</span>
+    <span class="c1"># refine the 2D mesh</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
+      <span class="n">new_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="n">new_elem_connect</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">:</span>
+        <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">n3</span> <span class="o">=</span> <span class="n">elem</span>
+        <span class="n">n12</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n2</span><span class="p">])</span>
+        <span class="n">n23</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n2</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n3</span><span class="p">])</span>
+        <span class="n">n31</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n3</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n1</span><span class="p">])</span>
+        <span class="n">new_nodes</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n1</span><span class="p">],</span> <span class="n">n12</span><span class="p">,</span> <span class="n">n31</span><span class="p">,</span> <span class="n">n12</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n2</span><span class="p">],</span> <span class="n">n23</span><span class="p">,</span> <span class="n">n31</span><span class="p">,</span> <span class="n">n23</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n3</span><span class="p">]</span>
+        <span class="p">])</span>
+        <span class="n">new_elem_connect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">9</span><span class="p">,</span>
+             <span class="nb">len</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">8</span><span class="p">,</span>
+             <span class="nb">len</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">7</span><span class="p">])</span>
+        <span class="n">new_elem_connect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">6</span><span class="p">,</span>
+             <span class="nb">len</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">5</span><span class="p">,</span>
+             <span class="nb">len</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">4</span><span class="p">])</span>
+        <span class="n">new_elem_connect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span>
+             <span class="nb">len</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span>
+             <span class="nb">len</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_nodes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_elem_connect</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_nodes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mesh2D.compute_normal">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh2D.compute_normal">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">compute_normal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute normal of the element&quot;&quot;&quot;</span>
+    <span class="c1"># breakpoint()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_order</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_order</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">edge</span> <span class="o">=</span> <span class="n">edge</span>
+    <span class="n">node_1_coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>    <span class="c1"># in physical space</span>
+    <span class="n">node_2_coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">tangent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">node_2_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">node_1_coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">node_2_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">node_1_coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">normal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">tangent</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">tangent</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">normal</span> <span class="o">=</span> <span class="n">normal</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">normal</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">normal</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Mesh3D">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh3D">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mesh3D</span><span class="p">(</span><span class="n">Mesh2D</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Mesh3D.__init__">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh3D.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">,</span> <span class="n">surface_connect</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">,</span> <span class="n">surface_connect</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">surface_connect</span> <span class="o">=</span> <span class="n">surface_connect</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">mesh_center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Mesh3D.get_mesh_coordinates">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh3D.get_mesh_coordinates">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_mesh_coordinates</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Mesh3D.plotmesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh3D.plotmesh">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">plotmesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">withnode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">withnodeid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">withedgeid</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;3D mesh plot not implemented yet&quot;</span><span class="p">)</span></div>
+
+  
+<div class="viewcode-block" id="Mesh3D.get_mesh_order">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh3D.get_mesh_order">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return order of mesh&quot;&quot;&quot;</span>
+    <span class="n">nb_node_per_elem</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elem_connect</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">nb_node_per_elem</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">nb_node_per_elem</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="Mesh3D.compute_normal">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.Mesh3D.compute_normal">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">compute_normal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">facet</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;compute normal of the element&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">facet</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">facet</span> <span class="o">=</span> <span class="n">facet</span>
+    <span class="n">node_1_coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">facet</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>    <span class="c1"># in physical space</span>
+    <span class="n">node_2_coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">facet</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">node_3_coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">facet</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+    <span class="n">vect_1</span> <span class="o">=</span> <span class="n">node_2_coord</span> <span class="o">-</span> <span class="n">node_1_coord</span>
+    <span class="n">vect_2</span> <span class="o">=</span> <span class="n">node_3_coord</span> <span class="o">-</span> <span class="n">node_1_coord</span>
+    <span class="c1"># compute the normal vector with cross product</span>
+    <span class="n">normal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">vect_1</span><span class="p">,</span> <span class="n">vect_2</span><span class="p">)</span>
+    <span class="n">normal</span> <span class="o">=</span> <span class="n">normal</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">normal</span><span class="p">)</span>
+    <span class="n">element_center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">node_1_coord</span><span class="p">,</span> <span class="n">node_2_coord</span><span class="p">,</span> <span class="n">node_3_coord</span><span class="p">],</span>
+                             <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">outwards</span> <span class="o">=</span> <span class="n">element_center</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_center</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">normal</span><span class="p">,</span> <span class="n">outwards</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">normal</span> <span class="o">=</span> <span class="o">-</span><span class="n">normal</span>
+    <span class="k">return</span> <span class="n">normal</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="mesh_constructor">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.mesh_constructor">[文档]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mesh_constructor</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">,</span> <span class="n">edge_connect</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Mesh1D</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Mesh2D</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">,</span> <span class="n">edge_connect</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Mesh3D</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">,</span> <span class="n">edge_connect</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dimension not supported&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># gmsh_type with mesh dimension and order</span>
+<span class="n">GMSH_DIM_FACET_MAP</span> <span class="o">=</span> <span class="p">{(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="s1">&#39;triangle&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="s1">&#39;triangle6&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="s1">&#39;tetra&#39;</span><span class="p">}</span>
+<span class="n">GMSH_DIM_EDGE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="s1">&#39;line&#39;</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="s1">&#39;line3&#39;</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="s1">&#39;triangle&#39;</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="s1">&#39;triangle6&#39;</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="MeshReader">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.MeshReader">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MeshReader</span><span class="p">:</span>
+
+<div class="viewcode-block" id="MeshReader.__init__">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.MeshReader.__init__">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_file_name</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">=</span> <span class="n">mesh_file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">meshio_object</span> <span class="o">=</span> <span class="n">meshio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">mesh_file_name</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span></div>
+
+
+<div class="viewcode-block" id="MeshReader.get_mesh">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.MeshReader.get_mesh">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseMesh</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;msh&#39;</span><span class="p">:</span>
+      <span class="c1"># version 2.2 without saving all parameters</span>
+      <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshio_object</span><span class="o">.</span><span class="n">points</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">]</span>
+      <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meshio_object</span><span class="o">.</span><span class="n">cells</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">elem</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">GMSH_DIM_FACET_MAP</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)]:</span>
+          <span class="n">elem_connect</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">elif</span> <span class="n">elem</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">GMSH_DIM_EDGE_MAP</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)]:</span>
+          <span class="n">facet_connect</span> <span class="o">=</span> <span class="n">elem</span><span class="o">.</span><span class="n">data</span>
+      <span class="k">return</span> <span class="n">mesh_constructor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">elem_connect</span><span class="p">,</span> <span class="n">facet_connect</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MeshReader.init_subdomains">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.MeshReader.init_subdomains">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">init_subdomains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh</span><span class="p">:</span> <span class="n">BaseMesh</span><span class="p">,</span>
+                      <span class="n">physical_tag2material</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return subdomains&quot;&quot;&quot;</span>
+    <span class="n">subdomains</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">material</span> <span class="ow">in</span> <span class="n">physical_tag2material</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">subdomains</span><span class="p">[</span><span class="n">material</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_elem_by_physical</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">set_subdomains</span><span class="p">(</span><span class="n">subdomains</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">subdomains</span></div>
+
+
+<div class="viewcode-block" id="MeshReader.get_elem_by_physical">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.MeshReader.get_elem_by_physical">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_elem_by_physical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">physical_tag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return element number by physical tag</span>
+<span class="sd">    3D elements in dim=3</span>
+<span class="sd">    2D elements in dim=2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;msh&#39;</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;this function has not yet support for other mesh file&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">physical_tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="n">elem_tag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshio_object</span><span class="o">.</span><span class="n">field_data</span><span class="p">[</span><span class="n">physical_tag</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">elem_tag</span> <span class="o">=</span> <span class="n">physical_tag</span>
+    <span class="n">elem_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshio_object</span><span class="o">.</span><span class="n">cell_data_dict</span><span class="p">[</span><span class="s1">&#39;gmsh:physical&#39;</span><span class="p">][</span><span class="n">GMSH_DIM_FACET_MAP</span><span class="p">[(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)]]</span> <span class="o">==</span> <span class="n">elem_tag</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">elem_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MeshReader.get_facet_by_physical">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.MeshReader.get_facet_by_physical">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_facet_by_physical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">physical_tag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return facet number by physical tag</span>
+<span class="sd">    2D facets in dim=3</span>
+<span class="sd">    1D facets in dim=2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">extension</span> <span class="o">==</span> <span class="s1">&#39;msh&#39;</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;this function has not yet support for other mesh file&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">physical_tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="n">edge_tag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meshio_object</span><span class="o">.</span><span class="n">field_data</span><span class="p">[</span><span class="n">physical_tag</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">edge_tag</span> <span class="o">=</span> <span class="n">physical_tag</span>
+    <span class="n">edge_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meshio_object</span><span class="o">.</span><span class="n">cell_data_dict</span><span class="p">[</span><span class="s1">&#39;gmsh:physical&#39;</span><span class="p">][</span><span class="n">GMSH_DIM_EDGE_MAP</span><span class="p">[(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)]]</span> <span class="o">==</span> <span class="n">edge_tag</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MeshReader.get_vertices_by_physical">
+<a class="viewcode-back" href="../../api_reference/mesh.html#SAcouS.Mesh.MeshReader.get_vertices_by_physical">[文档]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_vertices_by_physical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">physical_tag</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span>
+                                                         <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;return vertices number by physical tag&quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;vertices not implemented yet&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+  <span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh2D</span><span class="p">()</span>
+  <span class="n">mesh_square</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">read_mesh</span><span class="p">(</span><span class="s2">&quot;../../tests/mesh/square_1.msh&quot;</span><span class="p">)</span>
+  <span class="n">mesh</span><span class="o">.</span><span class="n">plotmesh</span><span class="p">(</span><span class="n">withnode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">withnodeid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

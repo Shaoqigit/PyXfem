@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>interface模块 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="有限元方法基础" href="../theory/fem_basics.html" />
+    <link rel="prev" title="acxmor模块" href="acxmor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API参考</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mesh.html">Mesh模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials.html">Materials模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html">PostProcess模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html">acxfem模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html">acxtmm模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html">acxmor模块</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">interface模块</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-SAcouS.interface">输入文件解析</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.interface.parser.BaseParser"><code class="docutils literal notranslate"><span class="pre">BaseParser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.interface.parser.AcoustiXPaser"><code class="docutils literal notranslate"><span class="pre">AcoustiXPaser</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.interface.parser.ParserFactory"><code class="docutils literal notranslate"><span class="pre">ParserFactory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">求解设置</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.interface.sol_setup.PyAcoustiXSetuper"><code class="docutils literal notranslate"><span class="pre">PyAcoustiXSetuper</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">使用示例</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">解析输入文件</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">输入文件格式</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id6">节说明</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">命令行接口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">编程接口</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">自定义解析器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id1">快速索引</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用示例</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API参考</a></li>
+      <li class="breadcrumb-item active">interface模块</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/api_reference/interface.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="interface">
+<h1>interface模块<a class="headerlink" href="#interface" title="Link to this heading"></a></h1>
+<p>interface模块提供了输入文件解析和求解设置功能。</p>
+<section id="module-SAcouS.interface">
+<span id="id1"></span><h2>输入文件解析<a class="headerlink" href="#module-SAcouS.interface" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.BaseParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.interface.parser.</span></span><span class="sig-name descname"><span class="pre">BaseParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#BaseParser"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.BaseParser" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.BaseParser.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#BaseParser.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.BaseParser.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.BaseParser.parse">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#BaseParser.parse"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.BaseParser.parse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.interface.parser.</span></span><span class="sig-name descname"><span class="pre">AcoustiXPaser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.interface.parser.BaseParser" title="SAcouS.interface.parser.BaseParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseParser</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse_level1">
+<span class="sig-name descname"><span class="pre">parse_level1</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse_level1"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse_level1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse_level2plus">
+<span class="sig-name descname"><span class="pre">parse_level2plus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="（在 Python v3.14）"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="（在 Python v3.14）"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse_level2plus"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse_level2plus" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse_analysis">
+<span class="sig-name descname"><span class="pre">parse_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="（在 Python v3.14）"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse_analysis"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse_analysis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse_topology">
+<span class="sig-name descname"><span class="pre">parse_topology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topo_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="（在 Python v3.14）"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse_topology"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse_topology" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse_materials">
+<span class="sig-name descname"><span class="pre">parse_materials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">material_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="（在 Python v3.14）"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse_materials"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse_materials" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse_physic_domains">
+<span class="sig-name descname"><span class="pre">parse_physic_domains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">physic_domain_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="（在 Python v3.14）"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse_physic_domains"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse_physic_domains" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse_boundary_conditions">
+<span class="sig-name descname"><span class="pre">parse_boundary_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bc_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="（在 Python v3.14）"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse_boundary_conditions"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse_boundary_conditions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse_solver">
+<span class="sig-name descname"><span class="pre">parse_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="（在 Python v3.14）"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse_solver"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse_solver" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse_post_processing">
+<span class="sig-name descname"><span class="pre">parse_post_processing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">post_pro_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="（在 Python v3.14）"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse_post_processing"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse_post_processing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.AcoustiXPaser.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#AcoustiXPaser.parse"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.AcoustiXPaser.parse" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.ParserFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.interface.parser.</span></span><span class="sig-name descname"><span class="pre">ParserFactory</span></span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#ParserFactory"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.ParserFactory" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.ParserFactory.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#ParserFactory.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.ParserFactory.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.parser.ParserFactory.create_parser">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_parser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/parser.html#ParserFactory.create_parser"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.parser.ParserFactory.create_parser" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id2">
+<h2>求解设置<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.interface.sol_setup.PyAcoustiXSetuper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.interface.sol_setup.</span></span><span class="sig-name descname"><span class="pre">PyAcoustiXSetuper</span></span><a class="reference internal" href="../_modules/SAcouS/interface/sol_setup.html#PyAcoustiXSetuper"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.sol_setup.PyAcoustiXSetuper" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.sol_setup.PyAcoustiXSetuper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/sol_setup.html#PyAcoustiXSetuper.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.sol_setup.PyAcoustiXSetuper.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.sol_setup.PyAcoustiXSetuper.welcome">
+<span class="sig-name descname"><span class="pre">welcome</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/sol_setup.html#PyAcoustiXSetuper.welcome"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.sol_setup.PyAcoustiXSetuper.welcome" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.sol_setup.PyAcoustiXSetuper.parse_input">
+<span class="sig-name descname"><span class="pre">parse_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/sol_setup.html#PyAcoustiXSetuper.parse_input"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.sol_setup.PyAcoustiXSetuper.parse_input" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.sol_setup.PyAcoustiXSetuper.exit">
+<span class="sig-name descname"><span class="pre">exit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/sol_setup.html#PyAcoustiXSetuper.exit"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.sol_setup.PyAcoustiXSetuper.exit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.sol_setup.PyAcoustiXSetuper.fem_run">
+<span class="sig-name descname"><span class="pre">fem_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh_order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/sol_setup.html#PyAcoustiXSetuper.fem_run"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.sol_setup.PyAcoustiXSetuper.fem_run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.sol_setup.PyAcoustiXSetuper.post_process">
+<span class="sig-name descname"><span class="pre">post_process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/sol_setup.html#PyAcoustiXSetuper.post_process"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.sol_setup.PyAcoustiXSetuper.post_process" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.interface.sol_setup.PyAcoustiXSetuper.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/interface/sol_setup.html#PyAcoustiXSetuper.setup"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.interface.sol_setup.PyAcoustiXSetuper.setup" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id3">
+<h2>使用示例<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<section id="id4">
+<h3>解析输入文件<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.interface.sol_setup</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyAcoustiXSetuper</span>
+
+<span class="c1"># 创建设置器</span>
+<span class="n">setuper</span> <span class="o">=</span> <span class="n">PyAcoustiXSetuper</span><span class="p">()</span>
+
+<span class="c1"># 解析输入文件</span>
+<span class="n">setuper</span><span class="o">.</span><span class="n">parse_input</span><span class="p">(</span><span class="s1">&#39;simulation.axi&#39;</span><span class="p">)</span>
+
+<span class="c1"># 获取求解信息</span>
+<span class="n">info</span> <span class="o">=</span> <span class="n">setuper</span><span class="o">.</span><span class="n">sol_info</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;物理类型: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;physics&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;频率: </span><span class="si">{</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> Hz&quot;</span><span class="p">)</span>
+
+<span class="c1"># 显示欢迎信息</span>
+<span class="n">setuper</span><span class="o">.</span><span class="n">welcome</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2>输入文件格式<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">.axi</span></code> 文件采用INI格式:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[Mesh]</span>
+<span class="na">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">mesh.msh</span>
+<span class="na">dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2</span>
+<span class="na">order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+
+<span class="k">[Materials]</span>
+<span class="na">air</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Air, air</span>
+<span class="na">foam</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">EquivalentFluid, 0.98, 3750, 1.17, 742e-6, 110e-6</span>
+
+<span class="k">[Physics]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">Helmholtz</span>
+<span class="na">frequency</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1000</span>
+
+<span class="k">[BoundaryConditions]</span>
+<span class="na">inlet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">velocity, 1.0</span>
+<span class="na">outlet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">impedance, 416.5</span>
+<span class="na">wall</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">rigid</span>
+
+<span class="k">[Solver]</span>
+<span class="na">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">direct</span>
+
+<span class="k">[Output]</span>
+<span class="na">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">results.vtk</span>
+<span class="na">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">vtk</span>
+</pre></div>
+</div>
+<section id="id6">
+<h3>节说明<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p><strong>[Mesh]</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">file</span></code>: 网格文件路径</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dimension</span></code>: 空间维度 (1, 2, 3)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">order</span></code>: 网格阶数 (1或2)</p></li>
+</ul>
+<p><strong>[Materials]</strong></p>
+<p>格式: <code class="docutils literal notranslate"><span class="pre">名称</span> <span class="pre">=</span> <span class="pre">类型,</span> <span class="pre">参数...</span></code></p>
+<p>支持的类型:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Air</span></code>: 标准空气</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Fluid</span></code>: 自定义流体 (密度, 声速)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EquivalentFluid</span></code>: JCA模型 (孔隙率, 流阻, 曲折度, ...)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LimpPorousMaterial</span></code>: Limp模型</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PoroElasticMaterial</span></code>: Biot模型</p></li>
+</ul>
+<p><strong>[Physics]</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: 物理问题类型 (Helmholtz, Biot, ...)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: 频率 (Hz)</p></li>
+</ul>
+<p><strong>[BoundaryConditions]</strong></p>
+<p>格式: <code class="docutils literal notranslate"><span class="pre">边界名称</span> <span class="pre">=</span> <span class="pre">类型,</span> <span class="pre">值</span></code></p>
+<p>支持的类型:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">velocity</span></code>: 速度边界</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pressure</span></code>: 压力边界</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">impedance</span></code>: 阻抗边界</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rigid</span></code>: 刚性壁</p></li>
+</ul>
+<p><strong>[Solver]</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: 求解器类型 (direct, iterative)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tolerance</span></code>: 迭代容差 (迭代求解器)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_iter</span></code>: 最大迭代次数</p></li>
+</ul>
+<p><strong>[Output]</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">file</span></code>: 输出文件名</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">format</span></code>: 输出格式 (vtk, msh, txt)</p></li>
+</ul>
+</section>
+</section>
+<section id="id7">
+<h2>命令行接口<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 运行输入文件</span>
+sacous<span class="w"> </span>-i<span class="w"> </span>input.axi
+
+<span class="c1"># 或</span>
+sacous<span class="w"> </span>--input_file<span class="o">=</span>input.axi
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2>编程接口<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<section id="id9">
+<h3>自定义解析器<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.interface.parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseParser</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyParser</span><span class="p">(</span><span class="n">BaseParser</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_materials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="c1"># 自定义材料解析</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_boundary_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="c1"># 自定义边界条件解析</span>
+        <span class="k">pass</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">MyParser</span><span class="p">()</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">&#39;input.axi&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="acxmor.html" class="btn btn-neutral float-left" title="acxmor模块" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="../theory/fem_basics.html" class="btn btn-neutral float-right" title="有限元方法基础" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

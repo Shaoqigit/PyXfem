@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>有限元方法基础 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Helmholtz方程" href="helmholtz.html" />
+    <link rel="prev" title="interface模块" href="../api_reference/interface.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">有限元方法基础</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">什么是有限元方法？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">基本流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">弱形式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">离散化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">单元方程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">数值积分</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">全局组装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">边界条件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">线性求解</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyacoustix">PyAcoustiX中的实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">进一步阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">有限元方法基础</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/theory/fem_basics.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>有限元方法基础<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<p>本章节介绍有限元方法(Finite Element Method, FEM)的基本原理。</p>
+<section id="id2">
+<h2>什么是有限元方法？<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>有限元方法是一种数值技术，用于求解偏微分方程(PDE)。其核心思想是:</p>
+<ol class="arabic simple">
+<li><p><strong>离散化</strong>: 将连续域划分为有限个小单元</p></li>
+<li><p><strong>近似</strong>: 在每个单元上用简单函数近似解</p></li>
+<li><p><strong>组装</strong>: 将单元方程组合成全局方程组</p></li>
+<li><p><strong>求解</strong>: 求解线性方程组得到数值解</p></li>
+</ol>
+</section>
+<section id="id3">
+<h2>基本流程<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>连续问题 → 弱形式 → 离散化 → 组装 → 求解 → 后处理
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>弱形式<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p>考虑一般的边值问题:</p>
+<div class="math notranslate nohighlight">
+\[Lu = f \quad \text{in } \Omega\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(L\)</span> 是微分算子，<span class="math notranslate nohighlight">\(u\)</span> 是未知函数，<span class="math notranslate nohighlight">\(f\)</span> 是源项。</p>
+<p><strong>强形式</strong>: 要求解在每一点满足微分方程。</p>
+<p><strong>弱形式</strong>: 通过加权残差法，要求:</p>
+<div class="math notranslate nohighlight">
+\[\int_\Omega (Lu - f)v \, d\Omega = 0, \quad \forall v \in V\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(v\)</span> 是测试函数，<span class="math notranslate nohighlight">\(V\)</span> 是适当的函数空间。</p>
+<p>通过分部积分，可以降低对解的光滑性要求，得到弱形式。</p>
+</section>
+<section id="id5">
+<h2>离散化<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p><strong>网格划分</strong></p>
+<p>将计算域 <span class="math notranslate nohighlight">\(\Omega\)</span> 划分为 <span class="math notranslate nohighlight">\(N_e\)</span> 个单元:</p>
+<div class="math notranslate nohighlight">
+\[\Omega \approx \Omega_h = \bigcup_{e=1}^{N_e} \Omega_e\]</div>
+<p>常用单元类型:</p>
+<ul class="simple">
+<li><p>1D: 线段</p></li>
+<li><p>2D: 三角形、四边形</p></li>
+<li><p>3D: 四面体、六面体</p></li>
+</ul>
+<p><strong>基函数</strong></p>
+<p>在每个单元上，解用基函数的线性组合近似:</p>
+<div class="math notranslate nohighlight">
+\[u_h(x) = \sum_{j=1}^{N_n} u_j \phi_j(x)\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\phi_j\)</span> 是基函数，<span class="math notranslate nohighlight">\(u_j\)</span> 是节点值。</p>
+<p>常用基函数:</p>
+<ul class="simple">
+<li><p><strong>Lagrange多项式</strong>: 节点在单元内部均匀分布</p></li>
+<li><p><strong>Lobatto多项式</strong>: 节点包含端点，适合谱元法</p></li>
+<li><p><strong>Legendre多项式</strong>: 正交多项式，数值稳定性好</p></li>
+</ul>
+</section>
+<section id="id6">
+<h2>单元方程<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<p>将近似解代入弱形式，得到单元方程:</p>
+<div class="math notranslate nohighlight">
+\[K^{(e)} u^{(e)} = F^{(e)}\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><strong>刚度矩阵</strong>: <span class="math notranslate nohighlight">\(K^{(e)}_{ij} = \int_{\Omega_e} \nabla \phi_i \cdot \nabla \phi_j \, d\Omega\)</span></p></li>
+<li><p><strong>载荷向量</strong>: <span class="math notranslate nohighlight">\(F^{(e)}_i = \int_{\Omega_e} f \phi_i \, d\Omega\)</span></p></li>
+</ul>
+<section id="id7">
+<h3>数值积分<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>单元积分通常用高斯积分计算:</p>
+<div class="math notranslate nohighlight">
+\[\int_{\Omega_e} g(x) \, d\Omega \approx \sum_{q=1}^{N_q} w_q g(x_q)\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(w_q\)</span> 是权重，<span class="math notranslate nohighlight">\(x_q\)</span> 是积分点。</p>
+</section>
+</section>
+<section id="id8">
+<h2>全局组装<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>将所有单元方程组装成全局系统:</p>
+<div class="math notranslate nohighlight">
+\[K u = F\]</div>
+<p>其中:</p>
+<div class="math notranslate nohighlight">
+\[K = \bigoplus_{e=1}^{N_e} K^{(e)}, \quad F = \bigoplus_{e=1}^{N_e} F^{(e)}\]</div>
+<p>组装过程通过**自由度映射**将单元自由度映射到全局自由度。</p>
+</section>
+<section id="id9">
+<h2>边界条件<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<p><strong>本质边界条件 (Dirichlet)</strong></p>
+<p>直接指定节点值:</p>
+<div class="math notranslate nohighlight">
+\[u_i = g_i, \quad i \in \Gamma_D\]</div>
+<p>实现方法:</p>
+<ul class="simple">
+<li><p>直接代入法</p></li>
+<li><p>大数法</p></li>
+<li><p>消去法</p></li>
+</ul>
+<p><strong>自然边界条件 (Neumann)</strong></p>
+<p>出现在弱形式中:</p>
+<div class="math notranslate nohighlight">
+\[\int_{\Gamma_N} g \phi_i \, d\Gamma\]</div>
+<p>直接加到载荷向量中。</p>
+<p><strong>混合边界条件 (Robin)</strong></p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial u}{\partial n} + \alpha u = \beta\]</div>
+<p>同时影响刚度矩阵和载荷向量。</p>
+</section>
+<section id="id10">
+<h2>线性求解<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<p>得到线性系统 <span class="math notranslate nohighlight">\(Ku = F\)</span> 后，需要求解:</p>
+<p><strong>直接求解器</strong></p>
+<ul class="simple">
+<li><p>LU分解</p></li>
+<li><p>Cholesky分解 (对称正定)</p></li>
+</ul>
+<p>适用于中小规模问题 (<span class="math notranslate nohighlight">\(N &lt; 10^5\)</span>)</p>
+<p><strong>迭代求解器</strong></p>
+<ul class="simple">
+<li><p>共轭梯度法 (CG, 对称正定)</p></li>
+<li><p>GMRES (一般矩阵)</p></li>
+<li><p>BiCGSTAB (非对称)</p></li>
+</ul>
+<p>适用于大规模稀疏系统。</p>
+</section>
+<section id="id11">
+<h2>误差分析<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<p><strong>离散误差</strong></p>
+<p>FEM解的误差与网格尺寸 <span class="math notranslate nohighlight">\(h\)</span> 和多项式阶数 <span class="math notranslate nohighlight">\(p\)</span> 有关:</p>
+<div class="math notranslate nohighlight">
+\[\|u - u_h\|_{H^1} \leq C h^p |u|_{H^{p+1}}\]</div>
+<p>这意味着:</p>
+<ul class="simple">
+<li><p>细化网格 (<span class="math notranslate nohighlight">\(h\)</span> 减小) 可以提高精度</p></li>
+<li><p>提高阶数 (<span class="math notranslate nohighlight">\(p\)</span> 增大) 可以提高精度</p></li>
+</ul>
+<p><strong>收敛性检验</strong></p>
+<p>通过网格细化检验收敛阶:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.0125</span><span class="p">]:</span>
+    <span class="n">uh</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">compute_error</span><span class="p">(</span><span class="n">uh</span><span class="p">,</span> <span class="n">u_exact</span><span class="p">)</span>
+    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+
+<span class="c1"># 计算收敛阶</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)):</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">errors</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">errors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;收敛阶: </span><span class="si">{</span><span class="n">rate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pyacoustix">
+<h2>PyAcoustiX中的实现<a class="headerlink" href="#pyacoustix" title="Link to this heading"></a></h2>
+<p>PyAcoustiX的FEM实现包括:</p>
+<ul class="simple">
+<li><p><strong>网格模块</strong> (<a class="reference internal" href="../api_reference/mesh.html#module-SAcouS.Mesh" title="SAcouS.Mesh"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.Mesh</span></code></a>): 1D/2D/3D网格处理</p></li>
+<li><p><strong>基函数</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.Basis</span></code>): Lagrange/Lobatto多项式</p></li>
+<li><p><strong>组装器</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.Assembly</span></code>): 矩阵组装</p></li>
+<li><p><strong>求解器</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.Solver</span></code>): 线性和迭代求解器</p></li>
+<li><p><strong>边界条件</strong> (<code class="xref py py-mod docutils literal notranslate"><span class="pre">SAcouS.acxfem.BCsImpose</span></code>): 边界条件施加</p></li>
+</ul>
+</section>
+<section id="id12">
+<h2>进一步阅读<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Hughes, T.J.R. &quot;The Finite Element Method&quot;</p></li>
+<li><p>Zienkiewicz, O.C. and Taylor, R.L. &quot;The Finite Element Method&quot;</p></li>
+<li><p>Brenner, S.C. and Scott, L.R. &quot;The Mathematical Theory of Finite Element Methods&quot;</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="../api_reference/interface.html" class="btn btn-neutral float-left" title="interface模块" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="helmholtz.html" class="btn btn-neutral float-right" title="Helmholtz方程" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

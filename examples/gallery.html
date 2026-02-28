@@ -1,0 +1,214 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>示例画廊 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="架构设计" href="../developer_guide/architecture.html" />
+    <link rel="prev" title="示例" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">示例</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">示例画廊</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#d-helmholtz">1D Helmholtz问题</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#d">2D腔体问题</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">多层吸声结构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#biot">Biot多孔弹性材料</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">频率响应分析</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">3D复杂几何</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">更多示例</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id2">示例列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id6">运行示例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id7">示例输出</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id8">自定义示例</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">示例</a></li>
+      <li class="breadcrumb-item active">示例画廊</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/examples/gallery.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>示例画廊<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<p>以下是PyAcoustiX的一些典型应用示例。</p>
+<section id="d-helmholtz">
+<h2>1D Helmholtz问题<a class="headerlink" href="#d-helmholtz" title="Link to this heading"></a></h2>
+<p><strong>问题描述</strong>: 声波在Kundt管中的传播</p>
+<p><strong>材料</strong>: 空气 + JCA多孔材料</p>
+<p><strong>结果</strong>: 压力分布</p>
+<a class="reference internal image-reference" href="_static/example_1d.png"><img alt="_static/example_1d.png" class="align-center" src="_static/example_1d.png" style="width: 600px;" />
+</a>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 关键代码</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">Air</span><span class="p">,</span> <span class="n">EquivalentFluid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Mesh</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mesh1D</span>
+
+<span class="n">air</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="s1">&#39;air&#39;</span><span class="p">)</span>
+<span class="n">porous</span> <span class="o">=</span> <span class="n">EquivalentFluid</span><span class="p">(</span><span class="s1">&#39;foam&#39;</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">,</span> <span class="mi">3750</span><span class="p">,</span> <span class="mf">1.17</span><span class="p">,</span> <span class="mf">742e-6</span><span class="p">,</span> <span class="mf">110e-6</span><span class="p">)</span>
+
+<span class="c1"># 创建网格和求解...</span>
+</pre></div>
+</div>
+</section>
+<section id="d">
+<h2>2D腔体问题<a class="headerlink" href="#d" title="Link to this heading"></a></h2>
+<p><strong>问题描述</strong>: 2D矩形腔体的声学响应</p>
+<p><strong>边界条件</strong>: 左侧速度激励，其他刚性壁</p>
+<p><strong>结果</strong>: 声压级分布</p>
+<a class="reference internal image-reference" href="_static/example_2d.png"><img alt="_static/example_2d.png" class="align-center" src="_static/example_2d.png" style="width: 600px;" />
+</a>
+</section>
+<section id="id2">
+<h2>多层吸声结构<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p><strong>问题描述</strong>: 多层材料的吸声系数</p>
+<p><strong>方法</strong>: TMM + FEM耦合</p>
+<p><strong>结果</strong>: 频率相关的吸声系数</p>
+<a class="reference internal image-reference" href="_static/example_absorption.png"><img alt="_static/example_absorption.png" class="align-center" src="_static/example_absorption.png" style="width: 600px;" />
+</a>
+</section>
+<section id="biot">
+<h2>Biot多孔弹性材料<a class="headerlink" href="#biot" title="Link to this heading"></a></h2>
+<p><strong>问题描述</strong>: 饱和土壤中的波传播</p>
+<p><strong>材料</strong>: Biot多孔弹性材料</p>
+<p><strong>结果</strong>: 快波和慢波传播</p>
+</section>
+<section id="id3">
+<h2>频率响应分析<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p><strong>问题描述</strong>: 扬声器频率响应</p>
+<p><strong>方法</strong>: 频率扫描 + MoR加速</p>
+<p><strong>结果</strong>: SPL vs 频率</p>
+<a class="reference internal image-reference" href="_static/example_frf.png"><img alt="_static/example_frf.png" class="align-center" src="_static/example_frf.png" style="width: 600px;" />
+</a>
+</section>
+<section id="id4">
+<h2>3D复杂几何<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p><strong>问题描述</strong>: 汽车内部声场</p>
+<p><strong>网格</strong>: Gmsh生成的四面体网格</p>
+<p><strong>结果</strong>: 3D声压分布</p>
+</section>
+<section id="id5">
+<h2>更多示例<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p>查看 <code class="docutils literal notranslate"><span class="pre">tests/</span></code> 目录获取更多示例代码。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="index.html" class="btn btn-neutral float-left" title="示例" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="../developer_guide/architecture.html" class="btn btn-neutral float-right" title="架构设计" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

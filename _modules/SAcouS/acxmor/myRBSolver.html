@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAcouS.acxmor.myRBSolver &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">SAcouS.acxmor.myRBSolver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>SAcouS.acxmor.myRBSolver 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="RBSolver_fromResidual">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RBSolver_fromResidual</span><span class="p">:</span>
+
+<div class="viewcode-block" id="RBSolver_fromResidual.__init__">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxmodes</span><span class="p">,</span> <span class="n">operatorModesSpace</span><span class="p">,</span> <span class="n">operatorModesParam</span><span class="p">,</span> <span class="n">rhsModesSpace</span><span class="p">,</span> <span class="n">rhsModesParam</span><span class="p">,</span>
+                 <span class="n">parameterTrainingSpace</span><span class="p">,</span> <span class="n">dtype_</span><span class="o">=</span><span class="nb">float</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxModes</span> <span class="o">=</span> <span class="n">maxmodes</span>
+
+        <span class="c1"># Affine decomposition : op(x,mu) = sum_i op_i(x) * theta_i(mu)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operatorModesSpace</span> <span class="o">=</span> <span class="n">operatorModesSpace</span>  <span class="c1"># op_i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operatorModesParam</span> <span class="o">=</span> <span class="n">operatorModesParam</span>  <span class="c1"># theta_i</span>
+
+        <span class="c1"># Affine decomposition : rhs(x,mu) = sum_i rhs_i(x) * theta_i(mu)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rhsModesSpace</span> <span class="o">=</span> <span class="n">rhsModesSpace</span>  <span class="c1"># rhs_i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rhsModesParam</span> <span class="o">=</span> <span class="n">rhsModesParam</span>  <span class="c1"># theta_i</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameterTrainingSpace</span> <span class="o">=</span> <span class="n">parameterTrainingSpace</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">operatorModesSpace</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxModes</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RB_Coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameterTrainingSpace</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxModes</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbModes</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">worstParamHistory</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">TildeComputedFor</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># The number of mode for which Tilde quantities have been precomputed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Atilde_k</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Precomputed projected affine decomposition (operator space part)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Btilde_k</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Precomputed projected affine decomposition (rhs space part)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype_</span></div>
+
+
+    <span class="c1"># From the current state of the greedy strategy :</span>
+    <span class="c1"># Computes:</span>
+    <span class="c1"># * the worst snapshot and associated residual</span>
+    <span class="c1"># * the reduced problem for this particular snapshot</span>
+
+<div class="viewcode-block" id="RBSolver_fromResidual.computeWorstParameterAndAssociatedData">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.computeWorstParameterAndAssociatedData">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">computeWorstParameterAndAssociatedData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">):</span>
+
+        <span class="n">maxResidNorm</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>
+        <span class="n">imuTilde</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Loop over mu_i</span>
+        <span class="k">for</span> <span class="n">imu</span><span class="p">,</span> <span class="n">mui</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameterTrainingSpace</span><span class="p">):</span>
+            <span class="c1"># mui = self.parameterSnapshots[imu]</span>
+
+            <span class="c1"># Residual_mui = np.zeros(Bi[0].shape)</span>
+
+            <span class="n">Bcurr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhsModesSpace</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">Acurr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operatorModesSpace</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhsModesSpace</span><span class="p">)):</span>
+                <span class="n">Bcurr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhsModesSpace</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhsModesParam</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">mui</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operatorModesSpace</span><span class="p">)):</span>
+                <span class="n">Acurr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operatorModesSpace</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">operatorModesParam</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">mui</span><span class="p">)</span>
+
+            <span class="n">Residual_mui</span> <span class="o">=</span> <span class="n">Bcurr</span> <span class="o">-</span> <span class="n">Acurr</span> <span class="o">@</span> <span class="p">(</span><span class="n">basis</span> <span class="o">@</span> <span class="n">coeffs</span><span class="p">[</span><span class="n">imu</span><span class="p">])</span>
+
+            <span class="n">norm_Rmu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Residual_mui</span><span class="p">)</span>
+
+            <span class="c1"># BIDOUILLE : CHECK</span>
+            <span class="c1"># if imu in self.worstParamHistory:</span>
+            <span class="c1">#     norm_Rmu *= 0.</span>
+            <span class="c1">#     print(&#39;Bidouille !&#39;)</span>
+
+
+            <span class="c1"># print(&#39;mu=&#39;,mui,&#39;Norm resid&#39;,norm_Rmu)</span>
+
+            <span class="k">if</span> <span class="n">norm_Rmu</span> <span class="o">&gt;</span> <span class="n">maxResidNorm</span><span class="p">:</span>
+                <span class="n">maxResidNorm</span> <span class="o">=</span> <span class="n">norm_Rmu</span>
+                <span class="n">maxResid</span> <span class="o">=</span> <span class="n">Residual_mui</span>
+                <span class="n">imuTilde</span> <span class="o">=</span> <span class="n">imu</span>
+
+                <span class="n">opMaxResid</span> <span class="o">=</span> <span class="n">Acurr</span>
+                <span class="n">rhsMaxResid</span> <span class="o">=</span> <span class="n">Bcurr</span>
+                <span class="c1"># print(&#39;max&#39;)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Max residual norm&#39;</span><span class="p">,</span> <span class="n">maxResidNorm</span><span class="p">,</span> <span class="s1">&#39;for snapshot&#39;</span><span class="p">,</span> <span class="n">imuTilde</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">maxResid</span><span class="p">,</span> <span class="n">opMaxResid</span><span class="p">,</span> <span class="n">rhsMaxResid</span><span class="p">,</span> <span class="n">imuTilde</span></div>
+
+
+
+
+    <span class="c1"># For the current reduced basis, compute the Galerkin coefficients</span>
+<div class="viewcode-block" id="RBSolver_fromResidual.solveRomEqn">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.solveRomEqn">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solveRomEqn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basis</span><span class="p">):</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">parameterTrainingSpace</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">basis</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="c1"># print(basis, basis.shape)</span>
+
+        <span class="c1">###### Construction du problème réduit (partie deterministe)</span>
+
+        <span class="c1"># Construct Atilde_k and Btilde_k ONLY IF NEEDED</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TildeComputedFor</span><span class="p">:</span>
+            <span class="c1"># Construction des Atilde_k</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Atilde_k</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operatorModesSpace</span><span class="p">)):</span>
+                <span class="n">Atilde</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operatorModesSpace</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">@</span> <span class="n">basis</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Atilde_k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Atilde</span><span class="p">)</span>
+
+            <span class="c1"># Construction des Btilde_k</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Btilde_k</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhsModesSpace</span><span class="p">)):</span>
+                <span class="n">Btilde</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="nd">@self</span><span class="o">.</span><span class="n">rhsModesSpace</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Btilde_k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Btilde</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">TildeComputedFor</span> <span class="o">=</span> <span class="n">m</span>
+        <span class="k">else</span> <span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Atilde and Btilde do already precomputed&#39;</span><span class="p">)</span>
+
+
+
+        <span class="c1">###### Resolution du problème réduit pour les snapshots</span>
+        <span class="c1"># Loop over mu_i</span>
+        <span class="k">for</span> <span class="n">imu</span><span class="p">,</span> <span class="n">mui</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameterTrainingSpace</span><span class="p">):</span>
+
+
+            <span class="c1"># Particularisation du problème réduit pour mu</span>
+            <span class="n">RB_Matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">RB_RHS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operatorModesParam</span><span class="p">)):</span>
+                <span class="n">RB_Matrix</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operatorModesParam</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">mui</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Atilde_k</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhsModesParam</span><span class="p">)):</span>
+                <span class="n">RB_RHS</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhsModesParam</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">mui</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Btilde_k</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="c1"># aaaaa</span>
+            <span class="c1"># Solve</span>
+            <span class="n">coeffs</span><span class="p">[</span><span class="n">imu</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">RB_Matrix</span><span class="p">,</span> <span class="n">RB_RHS</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">coeffs</span></div>
+
+
+
+
+<div class="viewcode-block" id="RBSolver_fromResidual.updateBasis">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.updateBasis">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateBasis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="c1"># Nouvelle fonction de base</span>
+        <span class="n">newBasis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+        <span class="c1"># newBasis /= np.linalg.norm(newBasis)</span>
+        <span class="k">return</span> <span class="n">newBasis</span></div>
+
+
+
+
+    <span class="c1"># Solve Greedy</span>
+<div class="viewcode-block" id="RBSolver_fromResidual.solveGreedyLeblond">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.solveGreedyLeblond">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solveGreedyLeblond</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="n">errorHistory</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">while</span> <span class="n">err</span> <span class="o">&gt;</span> <span class="n">tol</span> <span class="ow">and</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxModes</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Calcul du résidu</span>
+                <span class="n">maxResid</span><span class="p">,</span> <span class="n">Acurr</span><span class="p">,</span> <span class="n">Bcurr</span><span class="p">,</span> <span class="n">imuTilde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeWorstParameterAndAssociatedData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                                                                                               <span class="bp">self</span><span class="o">.</span><span class="n">RB_Coeffs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">worstParamHistory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imuTilde</span><span class="p">)</span>
+            <span class="n">newBasis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateBasis</span><span class="p">(</span><span class="n">Acurr</span><span class="p">,</span> <span class="n">maxResid</span><span class="p">)</span>
+
+            <span class="c1"># MAJ des bases reduites</span>
+            <span class="c1"># gramm schmit orthogonalization</span>
+            <span class="n">othoNewBasis</span> <span class="o">=</span> <span class="n">newBasis</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">newBasis</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>  <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+            <span class="n">othoNewBasis</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">othoNewBasis</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">othoNewBasis</span>
+            <span class="c1"># self.RB_Basis[:, m], R = np.linalg.qr(self.RB_Basis[:, m])</span>
+            <span class="n">m</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nbModes</span> <span class="o">=</span> <span class="n">m</span>
+
+            <span class="c1"># Projection de la solution sur la base reduite</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RB_Coeffs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solveRomEqn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">])</span>
+
+            <span class="c1"># Calcul du résidu</span>
+            <span class="n">maxResid</span><span class="p">,</span> <span class="n">Acurr</span><span class="p">,</span> <span class="n">Bcurr</span><span class="p">,</span> <span class="n">imuTilde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeWorstParameterAndAssociatedData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">],</span>
+                                                                                               <span class="bp">self</span><span class="o">.</span><span class="n">RB_Coeffs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">])</span>
+            <span class="c1"># maxResid_ = RB_Basis[:,:m]@RB_Coeffs[:,:m].T</span>
+
+            <span class="c1"># Erreur de la boucle while</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">maxResid</span><span class="p">))</span>
+            <span class="n">errorHistory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mode&#39;</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="s1">&#39;Worst snapshot&#39;</span><span class="p">,</span> <span class="n">imuTilde</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">errorHistory</span></div>
+
+
+    <span class="c1"># Solve Greedy</span>
+<div class="viewcode-block" id="RBSolver_fromResidual.solveGreedy">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.solveGreedy">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solveGreedy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="n">errorHistory</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">while</span> <span class="n">err</span> <span class="o">&gt;</span> <span class="n">tol</span> <span class="ow">and</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxModes</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># Calcul du résidu</span>
+                <span class="n">maxResid</span><span class="p">,</span> <span class="n">Acurr</span><span class="p">,</span> <span class="n">Bcurr</span><span class="p">,</span> <span class="n">imuTilde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeWorstParameterAndAssociatedData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                                                                                               <span class="bp">self</span><span class="o">.</span><span class="n">RB_Coeffs</span><span class="p">[:,</span>
+                                                                                               <span class="p">:</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">worstParamHistory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imuTilde</span><span class="p">)</span>
+            <span class="n">newBasis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">updateBasis</span><span class="p">(</span><span class="n">Acurr</span><span class="p">,</span> <span class="n">Bcurr</span><span class="p">)</span>
+
+            <span class="c1"># orthonormalization</span>
+            <span class="n">othoNewBasis</span> <span class="o">=</span> <span class="n">newBasis</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="n">newBasis</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">j</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>  <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+            <span class="n">othoNewBasis</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">othoNewBasis</span><span class="p">)</span>
+            <span class="c1"># MAJ des bases reduites</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">othoNewBasis</span>
+            <span class="n">m</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nbModes</span> <span class="o">=</span> <span class="n">m</span>
+
+            <span class="c1"># Projection de la solution sur la base reduite</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">RB_Coeffs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solveRomEqn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">])</span>
+
+            <span class="c1"># aaaa</span>
+
+            <span class="c1"># Calcul du résidu</span>
+            <span class="n">maxResid</span><span class="p">,</span> <span class="n">Acurr</span><span class="p">,</span> <span class="n">Bcurr</span><span class="p">,</span> <span class="n">imuTilde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeWorstParameterAndAssociatedData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">],</span>
+                                                                                           <span class="bp">self</span><span class="o">.</span><span class="n">RB_Coeffs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">m</span><span class="p">])</span>
+            <span class="c1"># maxResid_ = RB_Basis[:,:m]@RB_Coeffs[:,:m].T</span>
+
+            <span class="c1"># Erreur de la boucle while</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">maxResid</span><span class="p">))</span>
+            <span class="n">errorHistory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mode&#39;</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="s1">&#39;Error&#39;</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="s1">&#39;Worst snapshot&#39;</span><span class="p">,</span> <span class="n">imuTilde</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">errorHistory</span></div>
+
+
+
+    <span class="c1"># mu is part of the training space: we just take its id</span>
+<div class="viewcode-block" id="RBSolver_fromResidual.reconstructHiFiApproximatedSolution">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.reconstructHiFiApproximatedSolution">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reconstructHiFiApproximatedSolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imu</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">nbModes</span><span class="p">]</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">RB_Coeffs</span><span class="p">[</span><span class="n">imu</span><span class="p">,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">nbModes</span><span class="p">]</span></div>
+
+
+    <span class="c1"># mu was not part of the training space here: we take its value</span>
+<div class="viewcode-block" id="RBSolver_fromResidual.reconstructHiFiApproximatedSolutionArbitrary">
+<a class="viewcode-back" href="../../../api_reference/acxmor.html#SAcouS.acxmor.myRBSolver.RBSolver_fromResidual.reconstructHiFiApproximatedSolutionArbitrary">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reconstructHiFiApproximatedSolutionArbitrary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+
+        <span class="c1">###### Resolution du problème réduit pour le parametre donne</span>
+        <span class="c1"># Particularisation du problème réduit pour mu</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbModes</span>
+
+        <span class="c1"># Check if the pre-computation of the reduced operators is consistent</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">TildeComputedFor</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+        <span class="n">RB_Matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">RB_RHS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operatorModesParam</span><span class="p">)):</span>
+            <span class="n">RB_Matrix</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operatorModesParam</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">mu</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Atilde_k</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhsModesParam</span><span class="p">)):</span>
+            <span class="n">RB_RHS</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhsModesParam</span><span class="p">[</span><span class="n">k</span><span class="p">](</span><span class="n">mu</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Btilde_k</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="c1"># Solve</span>
+        <span class="n">coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">RB_Matrix</span><span class="p">,</span> <span class="n">RB_RHS</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">RB_Basis</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">nbModes</span><span class="p">]</span> <span class="o">@</span> <span class="n">coeff</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

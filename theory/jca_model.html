@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JCA模型 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="Biot理论" href="biot_theory.html" />
+    <link rel="prev" title="Helmholtz方程" href="helmholtz.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">JCA模型</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">多孔材料简介</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">等效流体假设</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">等效密度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">等效体积模量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">等效声速和阻抗</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">物理意义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">频率特性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">吸声系数</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">参数测量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyacoustix">PyAcoustiX实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">进一步阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">JCA模型</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/theory/jca_model.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="jca">
+<h1>JCA模型<a class="headerlink" href="#jca" title="Link to this heading"></a></h1>
+<p>Johnson-Champoux-Allard (JCA) 模型是描述刚性骨架多孔吸声材料的标准模型。</p>
+<section id="id1">
+<h2>多孔材料简介<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>多孔吸声材料具有复杂的微观结构:</p>
+<ul class="simple">
+<li><p>固体骨架 (不可动)</p></li>
+<li><p>连通的孔隙网络</p></li>
+<li><p>孔隙中充满流体 (通常是空气)</p></li>
+</ul>
+<p>声波在多孔材料中传播时，由于粘滞和热损耗，声能被转化为热能。</p>
+</section>
+<section id="id2">
+<h2>等效流体假设<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>JCA模型采用**等效流体**假设:</p>
+<ul class="simple">
+<li><p>固体骨架完全刚性</p></li>
+<li><p>只考虑孔隙中流体的运动</p></li>
+<li><p>用等效复密度和复体积模量描述宏观行为</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>等效密度<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>考虑粘滞效应的Johnson等人模型:</p>
+<div class="math notranslate nohighlight">
+\[\tilde{\rho}_{eq} = \frac{\rho_0 \alpha_\infty}{\phi} \left[ 1 + \frac{\sigma \phi}{j \omega \rho_0 \alpha_\infty} \sqrt{1 + \frac{4 j \omega \rho_0 \alpha_\infty^2 \eta}{\sigma^2 \phi^2 \Lambda^2}} \right]\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\rho_0\)</span>: 流体密度 [kg/m³]</p></li>
+<li><p><span class="math notranslate nohighlight">\(\phi\)</span>: 孔隙率 [-]</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma\)</span>: 流阻 [Pa·s/m²]</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha_\infty\)</span>: 高频曲折度 [-]</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta\)</span>: 动力粘度 [Pa·s]</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Lambda\)</span>: 粘滞特征长度 [m]</p></li>
+</ul>
+</section>
+<section id="id4">
+<h2>等效体积模量<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p>考虑热效应的Champoux-Allard模型:</p>
+<div class="math notranslate nohighlight">
+\[\tilde{K}_{eq} = \frac{\gamma P_0}{\phi} \left[ \gamma - \frac{\gamma - 1}{1 + \frac{8 \eta}{j \omega \rho_0 \Pr \Lambda'^2} \sqrt{1 + \frac{j \omega \rho_0 \Pr \Lambda'^2}{16 \eta}}} \right]^{-1}\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span>: 比热比 (空气约1.4)</p></li>
+<li><p><span class="math notranslate nohighlight">\(P_0\)</span>: 大气压 [Pa]</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Pr\)</span>: Prandtl数 (空气约0.71)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Lambda'\)</span>: 热特征长度 [m]</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>等效声速和阻抗<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p>从等效密度和体积模量，可以计算:</p>
+<p><strong>等效声速</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\tilde{c}_{eq} = \sqrt{\frac{\tilde{K}_{eq}}{\tilde{\rho}_{eq}}}\]</div>
+<p><strong>等效特性阻抗</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\tilde{Z}_{eq} = \sqrt{\tilde{\rho}_{eq} \tilde{K}_{eq}}\]</div>
+<p><strong>复波数</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\tilde{k} = \omega \sqrt{\frac{\tilde{\rho}_{eq}}{\tilde{K}_{eq}}}\]</div>
+</section>
+<section id="id6">
+<h2>物理意义<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<p><strong>孔隙率</strong> (<span class="math notranslate nohighlight">\(\phi\)</span>)</p>
+<p>孔隙体积与总体积之比:</p>
+<div class="math notranslate nohighlight">
+\[\phi = \frac{V_{pores}}{V_{total}}\]</div>
+<p>典型值: 0.9 - 0.99 (泡沫材料)</p>
+<p><strong>流阻</strong> (<span class="math notranslate nohighlight">\(\sigma\)</span>)</p>
+<p>描述流体流经材料时的阻力:</p>
+<div class="math notranslate nohighlight">
+\[\Delta P = \sigma \cdot v \cdot d\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\Delta P\)</span> 是压降，<span class="math notranslate nohighlight">\(v\)</span> 是流速，<span class="math notranslate nohighlight">\(d\)</span> 是厚度。</p>
+<p>典型值: 10³ - 10⁶ Pa·s/m²</p>
+<p><strong>曲折度</strong> (<span class="math notranslate nohighlight">\(\alpha_\infty\)</span>)</p>
+<p>描述孔隙路径的复杂程度:</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\infty = \left( \frac{\text{实际路径长度}}{\text{直线路径长度}} \right)^2\]</div>
+<p>典型值: 1.0 - 3.0</p>
+<p><strong>特征长度</strong></p>
+<ul class="simple">
+<li><p><strong>粘滞特征长度</strong> <span class="math notranslate nohighlight">\(\Lambda\)</span>: 与粘滞损耗相关的孔隙尺寸</p></li>
+<li><p><strong>热特征长度</strong> <span class="math notranslate nohighlight">\(\Lambda'\)</span>: 与热损耗相关的孔隙尺寸</p></li>
+</ul>
+<p>对于圆柱形孔隙: <span class="math notranslate nohighlight">\(\Lambda = \Lambda' = R\)</span> (半径)</p>
+<p>对于一般多孔材料: <span class="math notranslate nohighlight">\(\Lambda' \approx 2\Lambda\)</span></p>
+</section>
+<section id="id7">
+<h2>频率特性<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<p><strong>低频极限</strong> (<span class="math notranslate nohighlight">\(\omega \to 0\)</span>)</p>
+<ul class="simple">
+<li><p>等效密度趋于无穷 (流体被&quot;锁定&quot;)</p></li>
+<li><p>等效体积模量趋于 <span class="math notranslate nohighlight">\(\gamma P_0 / \phi\)</span></p></li>
+</ul>
+<p><strong>高频极限</strong> (<span class="math notranslate nohighlight">\(\omega \to \infty\)</span>)</p>
+<ul class="simple">
+<li><p>等效密度: <span class="math notranslate nohighlight">\(\tilde{\rho}_{eq} \to \rho_0 \alpha_\infty / \phi\)</span></p></li>
+<li><p>等效体积模量: <span class="math notranslate nohighlight">\(\tilde{K}_{eq} \to \gamma P_0 / \phi\)</span></p></li>
+</ul>
+<p><strong>过渡频率</strong></p>
+<ul class="simple">
+<li><p><strong>粘滞特征频率</strong>: <span class="math notranslate nohighlight">\(\omega_v = \frac{\sigma \phi}{\rho_0 \alpha_\infty}\)</span></p></li>
+<li><p><strong>热特征频率</strong>: <span class="math notranslate nohighlight">\(\omega_t = \frac{16 \nu}{\Lambda'^2}\)</span></p></li>
+</ul>
+</section>
+<section id="id8">
+<h2>吸声系数<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>对于厚度为 <span class="math notranslate nohighlight">\(d\)</span> 的多孔材料层， backed by rigid wall:</p>
+<p><strong>表面阻抗</strong>:</p>
+<div class="math notranslate nohighlight">
+\[Z_s = -j \tilde{Z}_{eq} \cot(\tilde{k} d)\]</div>
+<p><strong>吸声系数</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\alpha = 1 - \left| \frac{Z_s - Z_0}{Z_s + Z_0} \right|^2\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(Z_0 = \rho_0 c_0\)</span> 是空气特性阻抗。</p>
+</section>
+<section id="id9">
+<h2>参数测量<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<p>JCA参数可以通过实验测量:</p>
+<ol class="arabic simple">
+<li><p><strong>孔隙率</strong>: 通过密度测量或压汞法</p></li>
+<li><p><strong>流阻</strong>: 通过气流实验 (ISO 9053)</p></li>
+<li><p><strong>曲折度</strong>: 通过超声传播时间测量</p></li>
+<li><p><strong>特征长度</strong>: 通过吸声系数反演或微观成像</p></li>
+</ol>
+</section>
+<section id="pyacoustix">
+<h2>PyAcoustiX实现<a class="headerlink" href="#pyacoustix" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">EquivalentFluid</span>
+
+<span class="c1"># 定义JCA材料</span>
+<span class="n">porous</span> <span class="o">=</span> <span class="n">EquivalentFluid</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;foam&#39;</span><span class="p">,</span>
+    <span class="n">phi</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span>           <span class="c1"># 孔隙率</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mi">3750</span><span class="p">,</span>         <span class="c1"># 流阻</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">1.17</span><span class="p">,</span>         <span class="c1"># 曲折度</span>
+    <span class="n">Lambda_prime</span><span class="o">=</span><span class="mf">742e-6</span><span class="p">,</span>  <span class="c1"># 热特征长度</span>
+    <span class="n">Lambda</span><span class="o">=</span><span class="mf">110e-6</span>       <span class="c1"># 粘滞特征长度</span>
+<span class="p">)</span>
+
+<span class="c1"># 设置频率</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">1000</span>
+<span class="n">porous</span><span class="o">.</span><span class="n">set_frequency</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+
+<span class="c1"># 获取等效属性</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;等效密度: </span><span class="si">{</span><span class="n">porous</span><span class="o">.</span><span class="n">rho_eq_til</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;等效体积模量: </span><span class="si">{</span><span class="n">porous</span><span class="o">.</span><span class="n">K_eq_til</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;等效声速: </span><span class="si">{</span><span class="n">porous</span><span class="o">.</span><span class="n">c_eq_til</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h2>进一步阅读<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Johnson, D.L. et al. &quot;Theory of dynamic permeability and tortuosity in fluid-saturated porous media&quot;</p></li>
+<li><p>Champoux, Y. and Allard, J.F. &quot;Dynamic tortuosity and bulk modulus in air-saturated porous media&quot;</p></li>
+<li><p>Allard, J.F. and Atalla, N. &quot;Propagation of Sound in Porous Media&quot;</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="helmholtz.html" class="btn btn-neutral float-left" title="Helmholtz方程" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="biot_theory.html" class="btn btn-neutral float-right" title="Biot理论" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

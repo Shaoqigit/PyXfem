@@ -1,0 +1,413 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAcouS.interface.parser &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模块代码</a></li>
+      <li class="breadcrumb-item active">SAcouS.interface.parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>SAcouS.interface.parser 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABCMeta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaterialFactory</span>
+
+<div class="viewcode-block" id="BaseParser">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.BaseParser">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseParser</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseParser.__init__">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.BaseParser.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">file_path</span></div>
+
+
+<div class="viewcode-block" id="BaseParser.parse">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.BaseParser.parse">[文档]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AcoustiXPaser">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AcoustiXPaser</span><span class="p">(</span><span class="n">BaseParser</span><span class="p">):</span>
+<div class="viewcode-block" id="AcoustiXPaser.__init__">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.axi&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;File must be an .axi file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topology_props</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">materials</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">physic_domains</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">boundary_conditions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_processing</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="AcoustiXPaser.parse_level1">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse_level1">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_level1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">current_block</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="c1"># sklp comments and space lines</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;//&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>  <span class="c1"># Skip comments</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;# BEGIN&#39;</span><span class="p">):</span>
+                    <span class="n">block_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;BEGIN &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="n">current_block</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">blocks</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_block</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;# END&#39;</span><span class="p">):</span>
+                    <span class="n">current_block</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">current_block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">current_block</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">blocks</span></div>
+
+        
+<div class="viewcode-block" id="AcoustiXPaser.parse_level2plus">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse_level2plus">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_level2plus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">blocks</span><span class="p">:</span><span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">indicator</span> <span class="o">=</span> <span class="s1">&#39;##&#39;</span>
+        <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">indicator</span> <span class="o">=</span> <span class="s1">&#39;###&#39;</span>
+        <span class="n">levelp_blocks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">current_block</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="c1"># sklp comments and space lines</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;//&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># Skip comments</span>
+
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">indicator</span><span class="o">+</span><span class="s1">&#39; BEGIN&#39;</span><span class="p">):</span>
+                <span class="n">block_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;BEGIN &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">current_block</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">levelp_blocks</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_block</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">indicator</span><span class="o">+</span><span class="s1">&#39; END&#39;</span><span class="p">):</span>
+                <span class="n">current_block</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">current_block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">current_block</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">levelp_blocks</span></div>
+
+    
+<div class="viewcode-block" id="AcoustiXPaser.parse_analysis">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse_analysis">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">analysis_block</span> <span class="o">=</span> <span class="n">analysis_blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis_type</span> <span class="o">=</span> <span class="n">analysis_block</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">analysis_block</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">analysis_block</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">analysis_block</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="AcoustiXPaser.parse_topology">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse_topology">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_topology</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topo_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">topo_blocks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;DIMENSION&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">topology_props</span><span class="p">[</span><span class="s1">&#39;dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">break</span>
+        <span class="n">level_2_block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_level2plus</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">topo_blocks</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mesh_block</span> <span class="o">=</span> <span class="n">level_2_block</span><span class="p">[</span><span class="s1">&#39;mesh&#39;</span><span class="p">]</span>
+            <span class="n">mesh_block2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_level2plus</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">mesh_block</span><span class="p">)</span>
+            <span class="c1"># parse mesh nodes</span>
+            <span class="n">info_mesh_nodes</span> <span class="o">=</span> <span class="n">mesh_block2</span><span class="p">[</span><span class="s1">&#39;node&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">info_mesh_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;RANGE&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mesh_nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">info_mesh_nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">info_mesh_nodes</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">info_mesh_nodes</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">topology_props</span><span class="p">[</span><span class="s1">&#39;mesh_nodes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_nodes</span>
+            <span class="k">elif</span> <span class="n">info_mesh_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;LIST&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The mesh nodes definition has not been implemented yet&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The mesh nodes definition is not correct&#39;</span><span class="p">)</span>
+            
+            <span class="c1"># parse mesh elements</span>
+            <span class="n">info_mesh_elements</span> <span class="o">=</span> <span class="n">mesh_block2</span><span class="p">[</span><span class="s1">&#39;element&#39;</span><span class="p">]</span>
+            <span class="n">global_order</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">info_mesh_elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">mesh_type</span> <span class="o">=</span> <span class="n">info_mesh_elements</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">mesh_type</span> <span class="o">==</span> <span class="s1">&#39;RANGE&#39;</span><span class="p">:</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">info_mesh_elements</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">num_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mesh_elements</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">info_mesh_elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="p">[</span><span class="n">start</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">step</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">))]))</span>
+            <span class="k">elif</span> <span class="n">mesh_type</span> <span class="o">==</span> <span class="s1">&#39;LIST&#39;</span><span class="p">:</span>
+                <span class="n">num_elements</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">info_mesh_elements</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mesh_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_elements</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mesh_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">num_elements</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">info_mesh_elements</span><span class="p">[</span><span class="mi">2</span><span class="p">:]):</span>
+                    <span class="n">element_info</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">element_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;NONE&#39;</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">mesh_order</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">global_order</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">mesh_order</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">element_info</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mesh_elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">element_info</span><span class="p">[</span><span class="mi">2</span><span class="p">:]])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">topology_props</span><span class="p">[</span><span class="s1">&#39;mesh_elements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_elements</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">topology_props</span><span class="p">[</span><span class="s1">&#39;mesh_order&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mesh_order</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No mesh block is defined&#39;</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">domain_block</span> <span class="o">=</span> <span class="n">level_2_block</span><span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">topology_props</span><span class="p">[</span><span class="s1">&#39;mesh_domain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">domain</span> <span class="ow">in</span> <span class="n">domain_block</span><span class="p">:</span>
+                <span class="n">domain_info</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                <span class="n">domain_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">domain_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">domain_dim</span> <span class="o">=</span> <span class="n">domain_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">domain_name</span> <span class="o">=</span> <span class="n">domain_info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">domain_elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">domain_info</span><span class="p">[</span><span class="mi">3</span><span class="p">:]])</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">topology_props</span><span class="p">[</span><span class="s1">&#39;mesh_domain&#39;</span><span class="p">][</span><span class="n">domain_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;domain_dim&#39;</span><span class="p">:</span> <span class="n">domain_dim</span><span class="p">,</span> <span class="s1">&#39;domain_,name&#39;</span><span class="p">:</span> <span class="n">domain_name</span><span class="p">,</span> <span class="s1">&#39;domain_elements&#39;</span><span class="p">:</span> <span class="n">domain_elements</span><span class="p">}</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No domain block is defined&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AcoustiXPaser.parse_materials">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse_materials">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_materials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">material_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">build_material</span> <span class="o">=</span> <span class="n">MaterialFactory</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">material</span> <span class="ow">in</span> <span class="n">material_blocks</span><span class="p">:</span>
+            <span class="n">material_info</span> <span class="o">=</span> <span class="n">material</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">material_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">material_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">material_type</span> <span class="o">=</span> <span class="n">material_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">material_name</span> <span class="o">=</span> <span class="n">material_info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">mat_properties</span> <span class="o">=</span> <span class="n">material_info</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">material_type</span> <span class="o">==</span> <span class="s1">&#39;AIR&#39;</span><span class="p">:</span>
+                <span class="n">properties_values</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">properties_values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">prop</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">mat_properties</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">materials</span><span class="p">[</span><span class="n">material_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_material</span><span class="o">.</span><span class="n">create_material</span><span class="p">(</span><span class="n">material_type</span><span class="p">,</span> <span class="n">material_name</span><span class="p">,</span> <span class="o">*</span><span class="n">properties_values</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AcoustiXPaser.parse_physic_domains">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse_physic_domains">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_physic_domains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">physic_domain_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">physic_domain</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">physic_domain_blocks</span><span class="p">):</span>
+            <span class="n">physic_type</span><span class="p">,</span> <span class="n">domain_id</span><span class="p">,</span> <span class="n">material_id</span> <span class="o">=</span> <span class="n">physic_domain</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">physic_domains</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">physic_type</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="nb">int</span><span class="p">(</span><span class="n">material_id</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="nb">int</span><span class="p">(</span><span class="n">domain_id</span><span class="o">.</span><span class="n">strip</span><span class="p">())]</span></div>
+
+
+<div class="viewcode-block" id="AcoustiXPaser.parse_boundary_conditions">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse_boundary_conditions">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_boundary_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bc_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">bc</span> <span class="ow">in</span> <span class="n">bc_blocks</span><span class="p">:</span>
+            <span class="n">bc_info</span> <span class="o">=</span> <span class="n">bc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">bc_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bc_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">bc_type</span> <span class="o">=</span> <span class="n">bc_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">bc_domain</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bc_info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">bc_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bc_info</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="p">[</span><span class="n">bc_id</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="n">bc_type</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s1">&#39;position&#39;</span><span class="p">:</span><span class="n">bc_domain</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">bc_value</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="AcoustiXPaser.parse_solver">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse_solver">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solver_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">solver_block</span> <span class="ow">in</span> <span class="n">solver_blocks</span><span class="p">:</span>
+            <span class="n">solver_info</span> <span class="o">=</span> <span class="n">solver_block</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">solver_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">solver_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">solver_type</span> <span class="o">=</span> <span class="n">solver_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">[</span><span class="n">solver_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">solver_type</span></div>
+
+
+<div class="viewcode-block" id="AcoustiXPaser.parse_post_processing">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse_post_processing">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_post_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">post_pro_blocks</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">frfs_out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">maps_out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">level_2_block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_level2plus</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">post_pro_blocks</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">level_2_block</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">block_name</span> <span class="o">==</span> <span class="s1">&#39;frf&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">frf</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
+                    <span class="n">frf_info</span> <span class="o">=</span> <span class="n">frf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                    <span class="n">frf_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frf_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">frfs_out</span><span class="p">[</span><span class="n">frf_id</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;file_name&#39;</span><span class="p">:</span> <span class="n">frf_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s1">&#39;domain&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">frf_info</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())}</span>
+            <span class="k">elif</span> <span class="n">block_name</span> <span class="o">==</span> <span class="s1">&#39;map&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">map_out</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
+                    <span class="n">map_out_info</span> <span class="o">=</span> <span class="n">map_out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+                    <span class="n">map_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">map_out_info</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">maps_out</span><span class="p">[</span><span class="n">map_id</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;file_name&#39;</span><span class="p">:</span> <span class="n">map_out_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s1">&#39;freqs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">map_out_info</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The post processing block is not supported yet&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_processing</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;frfs&#39;</span><span class="p">:</span> <span class="n">frfs_out</span><span class="p">,</span> <span class="s1">&#39;maps&#39;</span><span class="p">:</span> <span class="n">maps_out</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="AcoustiXPaser.parse">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.AcoustiXPaser.parse">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_level1</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">bock_name</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">bock_name</span> <span class="o">==</span> <span class="s1">&#39;analysis&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parse_analysis</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">bock_name</span> <span class="o">==</span> <span class="s1">&#39;topology&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parse_topology</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">bock_name</span> <span class="o">==</span> <span class="s1">&#39;material&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parse_materials</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">bock_name</span> <span class="o">==</span> <span class="s1">&#39;physic_domain&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parse_physic_domains</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">bock_name</span> <span class="o">==</span> <span class="s1">&#39;boundary_condition&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parse_boundary_conditions</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">bock_name</span> <span class="o">==</span> <span class="s1">&#39;solver&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parse_solver</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">bock_name</span> <span class="o">==</span> <span class="s1">&#39;post_pro&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parse_post_processing</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The block name is not supported&#39;</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;analysis&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_type</span><span class="p">,</span> <span class="s1">&#39;frequencies&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">,</span> <span class="s1">&#39;topology&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">topology_props</span><span class="p">,</span> <span class="s1">&#39;materials&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">materials</span><span class="p">,</span> <span class="s1">&#39;physic_domain&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">physic_domains</span><span class="p">,</span> <span class="s1">&#39;BCs&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="p">,</span> <span class="s1">&#39;solver&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">,</span> <span class="s1">&#39;post_processing&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_processing</span><span class="p">}</span></div>
+</div>
+
+    
+
+<div class="viewcode-block" id="ParserFactory">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.ParserFactory">[文档]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParserFactory</span><span class="p">:</span>
+
+<div class="viewcode-block" id="ParserFactory.__init__">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.ParserFactory.__init__">[文档]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ParserFactory.create_parser">
+<a class="viewcode-back" href="../../../api_reference/interface.html#SAcouS.interface.parser.ParserFactory.create_parser">[文档]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_parser</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+        <span class="c1"># import pdb;pdb.set_trace()</span>
+        <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.axi&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">AcoustiXPaser</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;other types of input files are not supported yet&#39;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

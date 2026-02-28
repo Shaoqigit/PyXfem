@@ -1,0 +1,623 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Materials模块 &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="PostProcess模块" href="postprocess.html" />
+    <link rel="prev" title="Mesh模块" href="mesh.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API参考</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mesh.html">Mesh模块</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Materials模块</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-SAcouS.Materials">基类</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Materials.BaseMaterial"><code class="docutils literal notranslate"><span class="pre">BaseMaterial</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">流体材料</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">空气</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">通用流体</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">多孔材料</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#jca">JCA等效流体</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#limp">Limp多孔材料</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">弹性材料</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Materials.ElasticMaterial"><code class="docutils literal notranslate"><span class="pre">ElasticMaterial</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#biot">Biot多孔弹性材料</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Materials.PoroElasticMaterial"><code class="docutils literal notranslate"><span class="pre">PoroElasticMaterial</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">材料工厂</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#SAcouS.Materials.MaterialFactory"><code class="docutils literal notranslate"><span class="pre">MaterialFactory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">使用示例</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">预定义材料</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">自定义流体</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">JCA多孔材料</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Biot材料</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">材料工厂</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="postprocess.html">PostProcess模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxfem.html">acxfem模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxtmm.html">acxtmm模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="acxmor.html">acxmor模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interface.html">interface模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id1">快速索引</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#id4">使用示例</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../theory/fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/tmm_theory.html">传递矩阵法 (TMM)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API参考</a></li>
+      <li class="breadcrumb-item active">Materials模块</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/api_reference/materials.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="materials">
+<h1>Materials模块<a class="headerlink" href="#materials" title="Link to this heading"></a></h1>
+<p>Materials模块定义了各种声学材料模型，包括流体、多孔材料和弹性材料。</p>
+<section id="module-SAcouS.Materials">
+<span id="id1"></span><h2>基类<a class="headerlink" href="#module-SAcouS.Materials" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Materials.BaseMaterial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Materials.</span></span><span class="sig-name descname"><span class="pre">BaseMaterial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#BaseMaterial"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.BaseMaterial" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>base abstract material class
+parameters:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.BaseMaterial.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Abstract</span> <span class="pre">Mtaterial'</span></em><a class="headerlink" href="#SAcouS.Materials.BaseMaterial.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.BaseMaterial.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Abstract</span> <span class="pre">Model'</span></em><a class="headerlink" href="#SAcouS.Materials.BaseMaterial.MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.BaseMaterial.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#BaseMaterial.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.BaseMaterial.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.BaseMaterial.set_frequency">
+<span class="sig-name descname"><span class="pre">set_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#BaseMaterial.set_frequency"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.BaseMaterial.set_frequency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id2">
+<h2>流体材料<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<section id="id3">
+<h3>空气<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Materials.</span></span><span class="sig-name descname"><span class="pre">Air</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#Air"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.Air" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.Materials.BaseMaterial" title="SAcouS.Materials.BaseMaterial"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMaterial</span></code></a></p>
+<p>air material class
+parameters:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Fluid'</span></em><a class="headerlink" href="#SAcouS.Materials.Air.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Air</span> <span class="pre">Model'</span></em><a class="headerlink" href="#SAcouS.Materials.Air.MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.COMPATIBLE">
+<span class="sig-name descname"><span class="pre">COMPATIBLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Fluid',</span> <span class="pre">'Poroelastic']</span></em><a class="headerlink" href="#SAcouS.Materials.Air.COMPATIBLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.T">
+<span class="sig-name descname"><span class="pre">T</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">293.15</span></em><a class="headerlink" href="#SAcouS.Materials.Air.T" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.P">
+<span class="sig-name descname"><span class="pre">P</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">101325.0</span></em><a class="headerlink" href="#SAcouS.Materials.Air.P" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.gamma">
+<span class="sig-name descname"><span class="pre">gamma</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.4</span></em><a class="headerlink" href="#SAcouS.Materials.Air.gamma" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.lambda_">
+<span class="sig-name descname"><span class="pre">lambda_</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0262</span></em><a class="headerlink" href="#SAcouS.Materials.Air.lambda_" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.mu">
+<span class="sig-name descname"><span class="pre">mu</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.839e-05</span></em><a class="headerlink" href="#SAcouS.Materials.Air.mu" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.Pr">
+<span class="sig-name descname"><span class="pre">Pr</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.71</span></em><a class="headerlink" href="#SAcouS.Materials.Air.Pr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.molar_mass">
+<span class="sig-name descname"><span class="pre">molar_mass</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.029</span></em><a class="headerlink" href="#SAcouS.Materials.Air.molar_mass" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.C_p">
+<span class="sig-name descname"><span class="pre">C_p</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1006</span></em><a class="headerlink" href="#SAcouS.Materials.Air.C_p" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.C_v">
+<span class="sig-name descname"><span class="pre">C_v</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">718.5714285714287</span></em><a class="headerlink" href="#SAcouS.Materials.Air.C_v" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.nu">
+<span class="sig-name descname"><span class="pre">nu</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.5160758450123658e-05</span></em><a class="headerlink" href="#SAcouS.Materials.Air.nu" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.nu_prime">
+<span class="sig-name descname"><span class="pre">nu_prime</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.1353180915667125e-05</span></em><a class="headerlink" href="#SAcouS.Materials.Air.nu_prime" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#Air.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.Air.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.K">
+<span class="sig-name descname"><span class="pre">K</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">141855.0</span></em><a class="headerlink" href="#SAcouS.Materials.Air.K" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.c">
+<span class="sig-name descname"><span class="pre">c</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">341.9730829285405</span></em><a class="headerlink" href="#SAcouS.Materials.Air.c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.Z">
+<span class="sig-name descname"><span class="pre">Z</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">414.8133495923197</span></em><a class="headerlink" href="#SAcouS.Materials.Air.Z" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.rho">
+<span class="sig-name descname"><span class="pre">rho</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.213</span></em><a class="headerlink" href="#SAcouS.Materials.Air.rho" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.Air.set_frequency">
+<span class="sig-name descname"><span class="pre">set_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#Air.set_frequency"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.Air.set_frequency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id4">
+<h3>通用流体<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Materials.Fluid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Materials.</span></span><span class="sig-name descname"><span class="pre">Fluid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#Fluid"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.Fluid" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.Materials.BaseMaterial" title="SAcouS.Materials.BaseMaterial"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMaterial</span></code></a></p>
+<p>fluid material class
+parameters:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Fluid.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Fluid'</span></em><a class="headerlink" href="#SAcouS.Materials.Fluid.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Fluid.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Fluid</span> <span class="pre">Model'</span></em><a class="headerlink" href="#SAcouS.Materials.Fluid.MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.Fluid.COMPATIBLE">
+<span class="sig-name descname"><span class="pre">COMPATIBLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Fluid',</span> <span class="pre">'Poroelastic']</span></em><a class="headerlink" href="#SAcouS.Materials.Fluid.COMPATIBLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.Fluid.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#Fluid.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.Fluid.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.Fluid.set_frequency">
+<span class="sig-name descname"><span class="pre">set_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#Fluid.set_frequency"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.Fluid.set_frequency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="id5">
+<h2>多孔材料<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<section id="jca">
+<h3>JCA等效流体<a class="headerlink" href="#jca" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Materials.EquivalentFluid">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Materials.</span></span><span class="sig-name descname"><span class="pre">EquivalentFluid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#EquivalentFluid"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.EquivalentFluid" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.Materials.BaseMaterial" title="SAcouS.Materials.BaseMaterial"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMaterial</span></code></a></p>
+<p>equivalent fluid material class
+attributes:
+phi: porosity -&gt; float
+sigma: flow resistivity -&gt; float
+alpha: static tortuosity -&gt; float
+Lambda_prime: thermal characteristic length -&gt; float
+Lambda: viscous characteristic length -&gt; float</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.EquivalentFluid.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Fluid'</span></em><a class="headerlink" href="#SAcouS.Materials.EquivalentFluid.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.EquivalentFluid.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'JCAL</span> <span class="pre">Equivalent</span> <span class="pre">Fluid'</span></em><a class="headerlink" href="#SAcouS.Materials.EquivalentFluid.MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.EquivalentFluid.COMPATIBLE">
+<span class="sig-name descname"><span class="pre">COMPATIBLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Fluid',</span> <span class="pre">'Poroelastic']</span></em><a class="headerlink" href="#SAcouS.Materials.EquivalentFluid.COMPATIBLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.EquivalentFluid.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#EquivalentFluid.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.EquivalentFluid.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.EquivalentFluid.set_frequency">
+<span class="sig-name descname"><span class="pre">set_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#EquivalentFluid.set_frequency"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.EquivalentFluid.set_frequency" title="Link to this definition"></a></dt>
+<dd><p>set frequency</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="limp">
+<h3>Limp多孔材料<a class="headerlink" href="#limp" title="Link to this heading"></a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Materials.LimpPorousMaterial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Materials.</span></span><span class="sig-name descname"><span class="pre">LimpPorousMaterial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#LimpPorousMaterial"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.LimpPorousMaterial" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.Materials.EquivalentFluid" title="SAcouS.Materials.EquivalentFluid"><code class="xref py py-class docutils literal notranslate"><span class="pre">EquivalentFluid</span></code></a></p>
+<p>limp porous material class
+derived from equivalent fluid class
+take the solid density and inertia into account
+additional attributes:
+rho_1: solid density -&gt; float</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.LimpPorousMaterial.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Fluid'</span></em><a class="headerlink" href="#SAcouS.Materials.LimpPorousMaterial.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.LimpPorousMaterial.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Limp</span> <span class="pre">Equivalent</span> <span class="pre">Fluid'</span></em><a class="headerlink" href="#SAcouS.Materials.LimpPorousMaterial.MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.LimpPorousMaterial.COMPATIBLE">
+<span class="sig-name descname"><span class="pre">COMPATIBLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Fluid',</span> <span class="pre">'Poroelastic']</span></em><a class="headerlink" href="#SAcouS.Materials.LimpPorousMaterial.COMPATIBLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.LimpPorousMaterial.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#LimpPorousMaterial.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.LimpPorousMaterial.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.LimpPorousMaterial.set_frequency">
+<span class="sig-name descname"><span class="pre">set_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#LimpPorousMaterial.set_frequency"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.LimpPorousMaterial.set_frequency" title="Link to this definition"></a></dt>
+<dd><p>set frequency</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="id6">
+<h2>弹性材料<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Materials.ElasticMaterial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Materials.</span></span><span class="sig-name descname"><span class="pre">ElasticMaterial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#ElasticMaterial"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.ElasticMaterial" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.Materials.BaseMaterial" title="SAcouS.Materials.BaseMaterial"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMaterial</span></code></a></p>
+<p>elastic material class
+parameters:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.ElasticMaterial.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Elastic'</span></em><a class="headerlink" href="#SAcouS.Materials.ElasticMaterial.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.ElasticMaterial.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Elastic</span> <span class="pre">Model'</span></em><a class="headerlink" href="#SAcouS.Materials.ElasticMaterial.MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.ElasticMaterial.COMPATIBLE">
+<span class="sig-name descname"><span class="pre">COMPATIBLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Elastic']</span></em><a class="headerlink" href="#SAcouS.Materials.ElasticMaterial.COMPATIBLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.ElasticMaterial.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#ElasticMaterial.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.ElasticMaterial.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.ElasticMaterial.compute_missing">
+<span class="sig-name descname"><span class="pre">compute_missing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#ElasticMaterial.compute_missing"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.ElasticMaterial.compute_missing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.ElasticMaterial.set_frequency">
+<span class="sig-name descname"><span class="pre">set_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#ElasticMaterial.set_frequency"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.ElasticMaterial.set_frequency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="biot">
+<h2>Biot多孔弹性材料<a class="headerlink" href="#biot" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Materials.PoroElasticMaterial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Materials.</span></span><span class="sig-name descname"><span class="pre">PoroElasticMaterial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#PoroElasticMaterial"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.PoroElasticMaterial" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#SAcouS.Materials.LimpPorousMaterial" title="SAcouS.Materials.LimpPorousMaterial"><code class="xref py py-class docutils literal notranslate"><span class="pre">LimpPorousMaterial</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.PoroElasticMaterial.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Poroelastic'</span></em><a class="headerlink" href="#SAcouS.Materials.PoroElasticMaterial.TYPE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.PoroElasticMaterial.MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'JCA-Biot</span> <span class="pre">Model'</span></em><a class="headerlink" href="#SAcouS.Materials.PoroElasticMaterial.MODEL" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="SAcouS.Materials.PoroElasticMaterial.COMPATIBLE">
+<span class="sig-name descname"><span class="pre">COMPATIBLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Poroelastic',</span> <span class="pre">'Elastic',</span> <span class="pre">'Fluid']</span></em><a class="headerlink" href="#SAcouS.Materials.PoroElasticMaterial.COMPATIBLE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.PoroElasticMaterial.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#PoroElasticMaterial.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.PoroElasticMaterial.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.PoroElasticMaterial.set_frequency">
+<span class="sig-name descname"><span class="pre">set_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omega</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#PoroElasticMaterial.set_frequency"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.PoroElasticMaterial.set_frequency" title="Link to this definition"></a></dt>
+<dd><p>set frequency</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id7">
+<h2>材料工厂<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="SAcouS.Materials.MaterialFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">SAcouS.Materials.</span></span><span class="sig-name descname"><span class="pre">MaterialFactory</span></span><a class="reference internal" href="../_modules/SAcouS/Materials.html#MaterialFactory"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.MaterialFactory" title="Link to this definition"></a></dt>
+<dd><p>基类：<a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="（在 Python v3.14）"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>material factory class</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.MaterialFactory.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#MaterialFactory.__init__"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.MaterialFactory.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="SAcouS.Materials.MaterialFactory.create_material">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">material_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/SAcouS/Materials.html#MaterialFactory.create_material"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#SAcouS.Materials.MaterialFactory.create_material" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="id8">
+<h2>使用示例<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<section id="id9">
+<h3>预定义材料<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">Air</span>
+
+<span class="c1"># 标准空气</span>
+<span class="n">air</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="s1">&#39;air&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;密度: </span><span class="si">{</span><span class="n">air</span><span class="o">.</span><span class="n">rho</span><span class="si">}</span><span class="s2"> kg/m³&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;声速: </span><span class="si">{</span><span class="n">air</span><span class="o">.</span><span class="n">c</span><span class="si">}</span><span class="s2"> m/s&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3>自定义流体<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fluid</span>
+
+<span class="c1"># 自定义流体 (水)</span>
+<span class="n">water</span> <span class="o">=</span> <span class="n">Fluid</span><span class="p">(</span><span class="s1">&#39;water&#39;</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">1500</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3>JCA多孔材料<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">EquivalentFluid</span>
+
+<span class="c1"># 定义JCA参数</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="mf">0.98</span>           <span class="c1"># 孔隙率</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mi">3750</span>         <span class="c1"># 流阻 [Pa·s/m²]</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.17</span>         <span class="c1"># 曲折度</span>
+<span class="n">Lambda_prime</span> <span class="o">=</span> <span class="mf">742e-6</span>  <span class="c1"># 热特征长度 [m]</span>
+<span class="n">Lambda</span> <span class="o">=</span> <span class="mf">110e-6</span>      <span class="c1"># 粘滞特征长度 [m]</span>
+
+<span class="n">porous</span> <span class="o">=</span> <span class="n">EquivalentFluid</span><span class="p">(</span><span class="s1">&#39;porous&#39;</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
+                         <span class="n">Lambda_prime</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">)</span>
+
+<span class="c1"># 设置频率 (计算等效属性)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">1000</span>
+<span class="n">porous</span><span class="o">.</span><span class="n">set_frequency</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;等效密度: </span><span class="si">{</span><span class="n">porous</span><span class="o">.</span><span class="n">rho_eq_til</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;等效体积模量: </span><span class="si">{</span><span class="n">porous</span><span class="o">.</span><span class="n">K_eq_til</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h3>Biot材料<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">PoroElasticMaterial</span>
+
+<span class="c1"># JCA参数 + 弹性参数</span>
+<span class="n">E</span> <span class="o">=</span> <span class="mf">1e6</span>          <span class="c1"># 杨氏模量 [Pa]</span>
+<span class="n">nu</span> <span class="o">=</span> <span class="mf">0.3</span>         <span class="c1"># 泊松比</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="mf">0.01</span>       <span class="c1"># 损耗因子</span>
+<span class="n">rho_solid</span> <span class="o">=</span> <span class="mi">30</span>   <span class="c1"># 固体密度 [kg/m³]</span>
+
+<span class="n">biot</span> <span class="o">=</span> <span class="n">PoroElasticMaterial</span><span class="p">(</span><span class="s1">&#39;biot&#39;</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
+                            <span class="n">Lambda_prime</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">rho_solid</span><span class="p">,</span>
+                            <span class="n">E</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="n">eta</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h3>材料工厂<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">MaterialFactory</span>
+
+<span class="c1"># 使用工厂创建材料</span>
+<span class="n">air</span> <span class="o">=</span> <span class="n">MaterialFactory</span><span class="o">.</span><span class="n">create_material</span><span class="p">(</span><span class="s1">&#39;AIR&#39;</span><span class="p">,</span> <span class="s1">&#39;air&#39;</span><span class="p">)</span>
+<span class="n">porous</span> <span class="o">=</span> <span class="n">MaterialFactory</span><span class="o">.</span><span class="n">create_material</span><span class="p">(</span><span class="s1">&#39;RIGID_POROUS&#39;</span><span class="p">,</span> <span class="s1">&#39;foam&#39;</span><span class="p">,</span>
+                                         <span class="mf">0.98</span><span class="p">,</span> <span class="mi">3750</span><span class="p">,</span> <span class="mf">1.17</span><span class="p">,</span>
+                                         <span class="mf">742e-6</span><span class="p">,</span> <span class="mf">110e-6</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="mesh.html" class="btn btn-neutral float-left" title="Mesh模块" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="postprocess.html" class="btn btn-neutral float-right" title="PostProcess模块" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

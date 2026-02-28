@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>传递矩阵法 (TMM) &mdash; PyAcoustiX v0.9.13 文档</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3b8134bd" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=dfa4f1fe"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="示例" href="../examples/index.html" />
+    <link rel="prev" title="Biot理论" href="biot_theory.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyAcoustiX
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">用户指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/installation.html">安装指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/quickstart.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_1d.html">教程1: 1D Helmholtz问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_2d.html">教程2: 2D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/tutorial_3d.html">教程3: 3D声学问题</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/cli_usage.html">命令行使用</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API参考</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/index.html">API参考</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">理论基础</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fem_basics.html">有限元方法基础</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helmholtz.html">Helmholtz方程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jca_model.html">JCA模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="biot_theory.html">Biot理论</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">传递矩阵法 (TMM)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">基本原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">单层传递矩阵</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">多层结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">边界条件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">声学性能指标</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">表面阻抗</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">材料模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">斜入射</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">扩散场吸声系数</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">频率特性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tmm-vs-fem">TMM vs FEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyacoustix">PyAcoustiX实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">进一步阅读</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">示例</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/index.html">示例</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">开发者指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/architecture.html">架构设计</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing.html">贡献指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/testing.html">测试指南</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyAcoustiX</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">传递矩阵法 (TMM)</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/Shaoqigit/PyXfem/blob/main/docs/source/theory/tmm_theory.rst" class="fa fa-github"> 在 GitHub 上编辑</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tmm">
+<h1>传递矩阵法 (TMM)<a class="headerlink" href="#tmm" title="Link to this heading"></a></h1>
+<p>传递矩阵法(Transfer Matrix Method, TMM)是分析多层声学结构的高效方法。</p>
+<section id="id1">
+<h2>基本原理<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>TMM基于以下假设:</p>
+<ol class="arabic simple">
+<li><p><strong>平面波</strong>: 声波以平面波形式传播</p></li>
+<li><p><strong>垂直入射</strong>: 波垂直于层界面传播</p></li>
+<li><p><strong>无耦合</strong>: 各层之间只有压力和速度的连续性</p></li>
+</ol>
+</section>
+<section id="id2">
+<h2>单层传递矩阵<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>考虑厚度为 <span class="math notranslate nohighlight">\(d\)</span> 的单层材料，声波沿 <span class="math notranslate nohighlight">\(x\)</span> 方向传播。</p>
+<p>在层内，声压和质点速度可以表示为:</p>
+<div class="math notranslate nohighlight">
+\[p(x) = A e^{-jkx} + B e^{+jkx}\]</div>
+<div class="math notranslate nohighlight">
+\[v(x) = \frac{1}{Z} (A e^{-jkx} - B e^{+jkx})\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(A\)</span>: 正向传播波幅值</p></li>
+<li><p><span class="math notranslate nohighlight">\(B\)</span>: 反向传播波幅值</p></li>
+<li><p><span class="math notranslate nohighlight">\(k\)</span>: 波数</p></li>
+<li><p><span class="math notranslate nohighlight">\(Z\)</span>: 特性阻抗</p></li>
+</ul>
+<p><strong>状态向量</strong></p>
+<p>定义状态向量:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{S} = \begin{bmatrix} p \\ v \end{bmatrix}\end{split}\]</div>
+<p><strong>传递矩阵</strong></p>
+<p>层两端的声场关系:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{S}(d) = T \cdot \mathbf{S}(0)\]</div>
+<p>其中传递矩阵:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}T = \begin{bmatrix} \cos(kd) &amp; -jZ\sin(kd) \\ -j\frac{\sin(kd)}{Z} &amp; \cos(kd) \end{bmatrix}\end{split}\]</div>
+</section>
+<section id="id3">
+<h2>多层结构<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>对于 <span class="math notranslate nohighlight">\(N\)</span> 层结构，总传递矩阵为各层矩阵的乘积:</p>
+<div class="math notranslate nohighlight">
+\[T_{total} = T_N \cdot T_{N-1} \cdots T_2 \cdot T_1\]</div>
+<p>注意矩阵乘法的顺序: 从最后一层到第一层。</p>
+</section>
+<section id="id4">
+<h2>边界条件<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p><strong>入射端</strong> (<span class="math notranslate nohighlight">\(x=0\)</span>)</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{S}(0) = \begin{bmatrix} p_i + p_r \\ v_i + v_r \end{bmatrix}\end{split}\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(p_i, v_i\)</span> 是入射波，<span class="math notranslate nohighlight">\(p_r, v_r\)</span> 是反射波。</p>
+<p><strong>透射端</strong> (<span class="math notranslate nohighlight">\(x=L\)</span>)</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{S}(L) = \begin{bmatrix} p_t \\ v_t \end{bmatrix}\end{split}\]</div>
+<p>对于半无限透射介质:</p>
+<div class="math notranslate nohighlight">
+\[p_t = Z_t v_t\]</div>
+</section>
+<section id="id5">
+<h2>声学性能指标<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p><strong>反射系数</strong></p>
+<div class="math notranslate nohighlight">
+\[R = \frac{p_r}{p_i} = \frac{Z_s - Z_0}{Z_s + Z_0}\]</div>
+<p>其中:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Z_0\)</span>: 入射介质阻抗</p></li>
+<li><p><span class="math notranslate nohighlight">\(Z_s\)</span>: 表面阻抗</p></li>
+</ul>
+<p><strong>吸声系数</strong></p>
+<div class="math notranslate nohighlight">
+\[\alpha = 1 - |R|^2 = \frac{4 \text{Re}(Z_s)/Z_0}{|1 + Z_s/Z_0|^2}\]</div>
+<p><strong>透射系数</strong></p>
+<div class="math notranslate nohighlight">
+\[T = \frac{p_t}{p_i}\]</div>
+<p><strong>传声损失</strong></p>
+<div class="math notranslate nohighlight">
+\[TL = 20 \log_{10} \left| \frac{1}{T} \right| \quad \text{[dB]}\]</div>
+</section>
+<section id="id6">
+<h2>表面阻抗<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<p>从传递矩阵可以得到表面阻抗:</p>
+<div class="math notranslate nohighlight">
+\[Z_s = \frac{T_{11} Z_t + T_{12}}{T_{21} Z_t + T_{22}}\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(Z_t\)</span> 是透射端阻抗。</p>
+<p>对于刚性背衬 (<span class="math notranslate nohighlight">\(v=0\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[Z_s = \frac{T_{12}}{T_{22}}\]</div>
+</section>
+<section id="id7">
+<h2>材料模型<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<p><strong>流体层</strong></p>
+<div class="math notranslate nohighlight">
+\[k = \frac{\omega}{c}, \quad Z = \rho c\]</div>
+<p><strong>多孔材料 (JCA模型)</strong></p>
+<div class="math notranslate nohighlight">
+\[k = \omega \sqrt{\frac{\tilde{\rho}_{eq}}{\tilde{K}_{eq}}}, \quad Z = \sqrt{\tilde{\rho}_{eq} \tilde{K}_{eq}}\]</div>
+<p><strong>弹性层</strong></p>
+<p>对于薄板，需要考虑弯曲波:</p>
+<div class="math notranslate nohighlight">
+\[Z = j\omega m \left( 1 - \frac{f^2}{f_c^2} \right)\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(m\)</span> 是面密度，<span class="math notranslate nohighlight">\(f_c\)</span> 是临界频率。</p>
+</section>
+<section id="id8">
+<h2>斜入射<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>对于入射角 <span class="math notranslate nohighlight">\(\theta\)</span>，修正传递矩阵:</p>
+<div class="math notranslate nohighlight">
+\[k_x = k \cos\theta\]</div>
+<div class="math notranslate nohighlight">
+\[Z_\theta = \frac{Z}{\cos\theta}\]</div>
+<p>吸声系数随入射角变化:</p>
+<ul class="simple">
+<li><p>0° (垂直入射): 最大吸声</p></li>
+<li><p>90° (掠入射): 吸声最小</p></li>
+</ul>
+<section id="id9">
+<h3>扩散场吸声系数<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p>对于随机入射，平均吸声系数:</p>
+<div class="math notranslate nohighlight">
+\[\alpha_{diff} = 2 \int_0^{\pi/2} \alpha(\theta) \sin\theta \cos\theta \, d\theta\]</div>
+</section>
+</section>
+<section id="id10">
+<h2>频率特性<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<p><strong>四分之一波长共振</strong></p>
+<p>对于厚度为 <span class="math notranslate nohighlight">\(d\)</span> 的单层材料，当:</p>
+<div class="math notranslate nohighlight">
+\[d = \frac{\lambda}{4} = \frac{c}{4f}\]</div>
+<p>时出现最大吸声。</p>
+<p><strong>低频行为</strong></p>
+<ul class="simple">
+<li><p>薄层: 吸声很小</p></li>
+<li><p>增加厚度可以提高低频吸声</p></li>
+</ul>
+<p><strong>高频行为</strong></p>
+<ul class="simple">
+<li><p>吸声趋于稳定值</p></li>
+<li><p>可能出现干涉效应</p></li>
+</ul>
+</section>
+<section id="tmm-vs-fem">
+<h2>TMM vs FEM<a class="headerlink" href="#tmm-vs-fem" title="Link to this heading"></a></h2>
+<p><strong>TMM优势</strong>:</p>
+<ul class="simple">
+<li><p>计算极快 (矩阵乘法)</p></li>
+<li><p>适合参数化研究</p></li>
+<li><p>适合优化设计</p></li>
+</ul>
+<p><strong>TMM局限</strong>:</p>
+<ul class="simple">
+<li><p>只适用于平面波</p></li>
+<li><p>不考虑边缘效应</p></li>
+<li><p>复杂几何困难</p></li>
+</ul>
+<p><strong>FEM-TMM耦合</strong>:</p>
+<p>PyAcoustiX支持FEM-TMM耦合，结合两者的优势:</p>
+<ul class="simple">
+<li><p>复杂几何区域用FEM</p></li>
+<li><p>多层均匀区域用TMM</p></li>
+</ul>
+</section>
+<section id="pyacoustix">
+<h2>PyAcoustiX实现<a class="headerlink" href="#pyacoustix" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.acxtmm</span><span class="w"> </span><span class="kn">import</span> <span class="n">TMM</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SAcouS.Materials</span><span class="w"> </span><span class="kn">import</span> <span class="n">Air</span><span class="p">,</span> <span class="n">EquivalentFluid</span>
+
+<span class="c1"># 定义多层结构</span>
+<span class="n">air</span> <span class="o">=</span> <span class="n">Air</span><span class="p">(</span><span class="s1">&#39;air&#39;</span><span class="p">)</span>
+<span class="n">foam</span> <span class="o">=</span> <span class="n">EquivalentFluid</span><span class="p">(</span><span class="s1">&#39;foam&#39;</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">,</span> <span class="mi">3750</span><span class="p">,</span> <span class="mf">1.17</span><span class="p">,</span> <span class="mf">742e-6</span><span class="p">,</span> <span class="mf">110e-6</span><span class="p">)</span>
+
+<span class="n">materials</span> <span class="o">=</span> <span class="p">[</span><span class="n">air</span><span class="p">,</span> <span class="n">foam</span><span class="p">,</span> <span class="n">air</span><span class="p">]</span>
+<span class="n">thicknesses</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]</span>  <span class="c1"># m</span>
+
+<span class="c1"># 创建TMM模型</span>
+<span class="n">freq</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">tmm</span> <span class="o">=</span> <span class="n">TMM</span><span class="p">(</span><span class="n">materials</span><span class="p">,</span> <span class="n">thicknesses</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span>
+
+<span class="c1"># 计算性能指标</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">tmm</span><span class="o">.</span><span class="n">absorption_coefficient</span><span class="p">()</span>
+<span class="n">Zs</span> <span class="o">=</span> <span class="n">tmm</span><span class="o">.</span><span class="n">surface_impedance</span><span class="p">()</span>
+<span class="n">TL</span> <span class="o">=</span> <span class="n">tmm</span><span class="o">.</span><span class="n">transmission_loss</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;吸声系数: </span><span class="si">{</span><span class="n">alpha</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;表面阻抗: </span><span class="si">{</span><span class="n">Zs</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;传声损失: </span><span class="si">{</span><span class="n">TL</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> dB&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h2>进一步阅读<a class="headerlink" href="#id11" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Beranek, L.L. and Ver, I.L. &quot;Noise and Vibration Control Engineering&quot;</p></li>
+<li><p>Cox, T.J. and D'Antonio, P. &quot;Acoustic Absorbers and Diffusers&quot;</p></li>
+<li><p>Allard, J.F. and Atalla, N. &quot;Propagation of Sound in Porous Media&quot;</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="biot_theory.html" class="btn btn-neutral float-left" title="Biot理论" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="../examples/index.html" class="btn btn-neutral float-right" title="示例" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2026, Shaoqi WU。</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用的 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a> 开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
