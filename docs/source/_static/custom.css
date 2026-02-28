@@ -1,0 +1,98 @@
+/* Custom CSS for PyAcoustiX documentation */
+
+/* 调整代码块样式 */
+div.highlight {
+    background-color: #f8f8f8;
+    border-radius: 4px;
+    border: 1px solid #e1e4e5;
+}
+
+/* 调整警告框样式 */
+.admonition {
+    border-radius: 4px;
+    margin: 1em 0;
+}
+
+.admonition.note {
+    background-color: #e7f3fe;
+    border-left: 6px solid #2196F3;
+}
+
+.admonition.warning {
+    background-color: #fff3cd;
+    border-left: 6px solid #ffc107;
+}
+
+.admonition.tip {
+    background-color: #d4edda;
+    border-left: 6px solid #28a745;
+}
+
+.admonition.important {
+    background-color: #f8d7da;
+    border-left: 6px solid #dc3545;
+}
+
+/* 表格样式 */
+.wy-table-responsive table td,
+.wy-table-responsive table th {
+    white-space: normal;
+}
+
+/* 数学公式样式 */
+.math {
+    font-size: 1.1em;
+}
+
+/* 版本信息样式 */
+.versionmodified {
+    font-style: italic;
+    color: #666;
+}
+
+/* 函数签名样式 */
+.sig {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+/* 参数列表样式 */
+.field-list th {
+    background-color: #f0f0f0;
+}
+
+/* 代码中的链接 */
+code.literal {
+    color: #E74C3C;
+    background-color: #f9f2f4;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/* 导航栏样式 */
+.wy-nav-side {
+    background: #2c3e50;
+}
+
+.wy-nav-side .wy-menu-vertical a {
+    color: #bfc9ca;
+}
+
+.wy-nav-side .wy-menu-vertical a:hover {
+    background-color: #34495e;
+    color: #fff;
+}
+
+.wy-nav-side .wy-menu-vertical a.current {
+    background-color: #2980B9;
+    color: #fff;
+}
+
+/* 搜索框样式 */
+.wy-side-nav-search {
+    background-color: #2980B9;
+}
+
+.wy-side-nav-search input[type="text"] {
+    border-color: #2980B9;
+}

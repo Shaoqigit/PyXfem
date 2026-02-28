@@ -1,0 +1,10 @@
+# 文档构建依赖
+sphinx>=5.0.0
+sphinx-rtd-theme>=1.0.0
+sphinx-autodoc-typehints>=1.0.0
+
+# 项目依赖 (用于API文档生成)
+numpy>=1.23.4
+scipy>=1.10.0
+matplotlib>=3.7.0
+meshio>=5.0.0
