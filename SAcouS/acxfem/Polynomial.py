@@ -131,6 +131,30 @@ class Lobatto(BasePolynomial):
 
     return B_lobatto
 
+  def eval_shape_functions(self, points):
+    """Vectorized evaluation of shape functions at given points.
+    
+    Args:
+        points: Array of points to evaluate at, shape (n_points,) or (n_points, n_dims)
+        
+    Returns:
+        Array of shape function values, shape (n_dofs, n_points)
+    """
+    N_funcs = self.get_shape_functions()
+    return np.array([[n(p) for p in np.atleast_1d(points)] for n in N_funcs])
+  
+  def eval_derivatives(self, points):
+    """Vectorized evaluation of shape function derivatives at given points.
+    
+    Args:
+        points: Array of points to evaluate at, shape (n_points,) or (n_points, n_dims)
+        
+    Returns:
+        Array of derivative values, shape (n_dofs, n_points)
+    """
+    B_funcs = self.get_der_shape_functions()
+    return np.array([[b(p) for p in np.atleast_1d(points)] for b in B_funcs])
+
 
 class Larange(BasePolynomial):
 

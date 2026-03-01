@@ -31,27 +31,33 @@ def add_shape_functions2element(element, order):
 
 
 def compute_matrix(Ke, Me, Ce, order):
+  """Compute element matrices using vectorized operations.
+  
+  Args:
+      Ke: Stiffness matrix (output)
+      Me: Mass matrix (output) 
+      Ce: Coupling matrix (output)
+      order: Element order
+  """
   n_pts = order * 2
   gl_pts, gl_wts = get_quadrature_points_weights(n_pts, 1)
-  # gl_pts, gl_wts = leggauss(n_pts)
+  
   l = Lobatto(order)
-  B = l.get_der_shape_functions()
-  N = l.get_shape_functions()
-  len(Me[0])
-  for i in range(len(Me[0])):
-    for j in range(len(Me[0])):
-      Ke[i, j] = sum(gl_wt * B[i](gl_pt) * B[j](gl_pt)
-                     for gl_pt, gl_wt in zip(gl_pts, gl_wts))
-      Me[i, j] = sum(gl_wt * N[i](gl_pt) * N[j](gl_pt)
-                     for gl_pt, gl_wt in zip(gl_pts, gl_wts))
-      Ce[i, j] = sum(gl_wt * N[i](gl_pt) * B[j](gl_pt) for gl_pt, gl_wt in zip(
-          gl_pts, gl_wts))    #Coupling matrix that to be used in Biot equation
-      if abs(Ke[i, j]) < 1e-10:
-        Ke[i, j] = 0
-      if abs(Me[i, j]) < 1e-10:
-        Me[i, j] = 0
-      if abs(Ce[i, j]) < 1e-10:
-        Ce[i, j] = 0
+  
+  # Use vectorized evaluation methods (new API)
+  B_vals = l.eval_derivatives(gl_pts)   # Shape: (n_dofs, n_pts)
+  N_vals = l.eval_shape_functions(gl_pts)  # Shape: (n_dofs, n_pts)
+  
+  # Compute all matrix elements using vectorized einsum
+  # Ke[i,j] = sum_q (B[i,q] * B[j,q] * w[q])
+  Ke[:] = np.einsum('iq,jq,q->ij', B_vals, B_vals, gl_wts)
+  Me[:] = np.einsum('iq,jq,q->ij', N_vals, N_vals, gl_wts)
+  Ce[:] = np.einsum('iq,jq,q->ij', N_vals, B_vals, gl_wts)
+  
+  # Apply threshold to small values
+  Ke[np.abs(Ke) < 1e-10] = 0
+  Me[np.abs(Me) < 1e-10] = 0
+  Ce[np.abs(Ce) < 1e-10] = 0
 
 
 # 1D lobatto element matrix: p=1
