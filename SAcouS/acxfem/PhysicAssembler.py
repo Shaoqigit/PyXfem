@@ -63,22 +63,32 @@ class BaseAssembler:
     else:
       dofs_index = self.fe_space.get_global_dofs_by_base(var)
 
-    rows = []
-    cols = []
-    data = []
-    for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-      local_indices = get_indeces(basis.local_dofs_index)
-      global_indices = get_indeces(dofs)
-      row = global_indices[:, 0]
-      col = global_indices[:, 1]
+    # Pre-allocate arrays for better performance
+    n_elems = len(dofs_index)
+    n_local_dofs = len(dofs_index[0]) if n_elems > 0 else 0
+    max_entries = n_elems * n_local_dofs * n_local_dofs
 
-      elem_data = basis.ke[local_indices[:, 0], local_indices[:, 1]]
-      rows.extend(row)
-      cols.extend(col)
-      data.extend(elem_data)
-    self.K = coo_matrix((data, (rows, cols)),
+    rows = np.empty(max_entries, dtype=np.int32)
+    cols = np.empty(max_entries, dtype=np.int32)
+    data = np.empty(max_entries, dtype=self.dtype)
+
+    idx = 0
+    for dofs, basis in zip(dofs_index, bases):
+      n_dof = len(dofs)
+      # Create index grids using broadcasting
+      row_grid, col_grid = np.meshgrid(dofs, dofs, indexing='ij')
+      local_i, local_j = np.meshgrid(
+        basis.local_dofs_index, basis.local_dofs_index, indexing='ij')
+
+      size = n_dof * n_dof
+      rows[idx:idx + size] = row_grid.ravel()
+      cols[idx:idx + size] = col_grid.ravel()
+      data[idx:idx + size] = basis.ke[local_i.ravel(), local_j.ravel()]
+      idx += size
+
+    self.K = csr_matrix((data[:idx], (rows[:idx], cols[:idx])),
                         shape=(self.nb_global_dofs, self.nb_global_dofs),
-                        dtype=self.dtype).tocsr()
+                        dtype=self.dtype)
 
     return self.K
 
@@ -88,21 +98,33 @@ class BaseAssembler:
       dofs_index = self.fe_space.get_global_dofs()
     else:
       dofs_index = self.fe_space.get_global_dofs_by_base(var)
-    rows = []
-    cols = []
-    data = []
-    for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-      local_indices = get_indeces(basis.local_dofs_index)
-      global_indices = get_indeces(dofs)
-      row = global_indices[:, 0]
-      col = global_indices[:, 1]
-      elem_data = basis.me[local_indices[:, 0], local_indices[:, 1]]
-      rows.extend(row)
-      cols.extend(col)
-      data.extend(elem_data)
-    self.M = coo_matrix((data, (rows, cols)),
+
+    # Pre-allocate arrays for better performance
+    n_elems = len(dofs_index)
+    n_local_dofs = len(dofs_index[0]) if n_elems > 0 else 0
+    max_entries = n_elems * n_local_dofs * n_local_dofs
+
+    rows = np.empty(max_entries, dtype=np.int32)
+    cols = np.empty(max_entries, dtype=np.int32)
+    data = np.empty(max_entries, dtype=self.dtype)
+
+    idx = 0
+    for dofs, basis in zip(dofs_index, bases):
+      n_dof = len(dofs)
+      # Create index grids using broadcasting
+      row_grid, col_grid = np.meshgrid(dofs, dofs, indexing='ij')
+      local_i, local_j = np.meshgrid(
+        basis.local_dofs_index, basis.local_dofs_index, indexing='ij')
+
+      size = n_dof * n_dof
+      rows[idx:idx + size] = row_grid.ravel()
+      cols[idx:idx + size] = col_grid.ravel()
+      data[idx:idx + size] = basis.me[local_i.ravel(), local_j.ravel()]
+      idx += size
+
+    self.M = csr_matrix((data[:idx], (rows[:idx], cols[:idx])),
                         shape=(self.nb_global_dofs, self.nb_global_dofs),
-                        dtype=self.dtype).tocsr()
+                        dtype=self.dtype)
 
     return self.M
 
@@ -111,32 +133,80 @@ class BaseAssembler:
       dofs_index = self.fe_space.get_global_dofs()
     else:
       dofs_index = self.fe_space.get_global_dofs_by_base(var)
-    rows = []
-    cols = []
-    data_K = []
-    data_M = []
-    for i, (dofs, basis) in enumerate(zip(dofs_index, bases)):
-      local_indices = get_indeces(basis.local_dofs_index)
-      global_indices = get_indeces(dofs)
-      row = global_indices[:, 0]
-      col = global_indices[:, 1]
 
-      elem_data_M = basis.me[local_indices[:, 0], local_indices[:, 1]]
-      elem_data_K = basis.ke[local_indices[:, 0], local_indices[:, 1]]
-      rows.extend(row)
-      cols.extend(col)
-      data_K.extend(elem_data_K)
-      data_M.extend(elem_data_M)
-    self.M = coo_matrix((data_M, (rows, cols)),
+    # Pre-allocate arrays for better performance
+    n_elems = len(dofs_index)
+    n_local_dofs = len(dofs_index[0]) if n_elems > 0 else 0
+    max_entries = n_elems * n_local_dofs * n_local_dofs
+
+    rows = np.empty(max_entries, dtype=np.int32)
+    cols = np.empty(max_entries, dtype=np.int32)
+    data_K = np.empty(max_entries, dtype=self.dtype)
+    data_M = np.empty(max_entries, dtype=self.dtype)
+
+    idx = 0
+    for dofs, basis in zip(dofs_index, bases):
+      n_dof = len(dofs)
+      # Create index grids using broadcasting
+      row_grid, col_grid = np.meshgrid(dofs, dofs, indexing='ij')
+      local_i, local_j = np.meshgrid(
+        basis.local_dofs_index, basis.local_dofs_index, indexing='ij')
+
+      size = n_dof * n_dof
+      rows[idx:idx + size] = row_grid.ravel()
+      cols[idx:idx + size] = col_grid.ravel()
+      data_K[idx:idx + size] = basis.ke[local_i.ravel(), local_j.ravel()]
+      data_M[idx:idx + size] = basis.me[local_i.ravel(), local_j.ravel()]
+      idx += size
+
+    self.M = csr_matrix((data_M[:idx], (rows[:idx], cols[:idx])),
                         shape=(self.nb_global_dofs, self.nb_global_dofs),
-                        dtype=self.dtype).tocsr()
-    self.K = coo_matrix((data_K, (rows, cols)),
+                        dtype=self.dtype)
+    self.K = csr_matrix((data_K[:idx], (rows[:idx], cols[:idx])),
                         shape=(self.nb_global_dofs, self.nb_global_dofs),
-                        dtype=self.dtype).tocsr()
+                        dtype=self.dtype)
 
 # ===================================== parallel assembly ==========================
 
   def fast_assemble_global_material_matrix(self, bases, var=None):
+    """Optimized assembly using pre-allocated arrays and meshgrid indexing."""
+    if var is None:
+      dofs_index = self.fe_space.get_global_dofs()
+    else:
+      dofs_index = self.fe_space.get_global_dofs_by_base(var)
+
+    # Pre-allocate arrays for better performance
+    n_elems = len(dofs_index)
+    n_local_dofs = len(dofs_index[0]) if n_elems > 0 else 0
+    max_entries = n_elems * n_local_dofs * n_local_dofs
+
+    rows = np.empty(max_entries, dtype=np.int32)
+    cols = np.empty(max_entries, dtype=np.int32)
+    data_K = np.empty(max_entries, dtype=self.dtype)
+    data_M = np.empty(max_entries, dtype=self.dtype)
+
+    idx = 0
+    for dofs, basis in zip(dofs_index, bases):
+      n_dof = len(dofs)
+      # Create index grids using broadcasting (faster than get_indeces)
+      row_grid, col_grid = np.meshgrid(dofs, dofs, indexing='ij')
+      local_i, local_j = np.meshgrid(
+        basis.local_dofs_index, basis.local_dofs_index, indexing='ij')
+
+      size = n_dof * n_dof
+      rows[idx:idx + size] = row_grid.ravel()
+      cols[idx:idx + size] = col_grid.ravel()
+      data_K[idx:idx + size] = basis.ke[local_i.ravel(), local_j.ravel()]
+      data_M[idx:idx + size] = basis.me[local_i.ravel(), local_j.ravel()]
+      idx += size
+
+    self.M = csr_matrix((data_M[:idx], (rows[:idx], cols[:idx])),
+                        shape=(self.nb_global_dofs, self.nb_global_dofs),
+                        dtype=self.dtype)
+    self.K = csr_matrix((data_K[:idx], (rows[:idx], cols[:idx])),
+                        shape=(self.nb_global_dofs, self.nb_global_dofs),
+                        dtype=self.dtype)
+
     if var is None:
       dofs_index = self.fe_space.get_global_dofs()
     else:
