@@ -85,7 +85,10 @@ class ApplyBoundaryConditions:
       global_indices = dofs
 
       node_coords = elements2node[i]
-      xx = np.dot(basis.N, node_coords)
+      # Vectorized evaluation of source function at all quadrature points
+      # xx shape: (n_quad, 2) for 2D
+      f_vals = np.array([source['value'](x[0], x[1]) for x in xx])
+      f = weights_o1 * f_vals
       f = np.array([
           weights_o1[i] * source['value'](x[0], x[1]) for i, x in enumerate(xx)
       ])
@@ -122,6 +125,65 @@ class ApplyBoundaryConditions:
         self.left_hand_side += C_damp
         return C_damp
       case np.ndarray():
+        edges = impedence_bcs['position']
+        lines = self.mesh.exterior_facets[edges]
+        
+        # Pre-allocate arrays for better performance
+        n_edges = len(lines)
+        n_dof_per_edge = 2  # Linear edge element
+        max_entries = n_edges * n_dof_per_edge * n_dof_per_edge
+        
+        rows = np.empty(max_entries, dtype=np.int32)
+        cols = np.empty(max_entries, dtype=np.int32)
+        data_M = np.empty(max_entries, dtype=self.dtype)
+        
+        # Pre-compute shape functions and quadrature
+        gl_pts, gl_wts = get_quadrature_points_weights(3, 1)
+        l = Lobatto(1)
+        N_funcs = l.get_shape_functions()
+        # Pre-evaluate shape functions at quadrature points
+        N_vals = np.array([[n(gp) for gp in gl_pts] for n in N_funcs])  # (n_dof, n_quad)
+        
+        idx = 0
+        for line_index in lines:
+          node_1_coord = self.mesh.nodes[line_index[0]]
+          node_2_coord = self.mesh.nodes[line_index[1]]
+          jac = np.linalg.norm(node_1_coord - node_2_coord) / 2
+          
+          # Vectorized computation of f matrix
+          # Interpolate coordinates at quadrature points: x = N^T * nodes
+          x_pts = N_vals.T @ np.array([node_1_coord, node_2_coord])  # (n_quad, dim)
+          
+          # Evaluate impedance function at all points
+          f_e_vals = np.array([
+              1j / (self.omega * impedence_bcs['value'](x[0], x[1]))
+              for x in x_pts
+          ])
+          
+          # Compute f = sum_q w_q * N * N^T * f_e
+          # Shape: (n_dof, n_dof) = (n_dof, n_quad) @ (n_quad, n_quad) @ (n_quad, n_dof)
+          f = (N_vals * gl_wts * f_e_vals) @ N_vals.T
+          f *= jac
+          
+          # Flatten local matrix
+          elem_data_M = f.ravel()
+          
+          # Compute global indices
+          n_dof = len(line_index)
+          row_grid, col_grid = np.meshgrid(line_index, line_index, indexing='ij')
+          
+          size = n_dof * n_dof
+          rows[idx:idx + size] = row_grid.ravel()
+          cols[idx:idx + size] = col_grid.ravel()
+          data_M[idx:idx + size] = elem_data_M
+          idx += size
+
+        C_damp = csr_array((data_M[:idx], (rows[:idx], cols[:idx])),
+                            shape=(self.nb_dofs, self.nb_dofs),
+                            dtype=self.dtype)
+
+        self.left_hand_side += C_damp
+        return self.left_hand_side
         edges = impedence_bcs['position']
         lines = self.mesh.exterior_facets[edges]
         rows = []
@@ -214,6 +276,67 @@ class ApplyBoundaryConditions:
 
 
 def compute_normal_vector(mesh, edge_or_facet):
+  """Compute normal vector(s) for edge(s) or facet(s).
+  
+  Args:
+      mesh: Mesh object
+      edge_or_facet: Array of node indices
+          - Single edge/facet: [n1, n2] or [n1, n2, n3]
+          - Multiple edges/facets: [[n1, n2], [n3, n4], ...]
+          
+  Returns:
+      Normal vector(s) - single vector or array of vectors
+  """
+  edge_or_facet = np.asarray(edge_or_facet)
+  
+  if edge_or_facet.ndim == 1:
+    # Single edge or facet
+    if len(edge_or_facet) == 2:
+      edge = edge_or_facet
+      node_1_coord = mesh.nodes[edge[0]]
+      node_2_coord = mesh.nodes[edge[1]]
+      tangent = node_2_coord - node_1_coord
+      normal = np.array([tangent[1], -tangent[0]])
+      return normal / np.linalg.norm(normal)
+    elif len(edge_or_facet) == 3:
+      facet = edge_or_facet
+      node_1_coord = mesh.nodes[facet[0]]
+      node_2_coord = mesh.nodes[facet[1]]
+      node_3_coord = mesh.nodes[facet[2]]
+      vect_1 = node_2_coord - node_1_coord
+      vect_2 = node_3_coord - node_1_coord
+      normal = np.cross(vect_1, vect_2)
+      return normal / np.linalg.norm(normal)
+      
+  elif edge_or_facet.ndim == 2:
+    # Multiple edges or facets
+    n_items = len(edge_or_facet)
+    
+    if edge_or_facet.shape[1] == 2:
+      # Multiple edges - vectorized computation
+      nodes_1 = mesh.nodes[edge_or_facet[:, 0]]
+      nodes_2 = mesh.nodes[edge_or_facet[:, 1]]
+      tangents = nodes_2 - nodes_1
+      # For 2D: normal = [ty, -tx]
+      normals = np.stack([tangents[:, 1], -tangents[:, 0]], axis=1)
+      return normals / np.linalg.norm(normals, axis=1, keepdims=True)
+      
+    elif edge_or_facet.shape[1] == 3:
+      # Multiple facets (triangles) - vectorized computation
+      nodes_1 = mesh.nodes[edge_or_facet[:, 0]]
+      nodes_2 = mesh.nodes[edge_or_facet[:, 1]]
+      nodes_3 = mesh.nodes[edge_or_facet[:, 2]]
+      vect_1 = nodes_2 - nodes_1
+      vect_2 = nodes_3 - nodes_1
+      # Cross product for multiple vectors
+      if mesh.dim == 3:
+        normals = np.cross(vect_1, vect_2)
+      else:
+        # 2D case with 3-node facets
+        normals = np.cross(vect_1, vect_2)
+      return normals / np.linalg.norm(normals, axis=1, keepdims=True)
+      
+  raise ValueError("Invalid edge_or_facet shape")
   if len(edge_or_facet) == 2:
     edge = edge_or_facet
     node_1_coord = mesh.nodes[edge[0]]    # in physical space

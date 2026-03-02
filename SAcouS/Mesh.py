@@ -20,10 +20,47 @@ from typing import Union
 import numpy as np
 import matplotlib.pyplot as plt
 from abc import ABCMeta, abstractmethod
+from functools import cached_property
 
 
 class BaseMesh(metaclass=ABCMeta):
-  """base abstract mesh class"""
+  """base abstract mesh class
+  
+  Attributes:
+      _node2elem_map: dict, cached mapping from node to elements
+      _mesh_coords: dict, cached element coordinates
+  """
+  
+  def __init__(self):
+    self._node2elem_map = None
+    self._mesh_coords = None
+  
+  @property
+  def node2elem_map(self):
+    """Cached mapping from node index to list of element indices."""
+    if self._node2elem_map is None:
+      self._node2elem_map = {}
+      for i, elem in enumerate(self.elem_connect):
+        for node in elem:
+          if node not in self._node2elem_map:
+            self._node2elem_map[node] = []
+          self._node2elem_map[node].append(i)
+    return self._node2elem_map
+  
+  def node2elem(self, node):
+    """return element number from node number"""
+    elems = self.node2elem_map.get(node, [])
+    if not elems:
+      raise ValueError("node not in mesh")
+    return elems[0]
+  
+  def clear_cache(self):
+    """Clear cached data - call this after modifying mesh"""
+    self._node2elem_map = None
+    self._mesh_coords = None
+    # Clear cached_property caches
+    self.__dict__.pop('num_node2coord', None)
+    self.__dict__.pop('coord2node_num', None)
 
   def parser_mesh(mesh_file):
     """parse mesh file"""
@@ -49,12 +86,7 @@ class BaseMesh(metaclass=ABCMeta):
     """return connectivity"""
     return self.elem_connect
 
-  def node2elem(self, node):
-    """return element number from node number"""
-    for i in range(len(self.elem_connect)):
-      if node in self.elem_connect[i]:
-        return i
-    raise ValueError("node not in mesh")
+
 
   def get_nb_nodes(self):
     """return number of nodes"""
@@ -68,20 +100,22 @@ class BaseMesh(metaclass=ABCMeta):
     """return nodes of corresoinding element"""
     return self.get_mesh_coordinates()[elem]
 
-  @property
+  @cached_property
   def num_node2coord(self):
-    num_node2coord2 = {}
-    """return node number from coordinate"""
-    for i, coord in enumerate(self.nodes):
-      if isinstance(coord, np.ndarray):    # for 2/3D mesh
-        coord = tuple(coord)
-      num_node2coord2[i] = coord
-    return num_node2coord2
+    """return node number from coordinate - cached for performance"""
+    return {i: tuple(coord) if isinstance(coord, np.ndarray) else coord
+            for i, coord in enumerate(self.nodes)}
+  
+  @cached_property
+  def coord2node_num(self):
+    """return coordinate to node number mapping - cached for performance"""
+    return {coord: i for i, coord in self.num_node2coord.items()}
 
 
 class Mesh1D(BaseMesh):
 
   def __init__(self, nodes, elem_connect):
+    super().__init__()
     self.nodes = nodes
     self.nb_nodes = len(nodes)
     self.elem_connect = elem_connect
@@ -97,23 +131,17 @@ class Mesh1D(BaseMesh):
     return self._subdomains
 
   def get_mesh_coordinates(self):
-    """dict of element number and nodes coordinates"""
-    elems = {}
-    for i in range(len(self.elem_connect)):
-      elems[i] = np.array([self.nodes[i], self.nodes[i + 1]])
-    return elems
+    """dict of element number and nodes coordinates - with caching"""
+    if self._mesh_coords is None:
+      self._mesh_coords = {i: self.nodes[conn] 
+                           for i, conn in enumerate(self.elem_connect)}
+    return self._mesh_coords
 
   def get_min_size(self):
     """return minimum size of elements"""
     return min(np.diff(self.nodes))
 
-  @property
-  def coord2node_num(self):
-    """return element number from node number"""
-    coord2node_num = {}
-    for i, coord in enumerate(self.nodes):
-      coord2node_num[coord] = i
-    return coord2node_num
+
 
   def refine_mesh(self, times):
     """refine mesh"""
@@ -161,6 +189,7 @@ import meshio
 class Mesh2D(BaseMesh):
 
   def __init__(self, nodes, elem_connect, edge_connect=None):
+    super().__init__()
     self.nodes = nodes
     self.elem_connect = elem_connect
     self.nb_nodes = len(self.nodes)
@@ -218,8 +247,11 @@ class Mesh2D(BaseMesh):
     plt.show()
 
   def get_mesh_coordinates(self):
-    """dict of element number and nodes coordinates"""
-    return {i: self.nodes[conn] for i, conn in enumerate(self.elem_connect)}
+    """dict of element number and nodes coordinates - with caching"""
+    if self._mesh_coords is None:
+      self._mesh_coords = {i: self.nodes[conn] 
+                           for i, conn in enumerate(self.elem_connect)}
+    return self._mesh_coords
 
   def refine_mesh(self, times):
     # refine the 2D mesh

@@ -158,6 +158,73 @@ class DofHandler1DMutipleVariable(DofHandler1D):
     return base4dofs.get(label, None)
 
   def mesh2dof(self, position, var):
+    """Map position to DOF index using cached coordinate mapping.
+    
+    Args:
+        position: float or array, coordinate to find
+        var: str, variable name
+        
+    Returns:
+        int: global DOF index
+    """
+    index_var = self.var_name.index(var)
+    
+    # Use cached coord2node_num mapping for O(1) lookup
+    # For floating point positions, we need to find the closest node
+    if isinstance(position, (int, float)):
+      # Direct lookup for exact match
+      pos_key = float(position)
+      node_idx = self.mesh.coord2node_num.get(pos_key)
+      if node_idx is not None:
+        return node_idx + index_var * self.mesh.get_nb_nodes()
+      
+      # Find closest node for floating point
+      nodes_array = np.array(list(self.mesh.coord2node_num.keys()))
+      closest_idx = np.argmin(np.abs(nodes_array - position))
+      closest_pos = nodes_array[closest_idx]
+      if np.isclose(closest_pos, position, rtol=1e-10, atol=1e-10):
+        node_idx = self.mesh.coord2node_num[closest_pos]
+        return node_idx + index_var * self.mesh.get_nb_nodes()
+    
+    elif isinstance(position, (list, np.ndarray)):
+      pos_key = tuple(position)
+      node_idx = self.mesh.coord2node_num.get(pos_key)
+      if node_idx is not None:
+        return node_idx + index_var * self.mesh.get_nb_nodes()
+    
+    # Fallback: linear search
+    for i, node in enumerate(self.mesh.nodes):
+      if np.allclose(node, position):
+        return i + index_var * self.mesh.get_nb_nodes()
+    
+    raise ValueError(f"Position {position} not found in mesh")
+    """Map position to DOF index using cached coordinate mapping.
+    
+    Args:
+        position: float or array, coordinate to find
+        var: str, variable name
+        
+    Returns:
+        int: global DOF index
+    """
+    index_var = self.var_name.index(var)
+    
+    # Use cached coord2node_num mapping for O(1) lookup
+    # Convert position to tuple for dictionary lookup
+    if isinstance(position, (list, np.ndarray)):
+      pos_key = tuple(position)
+    else:
+      pos_key = position
+    
+    node_idx = self.mesh.coord2node_num.get(pos_key)
+    if node_idx is None:
+      # Fallback: try to find closest node (for floating point comparisons)
+      for i, node in enumerate(self.mesh.nodes):
+        if np.allclose(node, position):
+          return i + index_var * self.mesh.get_nb_nodes()
+      raise ValueError(f"Position {position} not found in mesh")
+    
+    return node_idx + index_var * self.mesh.get_nb_nodes()
     index_var = self.var_name.index(var)
     for i, node in enumerate(self.mesh.nodes):
       if node == position:
@@ -234,6 +301,16 @@ class GeneralDofHandler1D(DofHandler1D):
     return global_dof
 
   def base4global_dofs(self):
+    """Map bases to global DOFs - optimized with defaultdict."""
+    global_dofs = self.get_global_dofs()
+    
+    # Use defaultdict for cleaner code
+    base4dofs = defaultdict(list)
+    
+    for i, bases in enumerate(self.whole_bases):
+      base4dofs[bases.label].append(global_dofs[i])
+    
+    return dict(base4dofs)
     global_dofs = self.get_global_dofs()
     base4dofs = {}
     for i, bases in enumerate(self.whole_bases):
@@ -243,6 +320,28 @@ class GeneralDofHandler1D(DofHandler1D):
     return base4dofs
 
   def get_global_dofs_by_base(self, label):
+    base4dofs = self.base4global_dofs()
+    return base4dofs.get(label, None)
+  
+  def mesh2dof(self, position, var):
+    """Map position to DOF index using cached coordinate mapping."""
+    index_var = self.var_name.index(var)
+    
+    # Use cached coord2node_num mapping for O(1) lookup
+    if isinstance(position, (list, np.ndarray)):
+      pos_key = tuple(position)
+    else:
+      pos_key = position
+    
+    node_idx = self.mesh.coord2node_num.get(pos_key)
+    if node_idx is None:
+      # Fallback: try to find closest node
+      for i, node in enumerate(self.mesh.nodes):
+        if np.allclose(node, position):
+          return i + index_var * self.mesh.get_nb_nodes()
+      raise ValueError(f"Position {position} not found in mesh")
+    
+    return node_idx + index_var * self.mesh.get_nb_nodes()
     base4dofs = self.base4global_dofs()
     return base4dofs.get(label, None)
 
@@ -272,10 +371,12 @@ class FESpace:
 
   @cached_property
   def element_index2material(self):
-    elem_mat = {}
-    for mat, elems in self.subdomains.items():
-      elem_mat.update({elem: mat for elem in elems})
-    return elem_mat
+    """Map element indices to materials - optimized with dict comprehension."""
+    return {
+      elem: mat 
+      for mat, elems in self.subdomains.items() 
+      for elem in elems
+    }
 
   @cached_property
   def nb_dofs(self):
